@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "nlp-course"
+version = "0.0.0"
+description = ""
+authors = ["Maximilian Schattauer <max@schattauer.info>"]
+readme = "README.md"
+packages = [{include = "nlp_course"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+nltk = "^3.7"
+matplotlib = "^3.6.2"
+numpy = "^1.23.5"
+scipy = "^1.9.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
