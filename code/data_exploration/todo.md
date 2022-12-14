@@ -1,0 +1,2 @@
+- Check articles for real language
+- Check articles for wrong content (e.g. cookie banner)
