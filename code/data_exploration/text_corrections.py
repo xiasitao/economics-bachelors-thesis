@@ -44,8 +44,12 @@ def letter_shift(string: str, shift: int = 1, common_replacements=True) -> str:
     return ''.join(new_chars)
 
 
-def remove_URLs(string: str):
+def remove_URLs(string: str) -> str:
     regex = r'[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)'
+    return re.sub(regex, '', string)
+
+def remove_non_latin(string: str) -> str:
+    regex = r'[^\x00-\x7F\x80-\xFF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF]'
     return re.sub(regex, '', string)
 
 
@@ -57,7 +61,7 @@ obfuscated_articles = articles[articles['content'].str.contains('|'.join([rf'\b{
 
 
 # %%
-remove_URLs(obfuscated_articles.iloc[3].content)
+remove_non_latin(remove_URLs(obfuscated_articles.iloc[3].content))
 
 
 # %%
