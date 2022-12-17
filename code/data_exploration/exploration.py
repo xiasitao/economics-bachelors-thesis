@@ -27,6 +27,11 @@ pipeline = spacy.load('en_core_web_trf')
 spacy.language.Language.factory('language_detector', func=lambda nlp, name: spacy_langdetect.LanguageDetector())
 pipeline.add_pipe('language_detector', last=True)
 # %%
+articles['language_score'] = 0.0
+articles.content.apply(func=lambda row: articles['language_score'], axis=1)
 pipeline(articles.iloc[200000].content)._.language
 
+# %%
+pipeline('Warum sagt das keiner, es wäre doch so interessant. If I could ever know how much life is really?')._.language
+pipeline('Gne hm Bq`lld-Qnl`m Qhssdq unm Sgd Droqhsr9 Rn v`q dr lhs QdunkudqgdkcSgd Droqhsr rhmc Aq`tmrbgvdhfr `jstdkkd Unqydhfd')._.language
 # %%
