@@ -13,6 +13,8 @@ with open('../../assets/role_model_articles_en.pkl', 'rb') as file:
     articles_en = pickle.load(file)
 articles = pd.concat([articles_en, articles_de])
 # %%
+articles
+# %%
 # Histograms
 plt.title('Sentence count')
 plt.hist(articles[articles.sentences < 200].sentences)

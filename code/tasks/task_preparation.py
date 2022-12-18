@@ -47,7 +47,7 @@ def clean(string: str) -> str:
     Returns:
         str: cleaned substrate
     """
-    str = re.sub(r'\n', '', str)
+    str = re.sub(r'\n', '', string)
     return str
 
 
@@ -76,11 +76,13 @@ def task_preparation(produces: PosixPath):
     articles = articles.rename(columns={'addedAt': 'added_at'})
     
     # Process in chunks in order to avoid memory leak
+    first=True
     for chunk in np.array_split(articles, len(articles) // 10000 + 1):
         chunk['content_raw'] = chunk['content']
         chunk['content'] = chunk['content_raw'].apply(lambda text: remove_non_latin(remove_URLs(text)))
         chunk['obfuscated'] = chunk['content'].str.contains('|'.join([rf'\b{word}\b' for word in hint_words]))
-        chunk.to_csv(produces, mode='a')
+        chunk.to_csv(produces, mode='a', header=first)
+        first=False
 
 if __name__ == '__main__':
     raise Exception('Can only be executed by pytask')
