@@ -111,6 +111,17 @@ python-versions = ">=3.7"
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
+name = "click-default-group"
+version = "1.2.2"
+description = "Extends click.Group to invoke a command without explicit subcommand name"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+click = "*"
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 description = "Cross-platform colored terminal text."
@@ -131,6 +142,17 @@ traitlets = ">=5.3"
 
 [package.extras]
 test = ["pytest"]
+
+[[package]]
+name = "commonmark"
+version = "0.9.1"
+description = "Python parser for the CommonMark Markdown spec"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+test = ["flake8 (==3.7.8)", "hypothesis (==3.55.3)"]
 
 [[package]]
 name = "confection"
@@ -669,6 +691,14 @@ dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
+name = "pony"
+version = "0.7.16"
+description = "Pony Object-Relational Mapper"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "preshed"
 version = "3.0.8"
 description = "Cython hash table that trusts the keys are pre-hashed"
@@ -730,6 +760,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "pybaum"
+version = "0.1.3"
+description = "Tools to work with pytrees."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "pycparser"
 version = "2.21"
 description = "C parser in Python"
@@ -785,6 +823,27 @@ python-versions = ">=3.7"
 [package.extras]
 doc = ["sphinx", "sphinx_rtd_theme"]
 test = ["coverage[toml]", "flake8 (<5)", "pytest", "pytest-cov", "pytest-flake8", "pytest-isort", "pytest-xdist"]
+
+[[package]]
+name = "pytask"
+version = "0.2.7"
+description = "In its highest aspirations, pytask tries to be pytest as a build system."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+attrs = ">=19.2.0"
+click = "*"
+click-default-group = "*"
+networkx = ">=2.4"
+packaging = "*"
+pluggy = "*"
+pony = ">=0.7.15"
+pybaum = ">=0.1.1"
+rich = "*"
+tomli = ">=1.0.0"
+tomli-w = ">=1.0.0"
 
 [[package]]
 name = "pytest"
@@ -870,6 +929,22 @@ urllib3 = ">=1.21.1,<1.27"
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
+
+[[package]]
+name = "rich"
+version = "12.6.0"
+description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
+category = "main"
+optional = false
+python-versions = ">=3.6.3,<4.0.0"
+
+[package.dependencies]
+commonmark = ">=0.9.0,<0.10.0"
+pygments = ">=2.6.0,<3.0.0"
+typing-extensions = {version = ">=4.0.0,<5.0", markers = "python_version < \"3.9\""}
+
+[package.extras]
+jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
 name = "scikit-learn"
@@ -1178,6 +1253,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "tomli-w"
+version = "1.0.0"
+description = "A lil' TOML writer"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
 name = "toolz"
 version = "0.12.0"
 description = "List processing tools and functional utilities"
@@ -1281,7 +1364,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "6ab5b01f3fcc0cdf8b78653f72f733d767cc28cb8e747197b0e2b8d4ed82a879"
+content-hash = "bd896032ab98ef3f9a6801824f8029d0556fe73662ba0f6d4a2eb38adecef1c6"
 
 [metadata.files]
 appnope = [
@@ -1416,6 +1499,9 @@ click = [
     {file = "click-8.1.3-py3-none-any.whl", hash = "sha256:bb4d8133cb15a609f44e8213d9b391b0809795062913b383c62be0ee95b1db48"},
     {file = "click-8.1.3.tar.gz", hash = "sha256:7682dc8afb30297001674575ea00d1814d808d6a36af415a82bd481d37ba7b8e"},
 ]
+click-default-group = [
+    {file = "click-default-group-1.2.2.tar.gz", hash = "sha256:d9560e8e8dfa44b3562fbc9425042a0fd6d21956fcc2db0077f63f34253ab904"},
+]
 colorama = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
@@ -1423,6 +1509,10 @@ colorama = [
 comm = [
     {file = "comm-0.1.2-py3-none-any.whl", hash = "sha256:9f3abf3515112fa7c55a42a6a5ab358735c9dccc8b5910a9d8e3ef5998130666"},
     {file = "comm-0.1.2.tar.gz", hash = "sha256:3e2f5826578e683999b93716285b3b1f344f157bf75fa9ce0a797564e742f062"},
+]
+commonmark = [
+    {file = "commonmark-0.9.1-py2.py3-none-any.whl", hash = "sha256:da2f38c92590f83de410ba1a3cbceafbc74fee9def35f9251ba9a971d6d66fd9"},
+    {file = "commonmark-0.9.1.tar.gz", hash = "sha256:452f9dc859be7f06631ddcb328b6919c67984aca654e5fefb3914d54691aed60"},
 ]
 confection = [
     {file = "confection-0.0.3-py3-none-any.whl", hash = "sha256:51af839c1240430421da2b248541ebc95f9d0ee385bcafa768b8acdbd2b0111d"},
@@ -2068,6 +2158,10 @@ pluggy = [
     {file = "pluggy-1.0.0-py2.py3-none-any.whl", hash = "sha256:74134bbf457f031a36d68416e1509f34bd5ccc019f0bcc952c7b909d06b37bd3"},
     {file = "pluggy-1.0.0.tar.gz", hash = "sha256:4224373bacce55f955a878bf9cfa763c1e360858e330072059e10bad68531159"},
 ]
+pony = [
+    {file = "pony-0.7.16-py3-none-any.whl", hash = "sha256:608a1c1d662983bad2590e650f2bbc1cd6ed48558894ad8f50da4739ff98f614"},
+    {file = "pony-0.7.16.tar.gz", hash = "sha256:5f45fc67587f4520c560a57148cc573b097d42f82f5cb200d72c957b5708198d"},
+]
 preshed = [
     {file = "preshed-3.0.8-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ea4b6df8ef7af38e864235256793bc3056e9699d991afcf6256fa298858582fc"},
     {file = "preshed-3.0.8-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:8e945fc814bdc29564a2ce137c237b3a9848aa1e76a1160369b6e0d328151fdd"},
@@ -2130,6 +2224,10 @@ py = [
     {file = "py-1.11.0-py2.py3-none-any.whl", hash = "sha256:607c53218732647dff4acdfcd50cb62615cedf612e72d1724fb1a0cc6405b378"},
     {file = "py-1.11.0.tar.gz", hash = "sha256:51c75c4126074b472f746a24399ad32f6053d1b34b68d2fa41e558e6f4a98719"},
 ]
+pybaum = [
+    {file = "pybaum-0.1.3-py3-none-any.whl", hash = "sha256:a1d74200d0477c7da121af2f67a236d658ec62aaef5f5c35562ec959f52efa3d"},
+    {file = "pybaum-0.1.3.tar.gz", hash = "sha256:5827d90d94ba6ea68b7920f13c8df26a101b9be943fadee77bb2cc2a5c28fda3"},
+]
 pycparser = [
     {file = "pycparser-2.21-py2.py3-none-any.whl", hash = "sha256:8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9"},
     {file = "pycparser-2.21.tar.gz", hash = "sha256:e644fdec12f7872f86c58ff790da456218b10f863970249516d60a5eaca77206"},
@@ -2183,6 +2281,10 @@ pyparsing = [
 pyphen = [
     {file = "pyphen-0.13.2-py3-none-any.whl", hash = "sha256:e88cfb46aed61f4c7fe49592ff322e6266485fd2447c818a9123485cd92b7ef4"},
     {file = "pyphen-0.13.2.tar.gz", hash = "sha256:847f57a043a58408f24670ae0184ff6edfb5fd5731743208228c028ddc514438"},
+]
+pytask = [
+    {file = "pytask-0.2.7-py3-none-any.whl", hash = "sha256:f4dec18784348bd40094837f42f587baf1d73cafa8721fdf02f3645070119a99"},
+    {file = "pytask-0.2.7.tar.gz", hash = "sha256:8ebf85440badac75ac60e2991e7b9832d6c33923d6dc105662241ff2fadfa472"},
 ]
 pytest = [
     {file = "pytest-7.2.0-py3-none-any.whl", hash = "sha256:892f933d339f068883b6fd5a459f03d85bfcb355e4981e146d2c7616c21fef71"},
@@ -2382,6 +2484,10 @@ requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
     {file = "requests-2.28.1.tar.gz", hash = "sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983"},
 ]
+rich = [
+    {file = "rich-12.6.0-py3-none-any.whl", hash = "sha256:a4eb26484f2c82589bd9a17c73d32a010b1e29d89f1604cd9bf3a2097b81bb5e"},
+    {file = "rich-12.6.0.tar.gz", hash = "sha256:ba3a3775974105c221d31141f2c116f4fd65c5ceb0698657a11e9f295ec93fd0"},
+]
 scikit-learn = [
     {file = "scikit-learn-1.2.0.tar.gz", hash = "sha256:680b65b3caee469541385d2ca5b03ff70408f6c618c583948312f0d2125df680"},
     {file = "scikit_learn-1.2.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:1beaa631434d1f17a20b1eef5d842e58c195875d2bc11901a1a70b5fe544745b"},
@@ -2564,6 +2670,10 @@ threadpoolctl = [
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
+]
+tomli-w = [
+    {file = "tomli_w-1.0.0-py3-none-any.whl", hash = "sha256:9f2a07e8be30a0729e533ec968016807069991ae2fd921a78d42f429ae5f4463"},
+    {file = "tomli_w-1.0.0.tar.gz", hash = "sha256:f463434305e0336248cac9c2dc8076b707d8a12d019dd349f5c1e382dd1ae1b9"},
 ]
 toolz = [
     {file = "toolz-0.12.0-py3-none-any.whl", hash = "sha256:2059bd4148deb1884bb0eb770a3cde70e7f954cfbbdc2285f1f2de01fd21eb6f"},

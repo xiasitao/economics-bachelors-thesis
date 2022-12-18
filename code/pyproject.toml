@@ -19,8 +19,12 @@ matplotlib = "^3.6.2"
 nltk = "^3.8"
 textblob = "^0.17.1"
 spacy-langdetect = "^0.1.2"
+pytask = "^0.2.7"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytask.ini_options]
+paths = "tasks"
