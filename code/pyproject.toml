@@ -20,6 +20,7 @@ nltk = "^3.8"
 textblob = "^0.17.1"
 spacy-langdetect = "^0.1.2"
 pytask = "^0.2.7"
+tables = "^3.7.0"
 
 
 [build-system]

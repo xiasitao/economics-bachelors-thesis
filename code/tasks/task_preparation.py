@@ -10,6 +10,22 @@ SOURCE_PATH = Path(__file__).parent.resolve()
 ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
+# Data cleaning
+def clean_data(data: pd.DataFrame) -> pd.DataFrame:
+    """Clean a dataframe by removing nans
+
+    Args:
+        data (pd.DataFrame): substrate
+
+    Returns:
+        pd.DataFrame: substrate
+    """
+
+    data = data.dropna(axis=0)
+    return data
+
+
+# Text cleaning
 def letter_shift(string: str, shift: int = 1, common_replacements=True) -> str:
     """Shift all letters by a number of places in the alphabet
 
@@ -38,7 +54,7 @@ def letter_shift(string: str, shift: int = 1, common_replacements=True) -> str:
     return ''.join(new_chars)
 
 
-def clean(string: str) -> str:
+def clean_content(string: str) -> str:
     """Remove unnecessary morphemes
 
     Args:
@@ -64,25 +80,24 @@ def remove_non_latin(string: str) -> str:
     return re.sub(regex, '', string)
 
 
-@pytask.mark.produces(f'{BUILD_PATH}/data.csv')
+@pytask.mark.produces(f'{BUILD_PATH}/data.pkl')
 def task_preparation(produces: PosixPath):
     produces.write_text('')
     articles = None
     source_files = [f'{ASSET_PATH}/role_model_articles_de.pkl', f'{ASSET_PATH}/role_model_articles_en.pkl']
     for source_file in source_files:
-        with open(source_file, 'rb') as file:
-            these_articles = pickle.load(file)
-            articles = these_articles if articles is None else pd.concat([articles, these_articles])
+        these_articles = pd.read_pickle(source_file)
+        articles = these_articles if articles is None else pd.concat([articles, these_articles])
     articles = articles.rename(columns={'addedAt': 'added_at'})
-    
+
+    processed_articles = None
     # Process in chunks in order to avoid memory leak
-    first=True
     for chunk in np.array_split(articles, len(articles) // 10000 + 1):
         chunk['content_raw'] = chunk['content']
         chunk['content'] = chunk['content_raw'].apply(lambda text: remove_non_latin(remove_URLs(text)))
         chunk['obfuscated'] = chunk['content'].str.contains('|'.join([rf'\b{word}\b' for word in hint_words]))
-        chunk.to_csv(produces, mode='a', header=first)
-        first=False
+        processed_articles = chunk if processed_articles is None else pd.concat([processed_articles, chunk])
+    processed_articles.to_pickle(produces)
 
 if __name__ == '__main__':
     raise Exception('Can only be executed by pytask')
