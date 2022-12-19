@@ -1,0 +1,16 @@
+- Introduction
+    - Role models
+    - 
+- Data and Methods
+    - SES data
+    - newspaper articles
+    - data preparation
+    - NLP methods
+- Observations
+    - NLP outcomes
+    - correlations with SES data
+    - interpretations
+    - validity?
+- Conclusion and Outlook
+    - potential improvements
+    - other approaches to determine role model quality?

@@ -1,0 +1,3 @@
+- Role Model Evaluation with Natural Language Processing
+- Correlating Role Model Quality with Socio-Economic Status
+- 
