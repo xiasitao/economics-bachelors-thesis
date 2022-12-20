@@ -1,3 +1,7 @@
 - Role Model Evaluation with Natural Language Processing
 - Correlating Role Model Quality with Socio-Economic Status
-- 
+- Correlating Role Model Quality and Socio-Economic Status with Natural Language Processing
+- NLP-based Role Model Assessment
+- Exploring Role Models' Correlation with Social-Economic Status with NLP Methods
+- Role Models and Socio-Economic Status: exploring Correlations using Natural Language Processing
+- Idols and Socioeconomic Status - Exploring Role Models using Natural Language Processing
