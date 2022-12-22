@@ -13,12 +13,16 @@ import spacy
 from nltk.text import Text
 from nltk.corpus import stopwords
 from nltk.probability import FreqDist
-from nltk.tokenize import sent_tokenize, word_tokenize
 # %%
+# Load data
 articles = pd.read_pickle(f'{BUILD_PATH}/data.pkl')
 articles_en = articles[articles.language_ml == 'en']
 with open(BUILD_PATH / 'corpora.pkl', 'rb') as file:
     corpora = pickle.load(file)
+with open(BUILD_PATH / 'sentence_tokens.pkl', 'rb') as file:
+    sentence_tokens = pickle.load(file)
+with open(BUILD_PATH / 'word_statistic.pkl', 'rb') as file:
+    word_statistics = pickle.load(file)
 # %%
 # Histograms
 # plt.title('Sentence count')
@@ -29,15 +33,10 @@ with open(BUILD_PATH / 'corpora.pkl', 'rb') as file:
 # plt.hist(articles[articles.terms < 2000].terms)
 # plt.show()
 # %%
-sentence_tokens_en = sent_tokenize(corpora['en'])
-# freq_dist = FreqDist(word_tokenize('. '.join(articles_en.content)))
+freq_dist = FreqDist()
 # freq_dist.most_common(1000)
 # %%
-sentence_tokens_en
-# %%
-words_tokens_en = []
-for i, sentence in enumerate(sentence_tokens_en):
-    if i % 10000 == 0:
-        print(f'at sentence {i} of {len(sentence_tokens_en)}')
-    words_tokens_en += word_tokenize(sentence)
+sentence_tokens
+sentence_tokens_frequency_en = FreqDist(sentence_tokens['en'])
+sentence_tokens_frequency_en.most_common(200)
 # %%
