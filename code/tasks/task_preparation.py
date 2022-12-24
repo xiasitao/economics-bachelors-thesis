@@ -189,10 +189,10 @@ def slim_doc(doc: str, language: str) -> str:
     Returns:
         str: _description_
     """    
-    doc = _remove_punctuation(doc)
-    doc = _remove_numbers(doc)
     doc = _to_lower(doc)
     doc = _remove_stop_words(doc, language)
+    doc = _remove_punctuation(doc)
+    doc = _remove_numbers(doc)
     doc = _lemmatize(doc)
     return doc
 
