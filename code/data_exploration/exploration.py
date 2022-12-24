@@ -13,6 +13,9 @@ import spacy
 from nltk.text import Text
 from nltk.corpus import stopwords
 from nltk.probability import FreqDist
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+
 # %%
 # Load data
 articles = pd.read_pickle(f'{BUILD_PATH}/data.pkl')
@@ -23,6 +26,8 @@ with open(BUILD_PATH / 'sentence_tokens.pkl', 'rb') as file:
     sentence_tokens = pickle.load(file)
 with open(BUILD_PATH / 'word_statistic.pkl', 'rb') as file:
     word_statistics = pickle.load(file)
+
+
 # %%
 # Histograms
 # plt.title('Sentence count')
@@ -32,11 +37,22 @@ with open(BUILD_PATH / 'word_statistic.pkl', 'rb') as file:
 # plt.title('Word count')
 # plt.hist(articles[articles.terms < 2000].terms)
 # plt.show()
+
+
 # %%
-freq_dist = FreqDist()
-# freq_dist.most_common(1000)
-# %%
+# Most common sentences
 sentence_tokens
 sentence_tokens_frequency_en = FreqDist(sentence_tokens['en'])
 sentence_tokens_frequency_en.most_common(200)
 # %%
+# Most significant words
+tfidf_vectorizer = TfidfVectorizer()
+tfidf_values = tfidf_vectorizer.fit_transform(articles_en['content_slim'])
+tfidf_words = tfidf_vectorizer.get_feature_names_out()
+# %%
+tfidf_value_means = np.array(np.mean(tfidf_values, axis=0)).flatten()
+tfidf = pd.Series(data=tfidf_value_means, index=tfidf_words)
+tfidf = tfidf.sort_values(ascending=False)
+tfidf.iloc[0:50]
+# %%
+"us" in stopwords.words('english')

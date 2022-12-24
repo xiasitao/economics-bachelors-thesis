@@ -7,20 +7,59 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 import numpy as np
 import pandas as pd
 pd.options.mode.chained_assignment = None  # default='warn'
+
 import matplotlib.pyplot as plt
+
+from sklearn.feature_extraction.text import CountVectorizer
 from transformers import AutoTokenizer
+
 from sklearn.manifold import TSNE
+
+
 # %%
 articles = pd.read_pickle(f'{BUILD_PATH}/data.pkl')
 articles_en = articles[articles.language_ml == 'en']
-articles_en['contains_term'] = articles_en['content'].str.contains(r'\bpolitics\b')
+articles_en['contains_term'] = articles_en['content'].str.contains(r'\bmusic\b')
 subset_en = articles_en.iloc[0:5000]
+
+
+#%%
+# Count Vectorize slim
+count_slim_embedding = CountVectorizer().fit_transform(subset_en['content_slim'])
+count_slim_embedding_2d = TSNE(n_components=2, init='random', random_state=42).fit_transform(count_slim_embedding)
 # %%
-tokenizer = AutoTokenizer.from_pretrained('bert-base-cased')
-embedding_BERT = tokenizer.batch_encode_plus(subset_en.content.to_list(), truncation=True, padding=True)
-embedding_BERT_values = np.array(embedding_BERT['input_ids'])
+plt.title('Count vectorizer with slim text')
+plt.scatter(count_slim_embedding_2d[:, 0], count_slim_embedding_2d[:, 1], s=6, c=subset_en.contains_term.map({True: 'red', False: 'grey'}))
+plt.show()
+
 
 # %%
-content_encodings_TSNE = TSNE(n_components=2).fit_transform(embedding_BERT_values)
-plt.scatter(content_encodings_TSNE[:,0], content_encodings_TSNE[:,1], c=subset_en.contains_term)
+# BERT slim
+bert_slim_tokenizer = AutoTokenizer.from_pretrained('bert-base-uncased')
+bert_slim_embedding = bert_slim_tokenizer.batch_encode_plus(subset_en['content_slim'].to_list(), truncation=True, padding=True)
+bert_slim_embedding_values = np.array(bert_slim_embedding['input_ids'])
+bert_slim_embedding_2d = TSNE(n_components=2, random_state=42).fit_transform(bert_slim_embedding_values)
+plt.title('BERT with slim text')
+plt.scatter(bert_slim_embedding_2d[:,0], bert_slim_embedding_2d[:,1], s=6, c=subset_en.contains_term.map({True: 'red', False: 'grey'}))
+plt.show()
+# %%
+bert_slim_embedding_3d = TSNE(n_components=3, random_state=42).fit_transform(bert_slim_embedding_values)
+outliers = (bert_slim_embedding_3d**2).sum(axis=1)**(1/2) < 30
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+ax.set_title('BERT with slim text')
+ax.scatter(bert_slim_embedding_3d[outliers][:,0], bert_slim_embedding_3d[outliers][:,1], bert_slim_embedding_3d[outliers][:,2], s=6, c=subset_en[outliers]['contains_term'].map({True: 'red', False: 'grey'}))
+plt.show()
+#%%
+
+
+# %%
+# BERT content
+bert_tokenizer = AutoTokenizer.from_pretrained('bert-base-cased')
+bert_embedding = bert_tokenizer.batch_encode_plus(subset_en['content'].to_list(), truncation=True, padding=True)
+bert_embedding_values = np.array(bert_embedding['input_ids'])
+bert_embedding_2d = TSNE(n_components=2, random_state=42).fit_transform(bert_embedding_values)
+plt.title('BERT with normal text')
+plt.scatter(bert_embedding_2d[:,0], bert_embedding_2d[:,1], s=6, c=subset_en.contains_term.map({True: 'red', False: 'grey'}))
+plt.show()
 # %%
