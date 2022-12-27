@@ -53,6 +53,8 @@ tfidf_words = tfidf_vectorizer.get_feature_names_out()
 tfidf_value_means = np.array(np.mean(tfidf_values, axis=0)).flatten()
 tfidf = pd.Series(data=tfidf_value_means, index=tfidf_words)
 tfidf = tfidf.sort_values(ascending=False)
+# %%
 tfidf.iloc[0:50]
 # %%
-"us" in stopwords.words('english')
+tfidf.iloc[50:100]
+# %%

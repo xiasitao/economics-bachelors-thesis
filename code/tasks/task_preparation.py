@@ -109,7 +109,7 @@ def _remove_punctuation(doc: str) -> str:
     Returns:
         str: substrate without punctuation
     """    
-    regex = r'[.!?;:,-/+*&()\[\]{}"\'<>`#»«©]'  # TODO improve
+    regex = r'[.!?;:,-/+*&()\[\]{}"<>`#»«©]'  # TODO improve
     return re.sub(regex, '', doc)
 
 
