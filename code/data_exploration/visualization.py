@@ -73,8 +73,8 @@ plt.title('BERT with slim text')
 for label, data in zip(['left', 'upper center', 'lower center', 'right'], [left_2d, upper_center_2d, lower_center_2d, right_2d]):
     plt.scatter(data[:,0], data[:,1], s=6)
 plt.show()
-
-right_data['sentences_length'].mean()
+#%%
+right_data['sentences_length'].replace(np.inf, np.nan).dropna().mean()
 # right_data.columns
 
 # %%
