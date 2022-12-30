@@ -21,6 +21,9 @@ textblob = "^0.17.1"
 spacy-langdetect = "^0.1.2"
 pytask = "^0.2.7"
 tables = "^3.7.0"
+sentence-transformers = "^2.2.2"
+scikit-learn-extra = "^0.2.0"
+openpyxl = "^3.0.10"
 
 
 [build-system]
