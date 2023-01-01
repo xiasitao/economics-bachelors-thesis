@@ -24,17 +24,16 @@ with open(BUILD_PATH / 'word_statistic.pkl', 'rb') as file:
 # %%
 def balance_role_models(data, n_target = 50, downsample=True, upsample=True):
     new_data = pd.DataFrame(data=None, columns=data.columns)
-    max_index = data.index.max()
+    new_data = new_data.astype(data.dtypes)
     for role_model in data['role_model'].unique():
         role_model_data = shuffle(data[data['role_model'] == role_model])
         if downsample and len(role_model_data) > n_target:
             role_model_data = role_model_data.iloc[0:n_target]
         if upsample and len(role_model_data) < n_target:
             full_repetitions = n_target // len(role_model_data)
-            additional = role_model_data.loc[[*role_model_data.index]*full_repetitions].reset_index()
+            additional = role_model_data.loc[[*role_model_data.index]*full_repetitions].reset_index(drop=True)
             additional.index = 1000000000 + role_model_data.index.min() + additional.index
             role_model_data = pd.concat([role_model_data, additional]).iloc[0:n_target]
-
         new_data = pd.concat([new_data, role_model_data])
     return new_data
 balanced = balance_role_models(articles_en)
