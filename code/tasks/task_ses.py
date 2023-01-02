@@ -113,7 +113,7 @@ def task_ses_mentions(produces: Path):
 
 
 @pytask.mark.depends_on(BUILD_PATH / 'ses_mentions.pkl')
-@pytask.mark.produces(BUILD_PATH / 'ses_model_scores.pkl')
+@pytask.mark.produces(BUILD_PATH / 'ses_scores.pkl')
 def task_ses_model_scores(produces: Path):
     mention_data = pd.read_pickle(BUILD_PATH / 'ses_mentions.pkl')
     score_data = produce_role_model_scores(

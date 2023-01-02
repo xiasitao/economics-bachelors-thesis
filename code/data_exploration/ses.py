@@ -128,3 +128,7 @@ plt.title('Significance-weighted role model mention counts')
 plt.bar(role_model_significance_count, count, width=1/10)
 plt.show()
 # %%
+
+plt.hist(role_model_scores['average_ses'])
+
+# %%
