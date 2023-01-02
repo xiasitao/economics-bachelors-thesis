@@ -12,35 +12,57 @@ import matplotlib.pyplot as plt
 
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from sklearn.cluster import KMeans
 from sklearn_extra.cluster import KMedoids
-# %%
-articles = pd.read_pickle(f'{BUILD_PATH}/data.pkl')
+
+
+ # %%
+articles = pd.read_pickle(f'{BUILD_PATH}/data_balanced_50.pkl')
 articles_en = articles[articles.language_ml == 'en']
-subset_en = articles_en.iloc[0:5000]
+subset_en = articles_en # .iloc[0:5000]
+
+
 # %%
 sentence_bert_encoder = st.SentenceTransformer('all-MiniLM-L6-v2')
 # %%
-# embeddings = sentence_bert_encoder.encode(subset_en['content'].to_list())
-embeddings = sentence_bert_encoder.encode(subset_en['content_slim'].to_list())
-# %%
+embeddings = sentence_bert_encoder.encode(subset_en['content'].to_list())
+# embeddings = sentence_bert_encoder.encode(subset_en['content_slim'].to_list())
 # %%
 embeddings_50d = PCA(n_components=10).fit_transform(embeddings)
 embeddings_2d = TSNE(n_components=2, random_state=42).fit_transform(embeddings_50d)
+embeddings_3d = TSNE(n_components=3, random_state=42).fit_transform(embeddings_50d)
+embeddings_4d = PCA(n_components=4).fit_transform(embeddings_50d)
 # %%
 plt.title('Embeddings')
 plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], s=6)
 plt.show()
+
+
 # %%
-kmedoids = KMedoids(n_clusters=2).fit(embeddings_2d)
-clusters = kmedoids.predict(embeddings_2d)
+kmedoids = KMedoids(n_clusters=5).fit(embeddings_3d)
+kmedoids_clusters = kmedoids.predict(embeddings_3d)
 medoids = kmedoids.medoid_indices_
+subset_en['cluster'] = kmedoids_clusters
 # %%
 plt.title('KMedoids')
-plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], s=6, c=clusters)
+plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], s=6, c=subset_en['cluster'])
 plt.scatter(embeddings_2d[medoids][:, 0], embeddings_2d[medoids][:, 1], marker='*', color='red')
 # %%
-subset_en['profession'].hist(by=clusters)
+cluster_professions = subset_en.groupby(['cluster', 'profession']).agg({'content': 'count'}).sort_values(['cluster', 'content'], ascending=False)
+cluster_professions.groupby('cluster')['content'].nlargest(3)
+
+
 # %%
-subset_en[clusters == 1]['content'].iloc[6]
+kmeans = KMeans(n_clusters=10)
+kmeans.fit_transform(embeddings_3d)
+kmeans_clusters = kmeans.predict(embeddings_3d)
+subset_en['cluster'] = kmeans_clusters
 # %%
+plt.title('KMeans')
+plt.scatter(embeddings_2d[:, 0], embeddings_2d[:, 1], s=6, c=subset_en['cluster'])
+# %%
+cluster_professions = subset_en.groupby(['cluster', 'profession']).agg({'content': 'count'}).sort_values(['cluster', 'content'], ascending=False)
+cluster_professions.groupby('cluster')['content'].nlargest(3)
+
+
 # %%
