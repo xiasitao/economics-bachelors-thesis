@@ -1,5 +1,4 @@
 # %%
-import pickle
 import pandas as pd
 
 from pathlib import Path
@@ -9,16 +8,13 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 
 # %%
-
-
-# %%
-ses_data = pd.read_excel(ASSET_PATH / 'Role_models_by_SES.xlsx')
+ses_data = pd.read_excel(ASSET_PATH / 'Role_models_by_SES_precleaned.xlsx')
 role_model_data = pd.read_pickle(BUILD_PATH / 'role_model_data.pkl')
 # %%
-valid_rows = ses_data.join(role_model_data, how='inner', on='Role_model_1')
-# %%
-# %%
-valid_rows['Unnamed: 0']
+invalid_role_models = ses_data.join(role_model_data, how='left', on='Role_model_1')
+invalid_role_models = invalid_role_models[(invalid_role_models['profession'].isna()) & ~(invalid_role_models['Role_model_1'].isna())]
+invalid_role_models
+
 
 # %%
 def clean_ses_data(data: pd.DataFrame, role_model_data: pd.DataFrame) -> pd.DataFrame:
@@ -41,8 +37,18 @@ def clean_ses_data(data: pd.DataFrame, role_model_data: pd.DataFrame) -> pd.Data
     data['high_ses'] = data['high_ses'] == 1.0
     data['ses'] = data['high_ses'].apply(lambda high_ses: 1.0 if high_ses else 0.0)
     return data
-clean_ses_data(ses_data, role_model_data)
+ses_data_clean = clean_ses_data(ses_data, role_model_data)
 
 # %%
-
+def produce_role_model_mention_table(ses_data: pd.DataFrame) -> pd.DataFrame:
+    mention_data = pd.DataFrame(columns=['id', 'role_model', 'ses', 'rank'])
+    for rank, column in [(n, f'role_model_{n}') for n in range(1, 6)]:
+        rank_mention_data = ses_data[~(ses_data[column].isna())]
+        rank_mention_data = rank_mention_data.reset_index()
+        rank_mention_data = rank_mention_data.rename({column: 'role_model'}, axis=1)
+        rank_mention_data['rank'] = rank
+        rank_mention_data = rank_mention_data[['id', 'role_model', 'ses', 'rank']]
+        mention_data = pd.concat([mention_data, rank_mention_data]).reset_index(drop=True)
+    return mention_data
+produce_role_model_mention_table(ses_data_clean)
 # %%

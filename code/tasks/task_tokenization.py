@@ -9,6 +9,7 @@ SOURCE_PATH = Path(__file__).parent.resolve()
 ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
+@pytask.mark.skip()
 @pytask.mark.depends_on(BUILD_PATH / 'corpora.pkl')
 @pytask.mark.produces(BUILD_PATH / 'sentence_tokens.pkl')
 def task_sentence_tokenization(produces):
@@ -28,6 +29,8 @@ def task_sentence_tokenization(produces):
     with open(produces, 'wb') as file:
         pickle.dump(sentences, file)
 
+
+@pytask.mark.skip()
 @pytask.mark.depends_on(BUILD_PATH / 'sentence_tokens.pkl')
 @pytask.mark.produces(BUILD_PATH / 'word_statistic.pkl')
 def task_word_statistic(produces):

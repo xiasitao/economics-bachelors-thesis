@@ -42,7 +42,7 @@ def clean_ses_data(data: pd.DataFrame, role_model_data: pd.DataFrame) -> pd.Data
 @pytask.mark.depends_on(BUILD_PATH / 'role_model_data.pkl')
 @pytask.mark.produces(BUILD_PATH / 'ses.pkl')
 def task_ses(produces: Path):
-    ses_data = pd.read_excel(ASSET_PATH / 'Role_models_by_SES.xlsx')
+    ses_data = pd.read_excel(ASSET_PATH / 'Role_models_by_SES_precleaned.xlsx')
     role_model_data = pd.read_pickle(BUILD_PATH / 'role_model_data.pkl')
 
     ses_data = clean_ses_data(ses_data, role_model_data)
