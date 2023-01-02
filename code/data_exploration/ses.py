@@ -81,26 +81,36 @@ role_model_mentions = produce_role_model_mention_table(ses_data_clean)
 # %%
 def produce_role_model_scores(mention_data: pd.DataFrame, rank_weights = [1, 1/2, 1/3, 1/4, 1/5]) -> pd.DataFrame:
     """Aggregates the mention data to the role model level,
-    calculating counts, rank-weighted counts, and significance-weighted counts.
+    calculating counts, rank-weighted counts, and significance-weighted counts,
+    as well as zero-centered average SES scores, average rank-weighted SES scores,
+    and average significance-weighted SES scores.
 
     Args:
-        mention_data (pd.DataFrame): _description_
-        rank_weights (list, optional): _description_. Defaults to [1, 1/2, 1/3, 1/4, 1/5].
+        mention_data (pd.DataFrame): List of role model mentions.
+        rank_weights (list, optional): How to weigh a mention in every rank from 1 to 5. Defaults to [1, 1/2, 1/3, 1/4, 1/5].
 
     Returns:
         pd.DataFrame: _description_
     """    
     mention_data = mention_data.copy()
-    role_models = mention_data['role_model'].unique().sort()
-    score_data = pd.DataFrame(index = role_models)
-    score_data['count'] = mention_data.groupby('role_model').count()['id']
+    mention_data['zero_centered_ses'] = mention_data['ses'].map({1.0: 1.0, 0.0: -1.0})
     mention_data['weighted_rank'] = mention_data['rank'].apply(lambda rank: rank_weights[rank-1])
+    mention_data['rank_weighted_ses'] = mention_data['zero_centered_ses'] * mention_data['weighted_rank']
+    mention_data['significance_weighted_ses'] = mention_data['zero_centered_ses'] * mention_data['significance']
+
+    role_models = mention_data['role_model'].unique().sort()
+    score_data = pd.DataFrame(index=role_models)
+    score_data['count'] = mention_data.groupby('role_model').count()['id']
     score_data['rank_weighted_count'] = mention_data.groupby('role_model')['weighted_rank'].sum()
     score_data['significance_weighted_count'] = mention_data.groupby('role_model')['significance'].sum()
 
+    score_data['average_ses'] = mention_data.groupby('role_model')['zero_centered_ses'].mean()
+    score_data['rank_weighted_ses'] = mention_data.groupby('role_model')['rank_weighted_ses'].mean()
+    score_data['significance_weighted_ses'] = mention_data.groupby('role_model')['significance_weighted_ses'].mean()
+
     return score_data
 role_model_scores = produce_role_model_scores(role_model_mentions)
-
+role_model_scores
 
 # %%
 role_model_count, count = np.unique(role_model_scores['count'], return_counts=True)
@@ -110,11 +120,11 @@ plt.show()
 
 role_model_ranked_count, count = np.unique(role_model_scores['rank_weighted_count'], return_counts=True)
 plt.title('Rank-weighted role model mention counts')
-plt.bar(role_model_ranked_count, count)
+plt.bar(role_model_ranked_count, count, width=1/5)
 plt.show()
 
 role_model_significance_count, count = np.unique(role_model_scores['significance_weighted_count'], return_counts=True)
 plt.title('Significance-weighted role model mention counts')
-plt.bar(role_model_significance_count, count)
+plt.bar(role_model_significance_count, count, width=1/10)
 plt.show()
 # %%
