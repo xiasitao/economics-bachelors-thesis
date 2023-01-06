@@ -90,7 +90,7 @@ def _correct_sentence_boundaries(doc: str) -> str:
 
 
 def _remove_punctuation(doc: str) -> str:
-    """Remove punctuation
+    """Remove punctuation (no single quotes)
 
     Args:
         doc (str): substrate
@@ -98,7 +98,20 @@ def _remove_punctuation(doc: str) -> str:
     Returns:
         str: substrate without punctuation
     """    
-    regex = r'[.!?;:,-/+*&()\[\]{}"<>`#»«©]'  # TODO improve
+    regex = r'[.!?;:,-/+*&()\[\]{}"<>=$`#»«©]'  # TODO improve
+    return re.sub(regex, '', doc)
+
+
+def _remove_single_quotes(doc: str) -> str:
+    """Remove single quotes from a document
+
+    Args:
+        doc (str): substrate
+
+    Returns:
+        str: substrate without
+    """
+    regex = r'[\']'
     return re.sub(regex, '', doc)
 
 
@@ -195,9 +208,11 @@ def slim_doc(doc: str, language: str, spacy_nlp: spacy.language.Language) -> str
     doc = _remove_punctuation(doc)
     doc = _remove_numbers(doc)
     doc = _lemmatize(doc, spacy_nlp)
+    doc = _remove_single_quotes(doc)
     return doc
 
 
+# @pytask.mark.persist()
 @pytask.mark.depends_on(BUILD_PATH / 'role_model_data.pkl')
 @pytask.mark.produces(BUILD_PATH / 'data.pkl')
 def task_article_preparation(produces: Path):
@@ -238,6 +253,7 @@ def task_article_preparation(produces: Path):
     processed_articles.to_pickle(produces)
 
 
+@pytask.mark.skip()
 @pytask.mark.depends_on(BUILD_PATH / 'data.pkl')
 @pytask.mark.produces(BUILD_PATH / 'corpora.pkl')
 def task_corpus_extraction(produces):
