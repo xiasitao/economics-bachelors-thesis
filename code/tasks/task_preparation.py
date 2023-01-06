@@ -2,9 +2,12 @@ import pytask
 import re
 import pickle
 import pandas as pd
+from pandarallel import pandarallel
+pandarallel.initialize()
 import numpy as np
 from nltk.corpus import stopwords
 from nltk.tokenize import sent_tokenize, word_tokenize
+import spacy
 
 from pathlib import Path
 SOURCE_PATH = Path(__file__).parent.resolve()
@@ -12,7 +15,7 @@ ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 # Data cleaning
-def clean_data(data: pd.DataFrame) -> pd.DataFrame:
+def _clean_data(data: pd.DataFrame) -> pd.DataFrame:
     """Clean a dataframe by removing nans
 
     Args:
@@ -21,13 +24,12 @@ def clean_data(data: pd.DataFrame) -> pd.DataFrame:
     Returns:
         pd.DataFrame: substrate
     """
-
     data = data.dropna(axis=0)
     return data
 
 
 # Text cleaning
-def letter_shift(doc: str, shift: int = 1, common_replacements=True) -> str:
+def _letter_shift(doc: str, shift: int = 1, common_replacements=True) -> str:
     """Shift all letters by a number of places in the alphabet
 
     Args:
@@ -55,20 +57,7 @@ def letter_shift(doc: str, shift: int = 1, common_replacements=True) -> str:
     return ''.join(new_chars)
 
 
-def clean_content(doc: str) -> str:
-    """Remove unnecessary morphemes
-
-    Args:
-        doc (str): substrate
-
-    Returns:
-        str: cleaned substrate
-    """
-    str = re.sub(r'\n', '', doc)
-    return str
-
-
-hint_words = [letter_shift(word) for word in ('und', 'auch', 'ein', 'eine', 'der', 'die', 'das', 'for', 'and', 'with')]
+hint_words = [_letter_shift(word) for word in ('und', 'auch', 'ein', 'eine', 'der', 'die', 'das', 'for', 'and', 'with')]
 
 
 def _remove_URLs(doc: str) -> str:
@@ -138,16 +127,17 @@ def _to_lower(doc: str) -> str:
     return doc.lower()
 
 
-def _lemmatize(doc: str) -> str:
-    """Lemmatize
+def _lemmatize(doc: str, spacy_nlp: str) -> str:
+    """Lemmatize words
 
     Args:
         doc (str): substrate
 
     Returns:
         str: lemmatized substrate
-    """    
-    return doc
+    """
+    lemmatized_doc = [word.lemma_ for word in spacy_nlp(doc)]
+    return ' '.join(lemmatized_doc)
 
 
 def _remove_stop_words(doc: str, language: str) -> str:
@@ -160,6 +150,17 @@ def _remove_stop_words(doc: str, language: str) -> str:
         raise Exception(f'Unknown language: {language}')
 
     return ' '.join([word for word in word_tokenize(doc) if word.lower() not in selected_stopwords])
+
+
+def get_spacy_nlp(language: str) -> spacy.language.Language:
+    spacy_nlp = None
+    if language.lower() in ['en', 'english', 'en-us', 'en-ca', 'en-gb', 'en-ie', 'en-au', 'en-ng', 'en-nz']:
+        spacy_nlp = spacy.load('en_core_web_md')
+    elif language.lower() in ['de', 'german']:
+        spacy_nlp = spacy.load('de_core_news_md')
+    else:
+        raise Exception(f'Unknown language: {language}')
+    return spacy_nlp
 
 
 def correct_doc(doc: str) -> str:
@@ -180,7 +181,7 @@ def correct_doc(doc: str) -> str:
     return doc
 
 
-def slim_doc(doc: str, language: str) -> str:
+def slim_doc(doc: str, language: str, spacy_nlp: spacy.language.Language) -> str:
     """Remove punctuation lowercase, and stop words
 
     Args:
@@ -188,12 +189,12 @@ def slim_doc(doc: str, language: str) -> str:
 
     Returns:
         str: _description_
-    """    
+    """
     doc = _to_lower(doc)
     doc = _remove_stop_words(doc, language)
     doc = _remove_punctuation(doc)
     doc = _remove_numbers(doc)
-    doc = _lemmatize(doc)
+    doc = _lemmatize(doc, spacy_nlp)
     return doc
 
 
@@ -207,7 +208,6 @@ def task_article_preparation(produces: Path):
     Args:
         produces (Path): _description_
     """
-    produces.write_text('')
     articles = None
     source_files = [f'{ASSET_PATH}/role_model_articles_de.pkl', f'{ASSET_PATH}/role_model_articles_en.pkl']
     for source_file in source_files:
@@ -219,10 +219,11 @@ def task_article_preparation(produces: Path):
     # Process in chunks in order to avoid memory leak
     for language in articles.language_ml.unique():
         language_articles = articles[articles['language_ml'] == language]
+        spacy_nlp = get_spacy_nlp(language)
         for chunk in np.array_split(language_articles, len(language_articles) // 10000 + 1):
             chunk['content_raw'] = chunk['content']
-            chunk['content'] = chunk['content_raw'].apply(lambda text: correct_doc(text))
-            chunk['content_slim'] = chunk['content'].apply(lambda text: slim_doc(text, language))
+            chunk['content'] = chunk['content_raw'].parallel_apply(lambda text: correct_doc(text))
+            chunk['content_slim'] = chunk['content'].parallel_apply(lambda text: slim_doc(text, language, spacy_nlp))
             chunk['obfuscated'] = chunk['content'].str.contains('|'.join([rf'\b{word}\b' for word in hint_words]))
             processed_articles = chunk if processed_articles is None else pd.concat([processed_articles, chunk])
 
