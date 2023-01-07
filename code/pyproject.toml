@@ -24,6 +24,9 @@ tables = "^3.7.0"
 sentence-transformers = "^2.2.2"
 scikit-learn-extra = "^0.2.0"
 openpyxl = "^3.0.10"
+gensim = "^4.3.0"
+pprintpp = "^0.4.0"
+pandarallel = "^1.6.3"
 
 
 [build-system]

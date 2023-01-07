@@ -231,6 +231,17 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "dill"
+version = "0.3.6"
+description = "serialize all of python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+graph = ["objgraph (>=1.7.2)"]
+
+[[package]]
 name = "entrypoints"
 version = "0.4"
 description = "Discover and load entry points from installed packages."
@@ -301,6 +312,52 @@ type1 = ["xattr"]
 ufo = ["fs (>=2.2.0,<3)"]
 unicode = ["unicodedata2 (>=14.0.0)"]
 woff = ["brotli (>=1.0.1)", "brotlicffi (>=0.8.0)", "zopfli (>=0.1.4)"]
+
+[[package]]
+name = "fst-pso"
+version = "1.8.1"
+description = "Fuzzy Self-Tuning PSO global optimization library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+miniful = "*"
+numpy = "*"
+
+[[package]]
+name = "fuzzytm"
+version = "2.0.5"
+description = "A Python package for Fuzzy Topic Models"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+numpy = "*"
+pandas = "*"
+pyfume = "*"
+scipy = "*"
+
+[[package]]
+name = "gensim"
+version = "4.3.0"
+description = "Python framework for fast Vector Space Modelling"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+FuzzyTM = ">=0.4.0"
+numpy = ">=1.18.5"
+scipy = ">=1.7.0"
+smart-open = ">=1.8.1"
+
+[package.extras]
+distributed = ["Pyro4 (>=4.27)"]
+docs = ["POT", "Pyro4", "Pyro4 (>=4.27)", "annoy", "cython", "matplotlib", "memory-profiler", "mock", "nltk", "nmslib", "pandas", "pytest", "pytest-cov", "sphinx (==5.1.1)", "sphinx-gallery (==0.11.1)", "sphinxcontrib-napoleon (==0.7)", "sphinxcontrib.programoutput (==0.17)", "statsmodels", "testfixtures", "visdom (>=0.1.8,!=0.1.8.7)"]
+test = ["POT", "cython", "mock", "nmslib", "pytest", "pytest-cov", "testfixtures", "visdom (>=0.1.8,!=0.1.8.7)"]
+test-win = ["POT", "cython", "mock", "nmslib", "pytest", "pytest-cov", "testfixtures"]
 
 [[package]]
 name = "huggingface-hub"
@@ -563,6 +620,18 @@ python-versions = ">=3.5"
 traitlets = "*"
 
 [[package]]
+name = "miniful"
+version = "0.0.6"
+description = "Minimal Fuzzy Library"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+numpy = ">=1.12.0"
+scipy = ">=1.0.0"
+
+[[package]]
 name = "murmurhash"
 version = "1.0.9"
 description = "Cython bindings for MurmurHash"
@@ -702,6 +771,22 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "pandarallel"
+version = "1.6.3"
+description = "An easy to use library to speed up computation (by parallelizing on multi CPUs) with pandas."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+dill = ">=0.3.1"
+pandas = ">=1"
+psutil = "*"
+
+[package.extras]
+dev = ["mkdocs-material", "numpy (>=1.22)", "pytest (>=7)", "pytest-cov (>=3)"]
+
+[[package]]
 name = "pandas"
 version = "1.5.2"
 description = "Powerful data structures for data analysis, time series, and statistics"
@@ -816,6 +901,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "pprintpp"
+version = "0.4.0"
+description = "A drop-in replacement for pprint that's actually pretty"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "preshed"
 version = "3.0.8"
 description = "Cython hash table that trusts the keys are pre-hashed"
@@ -906,6 +999,20 @@ typing-extensions = ">=4.1.0"
 [package.extras]
 dotenv = ["python-dotenv (>=0.10.4)"]
 email = ["email-validator (>=1.0.3)"]
+
+[[package]]
+name = "pyfume"
+version = "0.2.25"
+description = "A Python package for fuzzy model estimation"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+fst-pso = "*"
+numpy = "*"
+scipy = "*"
+simpful = "*"
 
 [[package]]
 name = "pygments"
@@ -1182,6 +1289,19 @@ typing-extensions = "*"
 [package.extras]
 test = ["pytest (>=6.2)", "virtualenv (>20)"]
 toml = ["setuptools (>=42)"]
+
+[[package]]
+name = "simpful"
+version = "2.9.0"
+description = "A user-friendly Python library for fuzzy logic"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+numpy = ">=1.12.0"
+requests = "*"
+scipy = ">=1.0.0"
 
 [[package]]
 name = "six"
@@ -1672,7 +1792,7 @@ test = ["pytest (>=3.0.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "545c0cc00e9702795aeaeea0cf5a1291612e00df569b61f783ec9b08e84e4748"
+content-hash = "f39a487aa2d03f17c47b6b653863c4af36b79155eeccca5bae6cdfe5c6afb643"
 
 [metadata.files]
 appnope = [
@@ -2041,6 +2161,10 @@ decorator = [
     {file = "decorator-5.1.1-py3-none-any.whl", hash = "sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186"},
     {file = "decorator-5.1.1.tar.gz", hash = "sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330"},
 ]
+dill = [
+    {file = "dill-0.3.6-py3-none-any.whl", hash = "sha256:a07ffd2351b8c678dfc4a856a3005f8067aea51d6ba6c700796a4d9e280f39f0"},
+    {file = "dill-0.3.6.tar.gz", hash = "sha256:e5db55f3687856d8fbdab002ed78544e1c4559a130302693d839dfe8f93f2373"},
+]
 entrypoints = [
     {file = "entrypoints-0.4-py3-none-any.whl", hash = "sha256:f174b5ff827504fd3cd97cc3f8649f3693f51538c7e4bdf3ef002c8429d42f9f"},
     {file = "entrypoints-0.4.tar.gz", hash = "sha256:b706eddaa9218a19ebcd67b56818f05bb27589b1ca9e8d797b74affad4ccacd4"},
@@ -2064,6 +2188,32 @@ filelock = [
 fonttools = [
     {file = "fonttools-4.38.0-py3-none-any.whl", hash = "sha256:820466f43c8be8c3009aef8b87e785014133508f0de64ec469e4efb643ae54fb"},
     {file = "fonttools-4.38.0.zip", hash = "sha256:2bb244009f9bf3fa100fc3ead6aeb99febe5985fa20afbfbaa2f8946c2fbdaf1"},
+]
+fst-pso = [
+    {file = "fst-pso-1.8.1.tar.gz", hash = "sha256:b3d16ec27b0b4d36b35b306af40c00cd0b34e5e0a9e30a71ed02490e8954a26a"},
+]
+fuzzytm = [
+    {file = "FuzzyTM-2.0.5-py3-none-any.whl", hash = "sha256:b6f1480d74767ef26594c0bdf47aa0a316351719b1a253e31387e5f4a1a4bdc6"},
+    {file = "FuzzyTM-2.0.5.tar.gz", hash = "sha256:2042e48dddffc9cda5058b0b3fa9a6b3d2c471739f56d34da2810a08c7fd06d5"},
+]
+gensim = [
+    {file = "gensim-4.3.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:1f2420150117bb312f8ece2116c5b3a7620164fcd66e94883320b32d34948a05"},
+    {file = "gensim-4.3.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ab1511aa13fe55d024348e020010b01a408f2035d48e9eb4d7ad7657d44e339d"},
+    {file = "gensim-4.3.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e83d8ce322d6a3a93228944aba95e6951769d5238d49b6c5b89ad2515a56a136"},
+    {file = "gensim-4.3.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:74f09f08a1798d6f752ea17f430b07b8ac1387e6f714f3b5e93dcc082cd9c497"},
+    {file = "gensim-4.3.0-cp310-cp310-win_amd64.whl", hash = "sha256:cb1958ffb2a46af920e17bbce328f40ffc5eae9557d0c129287358283fd2e63f"},
+    {file = "gensim-4.3.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:81f4f1e4b70e770cf6262f2af77a1758dabf636c8866737d6904fb8c0e7ccfe0"},
+    {file = "gensim-4.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:58dc2a700328e8fa794e7a2f6567a1543655ef5ec5a52d8604239c9e0b3e32ed"},
+    {file = "gensim-4.3.0-cp311-cp311-win_amd64.whl", hash = "sha256:b846be8cc6205944e8426179b2fc87eb0e74d1debf3993223d9c03d378677e5c"},
+    {file = "gensim-4.3.0-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:33fc1d2d50d391fcc49175073da5728ba4ae636f67f4ecd9252583bbd139e391"},
+    {file = "gensim-4.3.0-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:b74d0a3d2e3baf9ad5af6f258808a2df4d366457e18b6f64d0d2398995bfff92"},
+    {file = "gensim-4.3.0-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d7a7c3dcc37735ecdd5bac8c0fa9816a3d584af7ee08a7869c51004be32bd3da"},
+    {file = "gensim-4.3.0-cp38-cp38-win_amd64.whl", hash = "sha256:4bc846b20146d2cd0fff7c48cb1d9349e30c3c8ef3819034576457fd56bd6c13"},
+    {file = "gensim-4.3.0-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:b389d545c5bdc7243617802d87dca36db191819642b9ba24e0bb3108640fec03"},
+    {file = "gensim-4.3.0-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:d864da3b39d22df068e25220bdf33c633c812f057f9c0dc9a8985a602efff739"},
+    {file = "gensim-4.3.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4073daadfe58fd89202b40fd4ca375aadda50a7475ad92fc37647b910286bb14"},
+    {file = "gensim-4.3.0-cp39-cp39-win_amd64.whl", hash = "sha256:0a94d28e31803c2bc14003b0ae047596021ea40a9dd3b38ce1842f4097507c6c"},
+    {file = "gensim-4.3.0.tar.gz", hash = "sha256:64bd7ec62990215878822e8b2569d1835054f56cdf53600ddfe9927e31f3b48d"},
 ]
 huggingface-hub = [
     {file = "huggingface_hub-0.11.1-py3-none-any.whl", hash = "sha256:11eed7aab4fa4d1fb532f2aea3379ef4998d9f6bc24a330834dfedd3dac7f441"},
@@ -2286,6 +2436,9 @@ matplotlib-inline = [
     {file = "matplotlib-inline-0.1.6.tar.gz", hash = "sha256:f887e5f10ba98e8d2b150ddcf4702c1e5f8b3a20005eb0f74bfdbd360ee6f304"},
     {file = "matplotlib_inline-0.1.6-py3-none-any.whl", hash = "sha256:f1f41aab5328aa5aaea9b16d083b128102f8712542f819fe7e6a420ff581b311"},
 ]
+miniful = [
+    {file = "miniful-0.0.6.tar.gz", hash = "sha256:642c9f36b87c81b3efc29947379b5b99b8d33185c904a7bc320d89a8e1871429"},
+]
 murmurhash = [
     {file = "murmurhash-1.0.9-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:697ed01454d92681c7ae26eb1adcdc654b54062bcc59db38ed03cad71b23d449"},
     {file = "murmurhash-1.0.9-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:5ef31b5c11be2c064dbbdd0e22ab3effa9ceb5b11ae735295c717c120087dd94"},
@@ -2415,6 +2568,9 @@ packaging = [
     {file = "packaging-22.0-py3-none-any.whl", hash = "sha256:957e2148ba0e1a3b282772e791ef1d8083648bc131c8ab0c1feba110ce1146c3"},
     {file = "packaging-22.0.tar.gz", hash = "sha256:2198ec20bd4c017b8f9717e00f0c8714076fc2fd93816750ab48e2c41de2cfd3"},
 ]
+pandarallel = [
+    {file = "pandarallel-1.6.3.tar.gz", hash = "sha256:699068b765e8d5cf93048f703084fe8097c9efd8f3bb989bcff04bf366042eeb"},
+]
 pandas = [
     {file = "pandas-1.5.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:e9dbacd22555c2d47f262ef96bb4e30880e5956169741400af8b306bbb24a273"},
     {file = "pandas-1.5.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:e2b83abd292194f350bb04e188f9379d36b8dfac24dd445d5c87575f3beaf789"},
@@ -2535,6 +2691,10 @@ pony = [
     {file = "pony-0.7.16-py3-none-any.whl", hash = "sha256:608a1c1d662983bad2590e650f2bbc1cd6ed48558894ad8f50da4739ff98f614"},
     {file = "pony-0.7.16.tar.gz", hash = "sha256:5f45fc67587f4520c560a57148cc573b097d42f82f5cb200d72c957b5708198d"},
 ]
+pprintpp = [
+    {file = "pprintpp-0.4.0-py2.py3-none-any.whl", hash = "sha256:b6b4dcdd0c0c0d75e4d7b2f21a9e933e5b2ce62b26e1a54537f9651ae5a5c01d"},
+    {file = "pprintpp-0.4.0.tar.gz", hash = "sha256:ea826108e2c7f49dc6d66c752973c3fc9749142a798d6b254e1e301cfdbc6403"},
+]
 preshed = [
     {file = "preshed-3.0.8-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:ea4b6df8ef7af38e864235256793bc3056e9699d991afcf6256fa298858582fc"},
     {file = "preshed-3.0.8-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:8e945fc814bdc29564a2ce137c237b3a9848aa1e76a1160369b6e0d328151fdd"},
@@ -2642,6 +2802,10 @@ pydantic = [
     {file = "pydantic-1.10.2-cp39-cp39-win_amd64.whl", hash = "sha256:c1ba1afb396148bbc70e9eaa8c06c1716fdddabaf86e7027c5988bae2a829ab6"},
     {file = "pydantic-1.10.2-py3-none-any.whl", hash = "sha256:1b6ee725bd6e83ec78b1aa32c5b1fa67a3a65badddde3976bca5fe4568f27709"},
     {file = "pydantic-1.10.2.tar.gz", hash = "sha256:91b8e218852ef6007c2b98cd861601c6a09f1aa32bbbb74fab5b1c33d4a1e410"},
+]
+pyfume = [
+    {file = "pyFUME-0.2.25-py3-none-any.whl", hash = "sha256:7743e4c26c61172d88f4f47e73f2fb6c00dfb7a9d64717727dc72c24f01a6b53"},
+    {file = "pyFUME-0.2.25.tar.gz", hash = "sha256:b83d481c5c8d77dcafddec873d9e2983a5f6fab2d3639b18b10cacb885dbbdf0"},
 ]
 pygments = [
     {file = "Pygments-2.13.0-py3-none-any.whl", hash = "sha256:f643f331ab57ba3c9d89212ee4a2dabc6e94f117cf4eefde99a0574720d14c42"},
@@ -3029,6 +3193,10 @@ setuptools = [
 setuptools-scm = [
     {file = "setuptools_scm-7.0.5-py3-none-any.whl", hash = "sha256:7930f720905e03ccd1e1d821db521bff7ec2ac9cf0ceb6552dd73d24a45d3b02"},
     {file = "setuptools_scm-7.0.5.tar.gz", hash = "sha256:031e13af771d6f892b941adb6ea04545bbf91ebc5ce68c78aaf3fff6e1fb4844"},
+]
+simpful = [
+    {file = "simpful-2.9.0-py3-none-any.whl", hash = "sha256:6d7e8077ac2b2499c3a1b86185cac52cc366d0a578428197b12575e451300855"},
+    {file = "simpful-2.9.0.tar.gz", hash = "sha256:29b0c1fe1dab5dc9eb137cf8ac7fad5ca44443398bd3917f14a37df6dc7f55a4"},
 ]
 six = [
     {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
