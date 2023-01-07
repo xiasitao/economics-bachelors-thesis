@@ -212,7 +212,7 @@ def slim_doc(doc: str, language: str, spacy_nlp: spacy.language.Language) -> str
     return doc
 
 
-# @pytask.mark.persist()
+@pytask.mark.persist()
 @pytask.mark.depends_on(BUILD_PATH / 'role_model_data.pkl')
 @pytask.mark.produces(BUILD_PATH / 'data.pkl')
 def task_article_preparation(produces: Path):

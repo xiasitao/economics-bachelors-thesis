@@ -104,6 +104,7 @@ def produce_role_model_scores(mention_data: pd.DataFrame, rank_weights = [1, 1/2
     score_data['rank_weighted_count'] = mention_data.groupby('role_model')['weighted_rank'].sum()
     score_data['significance_weighted_count'] = mention_data.groupby('role_model')['significance'].sum()
 
+    score_data['prevalent_ses'] = mention_data.groupby('role_model')['zero_centered_ses'].agg(pd.Series.mode).apply(lambda val: val if type(val) != np.ndarray else np.mean(val)).astype(float)
     score_data['average_ses'] = mention_data.groupby('role_model')['zero_centered_ses'].mean()
     score_data['rank_weighted_ses'] = mention_data.groupby('role_model')['rank_weighted_ses'].mean()
     score_data['significance_weighted_ses'] = mention_data.groupby('role_model')['significance_weighted_ses'].mean()
@@ -128,7 +129,14 @@ plt.title('Significance-weighted role model mention counts')
 plt.bar(role_model_significance_count, count, width=1/10)
 plt.show()
 # %%
-
+plt.title('Average SES')
 plt.hist(role_model_scores['average_ses'])
+plt.show()
+
+role_model_count, count = np.unique(role_model_scores['prevalent_ses'], return_counts=True)
+plt.title('Role model prevalent SES count')
+plt.bar(role_model_count, count)
+plt.show()
+
 
 # %%

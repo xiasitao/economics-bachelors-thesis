@@ -1,6 +1,7 @@
 import pytask
 import pickle
 import pandas as pd
+import numpy as np
 
 from pathlib import Path
 SOURCE_PATH = Path(__file__).parent.resolve()
@@ -88,6 +89,7 @@ def produce_role_model_scores(mention_data: pd.DataFrame, rank_weights = [1, 1/2
     score_data['rank_weighted_count'] = mention_data.groupby('role_model')['weighted_rank'].sum()
     score_data['significance_weighted_count'] = mention_data.groupby('role_model')['significance'].sum()
 
+    score_data['prevalent_ses'] = mention_data.groupby('role_model')['zero_centered_ses'].agg(pd.Series.mode).apply(lambda val: val if type(val) != np.ndarray else np.mean(val)).astype(float)
     score_data['average_ses'] = mention_data.groupby('role_model')['zero_centered_ses'].mean()
     score_data['rank_weighted_ses'] = mention_data.groupby('role_model')['rank_weighted_ses'].mean()
     score_data['significance_weighted_ses'] = mention_data.groupby('role_model')['significance_weighted_ses'].mean()
