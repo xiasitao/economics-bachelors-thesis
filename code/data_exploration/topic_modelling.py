@@ -18,13 +18,6 @@ from nltk.tokenize import word_tokenize
 from nltk.tag import pos_tag
 
 
- # %%
-articles = pd.read_pickle(BUILD_PATH / 'data_balanced_50.pkl')
-ses_scores = pd.read_pickle(BUILD_PATH / 'ses_scores_equilibrated.pkl')
-articles_en = articles[articles.language_ml == 'en']
-articles_en = articles_en.join(ses_scores[['average_ses', 'rank_weighted_ses', 'significance_weighted_ses', 'prevalent_ses']], on='role_model', how='inner')
-
-
 # %%
 def filter_tokens(doc: list) -> list:
     nltk_tokens = word_tokenize(' '.join(doc))
@@ -32,6 +25,33 @@ def filter_tokens(doc: list) -> list:
         if len(token[0]) > 1
         and token[1] in ('FW', 'NN', 'NNS', 'NNP', 'NNPS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ')  # https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
     ]
+
+
+def equilibrate_role_models(articles: pd.DataFrame, ses_data: pd.DataFrame) -> pd.DataFrame:
+    """Equilibrate role models such that for each prevalent_ses the same amount of role models are present
+
+    Args:
+        articles (pd.DataFrame): all articles relevant for these role models
+        ses_data (pd.DataFrame): substrate
+
+    Returns:
+        pd.DataFrame: substrate with equal amounts of role models for each prevalent ses
+    """    
+    ses_data = ses_data[ses_data.index.isin(articles['role_model'])]
+    minimum_count = ses_data.groupby('prevalent_ses').count()['count'].min()
+    ses_data = ses_data.sample(frac=1.0, random_state=42)
+    ses_data['_group_index'] = ses_data.groupby('prevalent_ses').cumcount()
+    ses_data = ses_data[ses_data['_group_index'] < minimum_count]
+    ses_data = ses_data.drop('_group_index', axis=1)
+    return ses_data
+
+
+ # %%
+articles = pd.read_pickle(BUILD_PATH / 'data_balanced_50.pkl')
+ses_scores = pd.read_pickle(BUILD_PATH / 'ses_scores_equilibrated.pkl')
+articles_en = articles[articles.language_ml == 'en']
+ses_scores = equilibrate_role_models(articles_en, ses_scores)
+articles_en = articles_en.join(ses_scores[['average_ses', 'rank_weighted_ses', 'significance_weighted_ses', 'prevalent_ses']], on='role_model', how='inner')
 
 
 # %%
@@ -62,4 +82,6 @@ articles_en[['topic', 'prevalent_ses', 'role_model', 'content']].groupby(['topic
 
 # %%
 print(topics)
+# %%
+articles_en.groupby(['prevalent_ses']).count()
 # %%

@@ -188,8 +188,8 @@ def task_ses_model_equilibration(produces: Path):
         scores,
         minimum_count=1,
         require_unique_SES=True,
-        articles=articles,
-        minimum_articles=50
+        #articles=articles,
+        #minimum_articles=50
     )
     equilibrated_scores = equilibrate_role_models(filtered_scores)
     equilibrated_scores.to_pickle(produces)
