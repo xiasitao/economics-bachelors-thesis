@@ -97,9 +97,50 @@ def produce_role_model_scores(mention_data: pd.DataFrame, rank_weights = [1, 1/2
     return score_data
 
 
+def filter_role_models(role_model_scores: pd.DataFrame, minimum_count: int, require_unique_SES: bool) -> pd.DataFrame:
+    """Filter role models by a minimum amount of mentions
+    and by requiring unique SES of the role model mentioning questionnaire participants.
+
+    Args:
+        role_model_scores (pd.DataFrame): substrate
+        minimum_count (int): Minimum count of mentions
+        enforce_unique_SES (bool): Whether to enforce 
+
+    Returns:
+        pd.DataFrame: _description_
+    """
+    role_model_scores = role_model_scores.copy()
+    role_model_scores = role_model_scores[role_model_scores['count'] >= minimum_count]
+    if require_unique_SES:
+        role_model_scores= role_model_scores[role_model_scores['average_ses'].isin([1.0, -1.0])]
+    return role_model_scores
+
+
+def equilibrate_role_models(role_model_scores: pd.DataFrame, group_column='prevalent_ses') -> pd.DataFrame:
+    """Equilibrate the distribution of role models by the prevalent_ses.
+    The smallest amount of role models determines to how many the other ses' should be downsampled to.
+
+    Args:
+        role_model_scores (pd.DataFrame): substrate
+        group_column (str): Column name to equilibrate by. Default: 'prevalent_ses'
+
+    Returns:
+        pd.DataFrame: substrate with equal amounts of role models for each prevalent_ses group
+    """
+    role_model_scores = role_model_scores.copy()
+    minimum_count = role_model_scores.groupby(group_column).count()['count'].min()
+    role_model_scores = role_model_scores.sample(frac=1.0, random_state=42)
+    role_model_scores['_group_index'] = role_model_scores.groupby(group_column).cumcount()
+    role_model_scores = role_model_scores[role_model_scores['_group_index'] < minimum_count]
+    role_model_scores = role_model_scores.drop('_group_index', axis=1)
+    return role_model_scores
+
+
 @pytask.mark.depends_on(BUILD_PATH / 'role_model_data.pkl')
 @pytask.mark.produces(BUILD_PATH / 'ses.pkl')
 def task_ses(produces: Path):
+    """Retreive cleaned SES data
+    """    
     ses_data = pd.read_excel(ASSET_PATH / 'Role_models_by_SES_precleaned.xlsx')
     role_model_data = pd.read_pickle(BUILD_PATH / 'role_model_data.pkl')
     ses_data = clean_ses_data(ses_data, role_model_data)
@@ -109,6 +150,8 @@ def task_ses(produces: Path):
 @pytask.mark.depends_on(BUILD_PATH / 'ses.pkl')
 @pytask.mark.produces(BUILD_PATH / 'ses_mentions.pkl')
 def task_ses_mentions(produces: Path):
+    """List all role model mentions
+    """
     ses_data = pd.read_pickle(BUILD_PATH / 'ses.pkl')
     mention_data = produce_role_model_mention_table(ses_data)
     mention_data.to_pickle(produces)
@@ -117,9 +160,22 @@ def task_ses_mentions(produces: Path):
 @pytask.mark.depends_on(BUILD_PATH / 'ses_mentions.pkl')
 @pytask.mark.produces(BUILD_PATH / 'ses_scores.pkl')
 def task_ses_model_scores(produces: Path):
+    """ Assign scores to role models
+    """
     mention_data = pd.read_pickle(BUILD_PATH / 'ses_mentions.pkl')
     score_data = produce_role_model_scores(
         mention_data=mention_data,
         rank_weights=[1/n for n in range(1, 6)]
     )
     score_data.to_pickle(produces)
+
+
+@pytask.mark.depends_on(BUILD_PATH / 'ses_scores.pkl')
+@pytask.mark.produces(BUILD_PATH / 'ses_scores_equilibrated.pkl')
+def task_ses_model_equilibration(produces: Path):
+    """Filter out non-SES-unique role models and equilibrate role models.
+    """
+    scores = pd.read_pickle(BUILD_PATH / 'ses_scores.pkl')
+    filtered_scores = filter_role_models(scores, minimum_count=1, require_unique_SES=True)
+    equilibrated_scores = equilibrate_role_models(filtered_scores)
+    equilibrated_scores.to_pickle(produces)

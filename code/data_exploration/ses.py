@@ -140,3 +140,51 @@ plt.show()
 
 
 # %%
+role_model_scores
+# %%
+def filter_role_models(role_model_scores: pd.DataFrame, minimum_count: int, require_unique_SES: bool) -> pd.DataFrame:
+    """Filter role models by a minimum amount of mentions
+    and by requiring unique SES of the role model mentioning questionnaire participants.
+
+    Args:
+        role_model_scores (pd.DataFrame): substrate
+        minimum_count (int): Minimum count of mentions
+        enforce_unique_SES (bool): Whether to enforce 
+
+    Returns:
+        pd.DataFrame: _description_
+    """
+    role_model_scores = role_model_scores.copy()
+    role_model_scores = role_model_scores[role_model_scores['count'] >= minimum_count]
+    if require_unique_SES:
+        role_model_scores= role_model_scores[role_model_scores['average_ses'].isin([1.0, -1.0])]
+    return role_model_scores
+
+
+def equilibrate_role_models(role_model_scores: pd.DataFrame, group_column='prevalent_ses') -> pd.DataFrame:
+    """Equilibrate the distribution of role models by the prevalent_ses.
+    The smallest amount of role models determines to how many the other ses' should be downsampled to.
+
+    Args:
+        role_model_scores (pd.DataFrame): substrate
+        group_column (str): Column name to equilibrate by. Default: 'prevalent_ses'
+
+    Returns:
+        pd.DataFrame: substrate with equal amounts of role models for each prevalent_ses group
+    """
+    role_model_scores = role_model_scores.copy()
+    minimum_count = role_model_scores.groupby(group_column).count()['count'].min()
+    role_model_scores = role_model_scores.sample(frac=1.0, random_state=42)
+    role_model_scores['_group_index'] = role_model_scores.groupby(group_column).cumcount()
+    role_model_scores = role_model_scores[role_model_scores['_group_index'] < minimum_count]
+    role_model_scores = role_model_scores.drop('_group_index', axis=1)
+    return role_model_scores
+
+
+# %%
+more_than_1_unique = filter_role_models(role_model_scores, 2, True)
+all_unique = filter_role_models(role_model_scores, 1, True)
+equilibrate_role_models(all_unique).groupby('prevalent_ses').count()
+
+
+# %%
