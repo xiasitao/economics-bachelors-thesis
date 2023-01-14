@@ -17,6 +17,9 @@ from gensim.models import LdaModel
 from nltk.tokenize import word_tokenize
 from nltk.tag import pos_tag
 
+from multiprocessing import Pool
+from threading import Lock
+
 
 # %%
 def filter_tokens(doc: list) -> list:
@@ -47,6 +50,45 @@ def equilibrate_role_models(articles: pd.DataFrame, ses_data: pd.DataFrame) -> p
     return ses_data
 
 
+def train_lda_model(n_topics: int) -> tuple:
+    """Train an LDA model on the corpus with a predefined number of topics.
+
+    Args:
+        n_topics (int): Number of topcis to generate.
+
+    Returns:
+        tuple: model, topics (10 most significant words for each topic)
+    """    
+    iterations = 500
+    passes = 4
+    model = LdaModel(
+        corpus=corpus, id2word=dictionary.id2token, random_state=42,
+        iterations=iterations, passes=passes,
+        num_topics=n_topics,
+    )
+    topics = [[topic_entry[1] for topic_entry in topic[0][0:10]] for topic in model.top_topics(corpus)]
+    return model, topics
+
+
+def find_topic_and_entropy(model: LdaModel, doc: list) -> tuple:
+    """Find the most probable topic and the topic distribution
+    entropt for a document.
+
+    Args:
+        model (LdaModel): Topic model
+        doc (list): Document as list of tokens
+
+    Returns:
+        tuple: topic, entropy
+    """    
+    topic_probabilities = np.array(model[dictionary.doc2bow(filter_tokens(doc))])
+    topics = topic_probabilities[:, 0]
+    probabilities = topic_probabilities[:, 1]
+    topic = topics[probabilities.argmax()]
+    entropy = -probabilities.dot(np.log(probabilities))
+    return topic, entropy
+
+
  # %%
 articles = pd.read_pickle(BUILD_PATH / 'data_balanced_50.pkl')
 ses_scores = pd.read_pickle(BUILD_PATH / 'ses_scores_equilibrated.pkl')
@@ -65,52 +107,15 @@ corpus = [dictionary.doc2bow(filter_tokens(article)) for article in articles_tok
 
 # %%
 # Run model
-n_topics = 10
-iterations = 500
-passes = 4
-model = LdaModel(
-    corpus=corpus, id2word=dictionary.id2token, random_state=42,
-    iterations=iterations, passes=passes,
-    num_topics=n_topics,
-)
-topics = [[topic_entry[1] for topic_entry in topic[0][0:10]] for topic in model.top_topics(corpus)]
-
-
-# %%
-# Topic assignment
+n_topics = 9
+model, topics = train_lda_model(n_topics)
 print(topics)
-topic_names_en = {
-    1: ['all articles'],  # bad
-    2: ['people', 'sports & movies'],  # bad
-    3: ['people', 'music', 'sports & movies'],  # bad
-    4: ['sports', 'people-focused entertainment', 'music', 'movies'],  # very good
-    5: ['sports', 'people', 'music', 'teams  & competition', 'movies'],  # ouhla
-    6: ['sports', 'emotion', 'movies', 'music', 'series', 'sports'],  # not too bad
-    10: ['emotion', 'movies', 'sports', 'music (entertainment)', 'prestige', 'videos', 'series', 'actors & roles', 'competition', 'music (meta)'],
-}
-HT_GENERAL, HT_MUSIC, HT_MOVIES, HT_SPORTS = 'general', 'music', 'movies', 'sports'
-# general: emotion, people, competition
-hypertopic_assignment_matrix = pd.DataFrame(index=list(topic_names_en.keys()), columns=np.arange(0, np.max(list(topic_names_en.keys()))), data=-1)
-hypertopic_assignment_matrix.loc[1, 0] = HT_GENERAL
-hypertopic_assignment_matrix.loc[2, 0:1] = HT_GENERAL, HT_GENERAL
-hypertopic_assignment_matrix.loc[3, 0:2] = HT_GENERAL, HT_MUSIC, HT_GENERAL
-hypertopic_assignment_matrix.loc[4, 0:3] = HT_SPORTS, HT_GENERAL, HT_MUSIC, HT_MOVIES
-hypertopic_assignment_matrix.loc[5, 0:4] = HT_SPORTS, HT_GENERAL, HT_MUSIC, HT_GENERAL, HT_MOVIES
-hypertopic_assignment_matrix.loc[6, 0:5] = HT_SPORTS, HT_GENERAL, HT_MOVIES, HT_MUSIC, HT_MOVIES, HT_SPORTS
-hypertopic_assignment_matrix.loc[10, 0:9] = HT_GENERAL, HT_MOVIES, HT_SPORTS, HT_MUSIC, HT_GENERAL, HT_MOVIES, HT_MOVIES, HT_MOVIES, HT_GENERAL, HT_MUSIC
 
-hypertopic_frequency_matrix = pd.DataFrame(index=list(topic_names_en.keys()), columns=[HT_GENERAL, HT_MOVIES, HT_MUSIC, HT_SPORTS], data=np.nan)
 
 # %%
 # Article topic identification
-def find_topic_and_entropy(model: LdaModel, doc: list):
-    topic_probabilities = np.array(model[dictionary.doc2bow(filter_tokens(doc))])
-    topics = topic_probabilities[:, 0]
-    probabilities = topic_probabilities[:, 1]
-    topic = topics[probabilities.argmax()]
-    entropy = -probabilities.dot(np.log(probabilities))
-    return topic, entropy
 articles_en[['topic', 'topic_entropy']] = articles_tokenized.parallel_apply(lambda doc: pd.Series(find_topic_and_entropy(model, doc)))
+articles_en['topic'] = articles_en['topic'].astype(int)
 topics_distribution_articles = articles_en[['topic', 'prevalent_ses', 'content']].groupby(['topic', 'prevalent_ses']).count()
 topics_distribution_role_models = articles_en[['topic', 'prevalent_ses', 'role_model']].groupby(['topic', 'prevalent_ses']).nunique()
 
@@ -133,4 +138,63 @@ plt.tight_layout()
 plt.show()
 
 
+# %%
+# Topic & hypertopic assignment
+topic_names_en = {
+    1: ['all articles'],  # bad
+    2: ['people', 'sports & movies'],  # bad
+    3: ['people', 'music', 'sports & movies'],  # bad
+    4: ['sports', 'people-focused entertainment', 'music', 'movies'],  # very good
+    5: ['sports', 'people', 'music', 'teams  & competition', 'movies'],  # ouhla
+    6: ['sports', 'emotion', 'movies', 'music', 'series', 'sports'],  # not too bad
+    7: ['sports', 'emotion', 'movies', 'music', 'teams &  competition', 'series', 'sports'],
+    8: ['movies', 'emotion', 'sports', 'music', 'movies', 'teams & competition', 'series', 'prestige'],
+    9: ['emotion', 'movies', 'music', 'sports', 'prestige', 'videos', 'teams & competition', 'competition', 'series'],
+    10: ['emotion', 'movies', 'sports', 'music (entertainment)', 'prestige', 'videos', 'series', 'actors & roles', 'competition', 'music (meta)'],
+}
+
+# general: emotion, people, competition, prestige
+HT_GENERAL, HT_MUSIC, HT_MOVIES, HT_SPORTS = 'general', 'music', 'movies', 'sports'
+hypertopics = [HT_GENERAL, HT_MOVIES, HT_MUSIC, HT_SPORTS]
+
+hypertopic_assignment_matrix = pd.DataFrame(index=list(topic_names_en.keys()), columns=np.arange(0, np.max(list(topic_names_en.keys()))), data=-1)
+hypertopic_assignment_matrix.loc[1, 0] = HT_GENERAL
+hypertopic_assignment_matrix.loc[2, 0:1] = HT_GENERAL, HT_GENERAL
+hypertopic_assignment_matrix.loc[3, 0:2] = HT_GENERAL, HT_MUSIC, HT_GENERAL
+hypertopic_assignment_matrix.loc[4, 0:3] = HT_SPORTS, HT_GENERAL, HT_MUSIC, HT_MOVIES
+hypertopic_assignment_matrix.loc[5, 0:4] = HT_SPORTS, HT_GENERAL, HT_MUSIC, HT_GENERAL, HT_MOVIES
+hypertopic_assignment_matrix.loc[6, 0:5] = HT_SPORTS, HT_GENERAL, HT_MOVIES, HT_MUSIC, HT_MOVIES, HT_SPORTS
+hypertopic_assignment_matrix.loc[7, 0:6] = HT_SPORTS, HT_GENERAL, HT_MOVIES, HT_MUSIC, HT_GENERAL, HT_MOVIES, HT_SPORTS
+hypertopic_assignment_matrix.loc[8, 0:7] = HT_MOVIES, HT_GENERAL, HT_SPORTS, HT_MUSIC, HT_MOVIES, HT_GENERAL, HT_MOVIES, HT_GENERAL
+hypertopic_assignment_matrix.loc[9, 0:8] = HT_GENERAL, HT_MOVIES, HT_MUSIC, HT_SPORTS, HT_GENERAL, HT_MOVIES, HT_GENERAL, HT_GENERAL, HT_MOVIES
+hypertopic_assignment_matrix.loc[10, 0:9] = HT_GENERAL, HT_MOVIES, HT_SPORTS, HT_MUSIC, HT_GENERAL, HT_MOVIES, HT_MOVIES, HT_MOVIES, HT_GENERAL, HT_MUSIC
+
+def find_hypertopic_frequencies(n_topics: int) -> pd.Series:
+    model, topics = train_lda_model(n_topics)
+    articles_en[['_topic', '_topic_entropy']] = articles_tokenized.parallel_apply(lambda doc: pd.Series(find_topic_and_entropy(model, doc)))
+    topics_distribution = articles_en[['_topic', 'prevalent_ses', 'content']].groupby(['_topic', 'prevalent_ses']).count()
+    hypertopic_frequencies = pd.Series(index=hypertopics, data=[[0,0],]*len(hypertopics))
+    for topic in topics_distribution.index.get_level_values(0).unique():
+        hypertopic = hypertopic_assignment_matrix.loc[n_topics, topic]
+        low, high = hypertopic_frequencies[hypertopic]
+        hypertopic_frequencies[hypertopic] = [low+topics_distribution.loc[topic, -1.0]['content'], high+topics_distribution.loc[topic, +1.0]['content']]
+    return hypertopic_frequencies
+
+hypertopic_frequency_matrix = pd.DataFrame(index=list(topic_names_en.keys()), columns=hypertopics, data=None)
+with Pool(len(topic_names_en)) as pool:
+    # results = pool.map(find_hypertopic_frequencies, topic_names_en)
+    results = [find_hypertopic_frequencies(n_topics) for n_topics in topic_names_en]
+    for n_topics, frequencies in zip(topic_names_en, results):
+        hypertopic_frequency_matrix.loc[n_topics] = frequencies
+articles_en = articles_en.drop(['_topic', '_topic_entropy'], axis=1)
+
+
+# %%
+plt.title('SES distribution by hypertopic')
+plt.xlabel('number of topics')
+plt.ylabel('relative amount of high-SES articles')
+for hypertopic in hypertopics:
+    plt.plot(hypertopic_frequency_matrix.index, hypertopic_frequency_matrix[hypertopic].apply(lambda x: x[1]/(x[0]+x[1]) if x[0]+x[1] != 0 else np.nan), label=hypertopic)
+plt.legend()
+plt.show()
 # %%
