@@ -121,6 +121,22 @@ topics_distribution_role_models = articles_en[['topic', 'prevalent_ses', 'role_m
 
 
 # %%
+# Topic assignment
+topic_names_en = {
+    # 1: ['all articles'],  # bad
+    # 2: ['people', 'sports & movies'],  # bad
+    # 3: ['people', 'music', 'sports & movies'],  # bad
+    # 4: ['sports', 'people-focused entertainment', 'music', 'movies'],  # very good
+    # 5: ['sports', 'people', 'music', 'teams  & competition', 'movies'],  # ouhla
+    # 6: ['sports', 'emotion', 'movies', 'music', 'series', 'sports'],  # not too bad
+    # 7: ['sports', 'emotion', 'movies', 'music', 'teams &  competition', 'series', 'sports'],
+    # 8: ['movies', 'emotion', 'sports', 'music', 'movies', 'teams & competition', 'series', 'prestige'],
+    # 9: ['emotion', 'movies', 'music', 'sports', 'prestige', 'videos', 'teams & competition', 'competition', 'series'],
+    # 10: ['emotion', 'movies', 'sports', 'music (entertainment)', 'prestige', 'videos', 'series', 'actors & roles', 'competition', 'music (meta)'],
+}
+
+
+# %%
 # Distribution plotting
 plt.figure(figsize=(10, 20))
 plt.title(f'SES distribution within topics')
@@ -139,20 +155,7 @@ plt.show()
 
 
 # %%
-# Topic & hypertopic assignment
-topic_names_en = {
-    1: ['all articles'],  # bad
-    2: ['people', 'sports & movies'],  # bad
-    3: ['people', 'music', 'sports & movies'],  # bad
-    4: ['sports', 'people-focused entertainment', 'music', 'movies'],  # very good
-    5: ['sports', 'people', 'music', 'teams  & competition', 'movies'],  # ouhla
-    6: ['sports', 'emotion', 'movies', 'music', 'series', 'sports'],  # not too bad
-    7: ['sports', 'emotion', 'movies', 'music', 'teams &  competition', 'series', 'sports'],
-    8: ['movies', 'emotion', 'sports', 'music', 'movies', 'teams & competition', 'series', 'prestige'],
-    9: ['emotion', 'movies', 'music', 'sports', 'prestige', 'videos', 'teams & competition', 'competition', 'series'],
-    10: ['emotion', 'movies', 'sports', 'music (entertainment)', 'prestige', 'videos', 'series', 'actors & roles', 'competition', 'music (meta)'],
-}
-
+# Hypertopic assignment
 # general: emotion, people, competition, prestige
 HT_GENERAL, HT_MUSIC, HT_MOVIES, HT_SPORTS = 'general', 'music', 'movies', 'sports'
 hypertopics = [HT_GENERAL, HT_MOVIES, HT_MUSIC, HT_SPORTS]

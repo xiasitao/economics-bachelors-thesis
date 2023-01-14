@@ -22,21 +22,43 @@ with open(BUILD_PATH / 'word_statistic.pkl', 'rb') as file:
     word_statistics = pickle.load(file)
 
 # %%
-def balance_role_models(data, n_target = 50, downsample=True, upsample=True):
-    new_data = pd.DataFrame(data=None, columns=data.columns)
-    new_data = new_data.astype(data.dtypes)
+def balance_role_models(data, n_target = 50, downsample=True, upsample=True, max_upsampling_factor=None):
+    """Balance the number of articles for all role models in a data set.
+    Does not distinguish between languages.
+
+    Args:
+        data (pd.DataFrame): Articles to balance
+        n_target (int, optional): Number of articles per role model. Defaults to 50.
+        downsample (bool, optional): Whether to downsample if too many articles are present for a role model. Defaults to True.
+        upsample (bool, optional): Whether to upsample if too few articles are present for a role model. Defaults to True.
+        max_upsampling_factor (int, optional): Maximum factor by which a role model's articles should be upsampled. Role models where the target can't be met are discarded. Default None:
+
+    Returns:
+        pd.DataFrame: Data frame with balanced numbers of articles per role model
+    """
+    dtypes = data.dtypes
+    new_data = pd.DataFrame(data=None, columns=list(data.columns)+['orig_id'])
+    dtypes['orig_id'] = pd.StringDtype()
+    new_data = new_data.astype(dtypes)
+
+    # Check for each role model if downsampling or upsampling are necessary
     for role_model in data['role_model'].unique():
         role_model_data = shuffle(data[data['role_model'] == role_model])
+        role_model_data['orig_id'] = role_model_data.index
         if downsample and len(role_model_data) > n_target:
-            role_model_data = role_model_data.iloc[0:n_target]
+            role_model_data = role_model_data.iloc[0:n_target].reset_index(drop=True)
         if upsample and len(role_model_data) < n_target:
-            full_repetitions = n_target // len(role_model_data)
-            additional = role_model_data.loc[[*role_model_data.index]*full_repetitions].reset_index(drop=True)
-            additional.index = 1000000000 + role_model_data.index.min() + additional.index
-            role_model_data = pd.concat([role_model_data, additional]).iloc[0:n_target]
-        new_data = pd.concat([new_data, role_model_data])
+            full_repetitions = n_target // len(role_model_data) + 1
+            if max_upsampling_factor is not None and full_repetitions > max_upsampling_factor:
+                continue
+            role_model_data = role_model_data.loc[[*role_model_data.index]*full_repetitions].reset_index(drop=True).iloc[0:n_target]
+        new_data = pd.concat([new_data, role_model_data], ignore_index=True)
     return new_data
-balanced = balance_role_models(articles_en)
+balanced = balance_role_models(articles_en, max_upsampling_factor=15)
+
+
+# %%
+articles['role_model'].nunique(), balanced['role_model'].nunique()
 
 
 # %%
@@ -82,6 +104,4 @@ plt.gca().yaxis.set_major_formatter(PercentFormatter())
 plt.show()
 
 
-
-# %%
 # %%
