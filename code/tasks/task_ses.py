@@ -97,7 +97,7 @@ def produce_role_model_scores(mention_data: pd.DataFrame, rank_weights = [1, 1/2
     return score_data
 
 
-def filter_role_models(role_model_scores: pd.DataFrame, minimum_count: int, require_unique_SES: bool, articles: pd.DataFrame = None, minimum_articles=50) -> pd.DataFrame:
+def filter_role_models(role_model_scores: pd.DataFrame, minimum_count: int, require_unique_SES: bool) -> pd.DataFrame:
     """Filter role models by a minimum amount of mentions
     and by requiring unique SES of the role model mentioning questionnaire participants.
 
@@ -105,20 +105,15 @@ def filter_role_models(role_model_scores: pd.DataFrame, minimum_count: int, requ
         role_model_scores (pd.DataFrame): substrate
         minimum_count (int): Minimum count of mentions
         enforce_unique_SES (bool): Whether to enforce 
-        articles (pd.DataFrame): Article data frame for filtering out role models without any articles
-        minimum_articles (int): Minimum number of articles to be availbable for a role model in order for them not to be filtered out
 
     Returns:
         pd.DataFrame: _description_
     """
     role_model_scores = role_model_scores.copy()
-    role_model_scores = role_model_scores[role_model_scores['count'] >= minimum_count]
+    if minimum_count is not None:
+        role_model_scores = role_model_scores[role_model_scores['count'] >= minimum_count]
     if require_unique_SES:
         role_model_scores = role_model_scores[role_model_scores['average_ses'].isin([1.0, -1.0])]
-    if articles is not None:
-        article_counts = articles.groupby('role_model').count()['content']
-        article_counts = article_counts[article_counts >= minimum_articles]
-        role_model_scores = role_model_scores[role_model_scores.index.isin(article_counts.index)]
     return role_model_scores
 
 
@@ -176,20 +171,26 @@ def task_ses_model_scores(produces: Path):
     score_data.to_pickle(produces)
 
 
-@pytask.mark.depends_on(BUILD_PATH / 'ses_scores.pkl')
-@pytask.mark.depends_on(BUILD_PATH / 'data.pkl')
-@pytask.mark.produces(BUILD_PATH / 'ses_scores_equilibrated.pkl')
-def task_ses_model_equilibration(produces: Path):
-    """Filter out non-SES-unique role models and equilibrate role models.
-    """
+@pytask.mark.depends_on(BUILD_PATH / 'ses.pkl')
+@pytask.mark.produces(BUILD_PATH / 'ses_scores_filtered.pkl')
+def task_ses_model_filtering(produces: Path):
+    """Filter out non-SES-unique role models.
+    """    
     scores = pd.read_pickle(BUILD_PATH / 'ses_scores.pkl')
-    articles = pd.read_pickle(BUILD_PATH / 'data.pkl')
     filtered_scores = filter_role_models(
         scores,
         minimum_count=1,
-        require_unique_SES=True,
-        #articles=articles,
-        #minimum_articles=50
+        require_unique_SES=True
     )
+    filtered_scores.to_pickle(produces)
+
+
+@pytask.mark.depends_on(BUILD_PATH / 'ses_scores_filtered.pkl')
+@pytask.mark.produces(BUILD_PATH / 'ses_scores_balanced.pkl')
+def task_ses_model_equilibration(produces: Path):
+    """Equilibrate role models
+    such that an equal amount of low- and high-SES role models is present in the dataset.
+    """
+    filtered_scores = pd.read_pickle(BUILD_PATH / 'ses_scores_filtered.pkl')
     equilibrated_scores = equilibrate_role_models(filtered_scores)
     equilibrated_scores.to_pickle(produces)

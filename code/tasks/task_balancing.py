@@ -24,14 +24,14 @@ def balance_role_models(data, n_target = 50, downsample=True, upsample=True, max
         pd.DataFrame: Data frame with balanced numbers of articles per role model
     """
     dtypes = data.dtypes
-    new_data = pd.DataFrame(data=None, columns=list(data.columns)+['orig_id'])
-    dtypes['orig_id'] = pd.StringDtype()
+    new_data = pd.DataFrame(data=None, columns=list(data.columns)+['article_id'])
+    dtypes['article_id'] = pd.StringDtype()
     new_data = new_data.astype(dtypes)
 
     # Check for each role model if downsampling or upsampling are necessary
     for role_model in data['role_model'].unique():
         role_model_data = shuffle(data[data['role_model'] == role_model])
-        role_model_data['orig_id'] = role_model_data.index
+        role_model_data['article_id'] = role_model_data.index
         if downsample and len(role_model_data) > n_target:
             role_model_data = role_model_data.iloc[0:n_target].reset_index(drop=True)
         if upsample and len(role_model_data) < n_target:

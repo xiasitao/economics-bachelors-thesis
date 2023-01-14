@@ -7,7 +7,13 @@
 - SES data
     - origin
     - descriptives
-    - cleaning and balancing
+    - filtering
+        - filtering out any role models where SES is ambiguous
+        - descriptives
+    - balancing
+        - balancing the amount of role models for low and high SES
+        - descriptives
+        - only necessary if articles/role models are counted per SES level
 - articles
     - origin
     - descriptives
@@ -15,6 +21,8 @@
     - balancing
         - method
         - descriptives (how many role models had too few articles, how many articles were upsampled?)
+        - necessary if articles/role models are counted per SES level in order to be able to compare both SES categories
+        - also necessary if distribution of topics etc. is scrutinized because topics etc. strongly correlate with role models and topics could be unnaturally overweighted/underweighted just by the number of articles per role model
 
 # Topic Modelling
 - Theory
