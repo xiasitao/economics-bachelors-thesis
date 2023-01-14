@@ -214,7 +214,7 @@ def slim_doc(doc: str, language: str, spacy_nlp: spacy.language.Language) -> str
 
 @pytask.mark.persist()
 @pytask.mark.depends_on(BUILD_PATH / 'role_model_data.pkl')
-@pytask.mark.produces(BUILD_PATH / 'data.pkl')
+@pytask.mark.produces(BUILD_PATH / 'articles.pkl')
 def task_article_preparation(produces: Path):
     """Load source files,
     clean content, add generate a slimmed-down version of the content without stopwords, numbers and punctuation,
@@ -254,15 +254,15 @@ def task_article_preparation(produces: Path):
 
 
 @pytask.mark.skip()
-@pytask.mark.depends_on(BUILD_PATH / 'data.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'articles.pkl')
 @pytask.mark.produces(BUILD_PATH / 'corpora.pkl')
 def task_corpus_extraction(produces):
-    data = pd.read_pickle(BUILD_PATH / 'data.pkl')
-    data = data[~(data['obfuscated'])]
+    articles = pd.read_pickle(BUILD_PATH / 'articles.pkl')
+    articles = articles[~(articles['obfuscated'])]
 
     corpora = {}
-    for language in data['language_ml'].unique():
-        corpus = '. '.join(data[data['language_ml'] == language].content)
+    for language in articles['language_ml'].unique():
+        corpus = '. '.join(articles[articles['language_ml'] == language].content)
         corpora[language] = corpus
     with open(produces, 'wb') as file:
         pickle.dump(corpora, file)

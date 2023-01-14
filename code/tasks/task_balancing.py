@@ -43,10 +43,10 @@ def balance_role_models(data, n_target = 50, downsample=True, upsample=True, max
     return new_data
 
 
-@pytask.mark.depends_on(BUILD_PATH / 'data.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'articles.pkl')
 @pytask.mark.parametrize(
     "produces, n",
-    [(BUILD_PATH / f'data_balanced_{n}.pkl', n) for n in (50, 100, 200, 500)]
+    [(BUILD_PATH / f'articles_balanced_{n}.pkl', n) for n in (50, 100, 200, 500)]
 )
 def task_balancing(n: int, produces: Path):
     """This task balances the number of article per role model and language by downsampling and upsampling.
@@ -56,11 +56,11 @@ def task_balancing(n: int, produces: Path):
         n (int): Number of articles per role model and language.
         produces (Path): Path to respective target file.
     """    
-    data = pd.read_pickle(BUILD_PATH / 'data.pkl')
-    balanced_data = None
-    for language in data['language_ml'].unique():
-        language_data = data[data['language_ml'] == language]
-        balanced_language_data = balance_role_models(data=language_data, n_target=n, downsample=True, upsample=True, max_upsampling_factor=10)
-        balanced_data = balanced_language_data if balanced_data is None else pd.concat([balanced_data, balanced_language_data])
-    balanced_data.to_pickle(produces)
+    articles = pd.read_pickle(BUILD_PATH / 'articles.pkl')
+    balanced_articles = None
+    for language in articles['language_ml'].unique():
+        language_articles = articles[articles['language_ml'] == language]
+        balanced_language_articles = balance_role_models(data=language_articles, n_target=n, downsample=True, upsample=True, max_upsampling_factor=10)
+        balanced_articles = balanced_language_articles if balanced_articles is None else pd.concat([balanced_articles, balanced_language_articles])
+    balanced_articles.to_pickle(produces)
 

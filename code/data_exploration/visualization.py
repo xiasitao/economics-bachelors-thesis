@@ -17,7 +17,7 @@ from sklearn.manifold import TSNE
 
 
 # %%
-articles = pd.read_pickle(f'{BUILD_PATH}/data.pkl')
+articles = pd.read_pickle(BUILD_PATH / 'articles.pkl')
 articles_en = articles[articles.language_ml == 'en']
 articles_en['contains_music'] = articles_en['content'].str.contains(r'\bmusic\b')
 articles_en['contains_film'] = articles_en['content'].str.contains(r'\b(films?|movies?|actors?)\b')

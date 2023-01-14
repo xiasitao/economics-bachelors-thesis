@@ -36,10 +36,10 @@ TOPIC_CATEGORIES = {
 
 ZERO_SHOT_BUILD_PATH  = BUILD_PATH / 'zero_shot_classification.pkl'
 @pytask.mark.persist()
-@pytask.mark.depends_on(BUILD_PATH / 'data_balanced_50.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'articles_balanced_50.pkl')
 @pytask.mark.produces(ZERO_SHOT_BUILD_PATH)
 def task_zero_shot_classification(produces: Path):
-    articles = pd.read_pickle(BUILD_PATH / 'data_balanced_50.pkl')
+    articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
     articles_en = articles[articles['language_ml'] == 'en']
     zs_classifier = pipeline('zero-shot-classification', model='facebook/bart-large-mnli')
     

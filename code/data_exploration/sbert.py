@@ -17,7 +17,7 @@ from sklearn_extra.cluster import KMedoids
 
 
  # %%
-articles = pd.read_pickle(BUILD_PATH / 'data_balanced_50.pkl')
+articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
 ses_scores = pd.read_pickle(BUILD_PATH / 'ses_scores.pkl')
 articles_en = articles[articles.language_ml == 'en']
 articles_en = articles_en.join(ses_scores[['average_ses', 'rank_weighted_ses', 'significance_weighted_ses']], on='role_model')

@@ -90,7 +90,7 @@ def find_topic_and_entropy(model: LdaModel, doc: list) -> tuple:
 
 
  # %%
-articles = pd.read_pickle(BUILD_PATH / 'data_balanced_50.pkl')
+articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
 ses_scores = pd.read_pickle(BUILD_PATH / 'ses_scores_balanced.pkl')
 articles_en = articles[articles.language_ml == 'en']
 ses_scores = equilibrate_role_models(articles_en, ses_scores)

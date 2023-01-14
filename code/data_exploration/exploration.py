@@ -18,7 +18,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 # %%
 # Load data
-articles = pd.read_pickle(f'{BUILD_PATH}/data.pkl')
+articles = pd.read_pickle(BUILD_PATH / 'articles.pkl')
 articles_en = articles[articles.language_ml == 'en']
 with open(BUILD_PATH / 'corpora.pkl', 'rb') as file:
     corpora = pickle.load(file)

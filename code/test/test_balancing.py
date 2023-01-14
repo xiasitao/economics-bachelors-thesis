@@ -7,7 +7,7 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 
 # %%
-balanced_100 = pd.read_pickle(f'{BUILD_PATH}/data_balanced_100.pkl')
+balanced_100 = pd.read_pickle(f'{BUILD_PATH}/articles_balanced_100.pkl')
 
 
 # %%

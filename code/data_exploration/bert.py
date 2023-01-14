@@ -13,7 +13,7 @@ from sklearn.manifold import TSNE
 
 
 #%%
-articles = pd.read_pickle(f'{BUILD_PATH}/data.pkl')
+articles = pd.read_pickle(f'{BUILD_PATH}/articles.pkl')
 articles_en = articles[articles.language_ml == 'en']
 subset_en = articles_en.iloc[0:5000]
 

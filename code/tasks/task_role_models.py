@@ -34,20 +34,3 @@ def task_role_model_data(produces: Path):
     
     role_model_data = role_model_data.set_index('role_model')
     role_model_data.to_pickle(produces)
-
-
-# @pytask.mark.produces(BUILD_PATH / 'role_model_dataset_mapping.pkl')
-# def tasl_role_model_dataset_mapping(produces: Path):
-#     """Creates a mapping between role model names and their names in the SES dataset
-
-#     Args:
-#         produces (Path): Output path.
-#     """    
-#     mapping_data = pd.read_excel(ASSET_PATH / 'role_model_data.xlsx')[['Star', 'Dataset_names']]
-#     mapping_data = mapping_data.rename({
-#         'Star': 'role_model',
-#         'Dataset_names': 'dataset_name'
-#     }, axis=1)
-#     mapping_data = mapping_data[~(mapping_data['role_model'].isna()) & ~(mapping_data[mapping_data['dataset_name'].isna()])]
-#     mapping_data = mapping_data.drop_duplicates().reset_index(drop=True)
-#     mapping_data.to_pickle(produces)
