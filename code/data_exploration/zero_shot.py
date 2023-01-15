@@ -44,13 +44,15 @@ articles_en = articles_en.join(ses_scores[['average_ses', 'rank_weighted_ses', '
 
 
 # %%
-zs_classifier = pipeline('zero-shot-classification', model='facebook/bart-large-mnli', use_fast=True)
+zs_classifier = pipeline(
+    'zero-shot-classification',
+    model='facebook/bart-large-mnli'
+)
 candidate_labels = ['emotional', 'serious', 'joyful']
 
 
 # %%
-articles_en['content'].iloc[1000]
-# %%
+%%time
 zs_classifier(articles_en['content'].iloc[0:2].to_list(), candidate_labels)
 # %%
 def zs_classify_articles(model: pipeline, articles: list, candidate_labels: list) -> tuple:

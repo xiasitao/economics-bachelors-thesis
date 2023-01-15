@@ -1,3 +1,6 @@
+""" This script is best executed with CUDA / on colab with CUDA.
+    You need to adapt the paths to your Colab directory structure.
+"""
 import pytask
 import pandas as pd
 import numpy as np
@@ -35,21 +38,42 @@ TOPIC_CATEGORIES = {
 
 
 ZERO_SHOT_BUILD_PATH  = BUILD_PATH / 'zero_shot_classification.pkl'
-@pytask.mark.persist()
+@pytask.mark.skip()  # Execute with CUDA on Colab
 @pytask.mark.depends_on(BUILD_PATH / 'articles_balanced_50.pkl')
 @pytask.mark.produces(ZERO_SHOT_BUILD_PATH)
-def task_zero_shot_classification(produces: Path):
+def task_zero_shot_classification(produces: Path, n_articles=10, incremental=True, device=None):
+    """Perform zero-shot classification on the 50-articles-per-role-model data set.
+    Perform with CUDA or on Colab (with CUDA) by setting the device to "cuda:0".
+
+    Args:
+        produces (Path): Output file path
+        n_articles (int, optional): Number of articles to process in this call. Defaults to 10.
+        incremental (bool, optional): Whether to only process articles that have not been processed yet. Defaults to False.
+    """    
+    incremental = incremental and produces.exists()
+    existing_data = None if not incremental else pd.read_pickle(produces)
+
     articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
     articles_en = articles[articles['language_ml'] == 'en']
-    zs_classifier = pipeline('zero-shot-classification', model='facebook/bart-large-mnli')
+    zs_classifier = pipeline(
+        'zero-shot-classification',
+        model='facebook/bart-large-mnli',
+        device=device
+    )
     
     article_data = articles_en[['article_id', 'content']].drop_duplicates()
-    article_data = article_data.sample(n=10, random_state=42)
+    if incremental:
+        print(f'Incremental classification, excluding {len(existing_data)} existing records.')
+        article_data = article_data[~(article_data['article_id'].isin(existing_data.index))]
+    if n_articles is not None and n_articles > 0:
+        article_data = article_data.sample(n=min(n_articles, len(article_data)), random_state=42)
+    
     classification_data = pd.DataFrame(
         data=None,
         index=article_data['article_id'],
         columns=[format_str.format(topic_category) for topic_category in TOPIC_CATEGORIES for format_str in ('{}', '{}_entropy')]
     )
+
     for topic_cateogory in TOPIC_CATEGORIES:
         labels, entropies = zs_classify_articles(
             model=zs_classifier,
@@ -58,8 +82,10 @@ def task_zero_shot_classification(produces: Path):
         )
         classification_data[topic_cateogory] = labels
         classification_data[f'{topic_cateogory}_entropy'] = entropies
-    
+
+    if incremental:
+        classification_data = pd.concat([existing_data, classification_data])
     classification_data.to_pickle(produces)
 
 if __name__ == '__main__':
-    task_zero_shot_classification(ZERO_SHOT_BUILD_PATH)
+    task_zero_shot_classification(ZERO_SHOT_BUILD_PATH, n_articles=1, incremental=True)

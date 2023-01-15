@@ -1,5 +1,9 @@
 # %%
 import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import numpy as np
+from scipy.stats import chisquare
 
 from pathlib import Path
 SOURCE_PATH = Path(__file__).parent.resolve()
@@ -9,11 +13,74 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 # %%
 articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
+ses = pd.read_pickle(BUILD_PATH / 'ses_scores_filtered.pkl')
+articles = articles.join(ses, how='inner', on='role_model')
 zero_shot_data = pd.read_pickle(BUILD_PATH / 'zero_shot_classification.pkl')
+articles = articles.join(zero_shot_data, how='inner', on='article_id')
+article_per_SES = articles[articles['average_ses']==-1.0].count()['content'], articles[articles['average_ses']==+1.0].count()['content']
+category_columns = [column for column in zero_shot_data.columns if not column.endswith('_entropy')]
 
 
 # %%
-zero_shot_data
+def find_category_distributions(articles: pd.DataFrame, category_columns: list) -> dict:   
+    category_distributions = {}
+    for category in category_columns:
+        category_distribution = pd.DataFrame(data=None, index=articles[category].unique(), columns=['low', 'high'])
+        category_distribution['low'] = articles[articles['average_ses'] == -1.0].groupby(category).count()['content']
+        category_distribution['high'] = articles[articles['average_ses'] == +1.0].groupby(category).count()['content']
+        category_distributions[category] = category_distribution
+    return category_distributions
+
+category_distributions = find_category_distributions(articles, category_columns)
+
+
 # %%
-articles.join(zero_shot_data, how='inner', on='article_id')
+def plot_category_distribution(category_distribution: pd.DataFrame, category_name: str, relative=True):
+    """Plot the distribution of articles over the categories for low and high SES.
+
+    Args:
+        category_distribution (pd.DataFrame): Distribution matrix with categories (index) and SES (columns)
+        category_name (str): Name of the category
+        relative (bool, optional): Whether to normalize frequencies for each SES level. Defaults to True.
+    """    
+    fig, ax = plt.gcf(), plt.gca()
+    ax.set_title(f'{category_name.capitalize()} distribution by SES')
+    if relative:
+        ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
+        category_distribution = category_distribution.copy()
+        category_distribution = category_distribution.apply(lambda col: col/col.sum())
+    category_distribution.plot(kind='bar', ax=ax)
+    fig.show()
+
+plot_category_distribution(category_distributions['difficulty'], 'emotion', relative=True)
+
+
+# %%
+def chi2_test(category_distribution: pd.DataFrame, articles_per_SES: tuple) -> pd.DataFrame:
+    """Perform a chi2 test on the absolute frequencies articles in each category.
+
+    Args:
+        category_distribution (pd.DataFrame): Distributions of SES (columns) in the cateogories (index)
+        articles_per_SES (tuple): Number of overall articles per SES (low, high)
+
+    Raises:
+        ValueError: If relative frequencies are supplied.
+
+    Returns:
+        pd.DataFrame: chi2 and p per category
+    """    
+    if not (category_distribution == category_distribution.astype(int)).all().all():
+        raise ValueError('Cannot accept relative frequencies.')
+
+    results = pd.DataFrame(None, columns=['chi2', 'p'], index=category_distribution.index)
+    for category in category_distribution.index:
+        frequencies = category_distribution.loc[category]
+        expected_frequencies = np.array(articles_per_SES)/np.sum(np.array(articles_per_SES)) * np.sum(frequencies)
+        result = chisquare(category_distribution.loc[category], expected_frequencies)
+        results.loc[category] = [result.statistic, result.pvalue]
+    return results
+
+chi2_test(category_distributions['difficulty'], article_per_SES)
+
+
 # %%
