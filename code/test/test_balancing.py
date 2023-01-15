@@ -17,9 +17,11 @@ balanced_50.groupby(['language_ml', 'role_model']).count()
 # %%
 balanced_50.groupby(['language_ml']).count()
 
-
+•
 # %%
 balanced_50.dtypes
 
 
+# %%
+balanced_50[balanced_50['language_ml']=='en'][['article_id', 'content']].drop_duplicates().count()
 # %%

@@ -88,4 +88,4 @@ def task_zero_shot_classification(produces: Path, n_articles=10, incremental=Tru
     classification_data.to_pickle(produces)
 
 if __name__ == '__main__':
-    task_zero_shot_classification(ZERO_SHOT_BUILD_PATH, n_articles=1, incremental=True)
+    task_zero_shot_classification(ZERO_SHOT_BUILD_PATH, n_articles=10, incremental=True, device='cpu')
