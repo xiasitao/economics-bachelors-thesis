@@ -23,6 +23,15 @@ category_columns = [column for column in zero_shot_data.columns if not column.en
 
 # %%
 def find_category_distributions(articles: pd.DataFrame, category_columns: list) -> dict:   
+    """Find the distribution of category expressions for low and high SES for all categories available.
+
+    Args:
+        articles (pd.DataFrame): Article data.
+        category_columns (list): List of column in the data corresponding to attributes.
+
+    Returns:
+        dict: dict of category distribution data frames for each category.
+    """    
     category_distributions = {}
     for category in category_columns:
         category_distribution = pd.DataFrame(data=None, index=articles[category].unique(), columns=['low', 'high'])
@@ -31,10 +40,32 @@ def find_category_distributions(articles: pd.DataFrame, category_columns: list) 
         category_distributions[category] = category_distribution
     return category_distributions
 
-category_distributions = find_category_distributions(articles, category_columns)
+
+def chi2_test(distribution: pd.DataFrame, articles_per_SES: tuple) -> pd.DataFrame:
+    """Perform a chi2 test on the absolute frequencies articles in each category.
+
+    Args:
+        category_distribution (pd.DataFrame): Distributions of SES (columns) in the cateogories (index)
+        articles_per_SES (tuple): Number of overall articles per SES (low, high)
+
+    Raises:
+        ValueError: If relative frequencies are supplied.
+
+    Returns:
+        pd.DataFrame: chi2 and p per category
+    """    
+    if not (distribution == distribution.astype(int)).all().all():
+        raise ValueError('Cannot accept relative frequencies.')
+
+    results = pd.DataFrame(None, columns=['chi2', 'p'], index=distribution.index)
+    for category in distribution.index:
+        frequencies = distribution.loc[category]
+        expected_frequencies = np.array(articles_per_SES)/np.sum(np.array(articles_per_SES)) * np.sum(frequencies)
+        result = chisquare(distribution.loc[category], expected_frequencies)
+        results.loc[category] = [result.statistic, result.pvalue]
+    return results
 
 
-# %%
 def plot_category_distribution(category_distribution: pd.DataFrame, category_name: str, relative=True):
     """Plot the distribution of articles over the categories for low and high SES.
 
@@ -52,33 +83,14 @@ def plot_category_distribution(category_distribution: pd.DataFrame, category_nam
     category_distribution.plot(kind='bar', ax=ax)
     fig.show()
 
-plot_category_distribution(category_distributions['difficulty'], 'emotion', relative=True)
+
+# %%
+category_distributions = find_category_distributions(articles, category_columns)
+plot_category_distribution(category_distributions['difficulty'], 'topic', relative=True)
 
 
 # %%
-def chi2_test(category_distribution: pd.DataFrame, articles_per_SES: tuple) -> pd.DataFrame:
-    """Perform a chi2 test on the absolute frequencies articles in each category.
 
-    Args:
-        category_distribution (pd.DataFrame): Distributions of SES (columns) in the cateogories (index)
-        articles_per_SES (tuple): Number of overall articles per SES (low, high)
-
-    Raises:
-        ValueError: If relative frequencies are supplied.
-
-    Returns:
-        pd.DataFrame: chi2 and p per category
-    """    
-    if not (category_distribution == category_distribution.astype(int)).all().all():
-        raise ValueError('Cannot accept relative frequencies.')
-
-    results = pd.DataFrame(None, columns=['chi2', 'p'], index=category_distribution.index)
-    for category in category_distribution.index:
-        frequencies = category_distribution.loc[category]
-        expected_frequencies = np.array(articles_per_SES)/np.sum(np.array(articles_per_SES)) * np.sum(frequencies)
-        result = chisquare(category_distribution.loc[category], expected_frequencies)
-        results.loc[category] = [result.statistic, result.pvalue]
-    return results
 
 chi2_test(category_distributions['difficulty'], articles_per_SES)
 
