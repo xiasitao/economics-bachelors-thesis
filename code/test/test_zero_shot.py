@@ -17,7 +17,7 @@ ses = pd.read_pickle(BUILD_PATH / 'ses_scores_filtered.pkl')
 articles = articles.join(ses, how='inner', on='role_model')
 zero_shot_data = pd.read_pickle(BUILD_PATH / 'zero_shot_classification.pkl')
 articles = articles.join(zero_shot_data, how='inner', on='article_id')
-article_per_SES = articles[articles['average_ses']==-1.0].count()['content'], articles[articles['average_ses']==+1.0].count()['content']
+articles_per_SES = articles[articles['average_ses']==-1.0].count()['content'], articles[articles['average_ses']==+1.0].count()['content']
 category_columns = [column for column in zero_shot_data.columns if not column.endswith('_entropy')]
 
 
@@ -80,7 +80,7 @@ def chi2_test(category_distribution: pd.DataFrame, articles_per_SES: tuple) -> p
         results.loc[category] = [result.statistic, result.pvalue]
     return results
 
-chi2_test(category_distributions['difficulty'], article_per_SES)
+chi2_test(category_distributions['difficulty'], articles_per_SES)
 
 
 # %%

@@ -18,7 +18,7 @@
     - origin
     - descriptives
     - cleaning, processing
-    - balancing
+    - balancing (articles per role model)
         - method
         - descriptives (how many role models had too few articles, how many articles were upsampled?)
         - necessary if articles/role models are counted per SES level in order to be able to compare both SES categories

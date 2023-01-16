@@ -107,11 +107,12 @@ corpus = [dictionary.doc2bow(filter_tokens(article)) for article in articles_tok
 
 # %%
 # Run model
-n_topics = 9
+n_topics = 2
 model, topics = train_lda_model(n_topics)
 print(topics)
 
-
+#%%
+articles_tokenized.parallel_apply(lambda doc: pd.Series(find_topic_and_entropy(model, doc)))
 # %%
 # Article topic identification
 articles_en[['topic', 'topic_entropy']] = articles_tokenized.parallel_apply(lambda doc: pd.Series(find_topic_and_entropy(model, doc)))
