@@ -7,6 +7,7 @@ SOURCE_PATH = Path(__file__).parent.resolve()
 ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
+@pytask.mark.persist()
 @pytask.mark.depends_on(BUILD_PATH / 'articles_balanced_50.pkl')
 @pytask.mark.produces(BUILD_PATH / 'articles_for_human_annotation.pkl')
 def task_human_annotation_preparation(produces: Path):

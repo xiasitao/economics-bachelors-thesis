@@ -18,6 +18,10 @@
 # Topic model
 - fix hyperparameters
 - add to pipeline
+- KS Test
+
+# Zero Shot
+- KS Test
 
 # Semantic clustering
 - combine with topic model
