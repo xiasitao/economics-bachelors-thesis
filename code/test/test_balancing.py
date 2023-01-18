@@ -7,7 +7,7 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 
 # %%
-balanced_50 = pd.read_pickle(f'{BUILD_PATH}/articles_balanced_50.pkl')
+balanced_50 = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
 
 
 # %%
@@ -17,7 +17,7 @@ balanced_50.groupby(['language_ml', 'role_model']).count()
 # %%
 balanced_50.groupby(['language_ml']).count()
 
-•
+
 # %%
 balanced_50.dtypes
 

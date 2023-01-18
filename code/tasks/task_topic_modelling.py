@@ -96,22 +96,27 @@ def task_topic_modelling(produces: Path, n_min=2, n_max=10):
     """    
     articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
     articles_en = articles[articles.language_ml == 'en']
-    articles_en = articles_en[['article_id', 'content_slim']].set_index('article_id', drop=True)
-
-    articles_tokenized = articles_en['content_slim'].str.split(' ')
-    dictionary = Dictionary(articles_tokenized)
+    articles_en = articles_en[['article_id', 'content_slim']]
+    articles_en['content_tokenized'] = articles_en['content_slim'].str.split(' ')
+    
+    # Building corpus with balanced articles
+    dictionary = Dictionary(articles_en['content_tokenized'])
     dictionary.filter_extremes(no_below=5, no_above=0.3)
     dictionary[0]
-    corpus = [dictionary.doc2bow(filter_tokens(article)) for article in articles_tokenized]
+    corpus = [dictionary.doc2bow(filter_tokens(article)) for article in articles_en['content_tokenized']]
 
+    # Predicting with unique articles
+    unique_articles = articles_en[['article_id', 'content_slim']].drop_duplicates().set_index('article_id', drop=True)
+    unique_articles['content_tokenized'] = unique_articles['content_slim'].str.split(' ')
     all_n_topics = [i for i in range(n_min, n_max+1)]
-    article_topics = pd.DataFrame(data=None, columns=[wildcard.format(n) for n in all_n_topics for wildcard in ('topic_{}', 'topic_{}_entropy')], index=articles_en.index)
+    article_topics = pd.DataFrame(data=None, columns=[wildcard.format(n) for n in all_n_topics for wildcard in ('topic_{}', 'topic_{}_entropy')], index=unique_articles.index)
     topic_words = {}
     for n_topics in all_n_topics:
         model, these_topic_words = train_lda_model(n_topics, corpus=corpus, dictionary=dictionary)
         topic_words[n_topics] = these_topic_words
-        article_topics[[f'topic_{n_topics}', f'topic_{n_topics}_entropy']] = articles_tokenized.parallel_apply(lambda doc: pd.Series(find_topic_and_entropy(model, dictionary, doc)))
-        
+        article_topics[[f'topic_{n_topics}', f'topic_{n_topics}_entropy']] = unique_articles['content_tokenized'].parallel_apply(lambda doc: pd.Series(find_topic_and_entropy(model, dictionary, doc)))
+    
+    # Save topic-classified articles
     with open(produces, 'wb') as file:
         pickle.dump((topic_words, article_topics,), file)
 

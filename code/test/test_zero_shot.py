@@ -24,6 +24,10 @@ human_annotated = pd.read_pickle(BUILD_PATH / 'articles_human_annotated.pkl')
 
 
 # %%
+# Sanity checks
+assert(articles.groupby('role_model').count()['content'].unique() == np.array([50]))
+
+# %%
 def find_low_entropy_articles(articles: pd.DataFrame, category_column: str, percentile=50) -> pd.DataFrame:
     """Find all articles having less entropy for a category than a certain percentile.
 
@@ -46,7 +50,7 @@ def find_category_distributions(articles: pd.DataFrame, category_columns: list) 
 
     Args:
         articles (pd.DataFrame): Article data.
-        category_columns (list): List of column in the data corresponding to attributes.
+        category_columns (list): List of columns in the data corresponding to attributes.
 
     Returns:
         dict: dict of category distribution data frames for each category.
@@ -87,6 +91,14 @@ def chi2_per_label_test(distribution: pd.DataFrame, articles_per_SES: tuple) -> 
 
 
 def chi2_contingency_test(distribution: pd.DataFrame) -> tuple:
+    """Perform a chi2 test checking whether the labels of a category are differently distributed for low and the high SES.
+
+    Args:
+        distribution (pd.DataFrame): Low and high SES distribution of labels in a category.
+
+    Returns:
+        tuple: chi2, p values
+    """    
     result = chi2_contingency(np.array(distribution.T))
     return result.statistic, result.pvalue
 
