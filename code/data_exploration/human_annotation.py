@@ -11,26 +11,6 @@ HUMAN_ANNOTATED_PATH = (BUILD_PATH / 'articles_human_annotated.pkl')
 
 
 # %%
-sample_articles = pd.read_pickle(BUILD_PATH / 'articles_for_human_annotation.pkl')
-if HUMAN_ANNOTATED_PATH.exists():
-    sample_articles = pd.read_pickle(HUMAN_ANNOTATED_PATH)
-
-annotation_categories = {
-    'topic': ['movie', 'music', 'sport', 'life'],
-    'difficulty': ['easy', 'difficult'],
-    'emotion': ['sadness', 'happiness', 'fear', 'anger', 'surprise', 'disgust'],
-}
-
-
-# %%
-for category in annotation_categories:
-    if category in sample_articles.columns:
-        print(f'{category}: annotated {sample_articles[category].count()} / {len(sample_articles[category])}')
-    else:
-        print(f'{category}: not started annotating yet')
-
-
-# %%
 def ask_for_annotations(sample_articles: pd.DataFrame, category: str, file_path: Path=HUMAN_ANNOTATED_PATH) -> pd.Series:
     if category not in sample_articles.columns:
         raise Exception(f'Invalid column: {category}')
@@ -56,8 +36,25 @@ def ask_for_annotations(sample_articles: pd.DataFrame, category: str, file_path:
             break
     
     sample_articles.to_pickle(file_path)
-    
 
 # %%
+sample_articles = pd.read_pickle(BUILD_PATH / 'articles_for_human_annotation.pkl')
+if HUMAN_ANNOTATED_PATH.exists():
+    sample_articles = pd.read_pickle(HUMAN_ANNOTATED_PATH)
+
+annotation_categories = {
+    'topic': ['movie', 'music', 'sport', 'life'],
+    'difficulty': ['easy', 'difficult'],
+    'emotion': ['sadness', 'happiness', 'fear', 'anger', 'surprise', 'disgust'],
+}
+
+for category in annotation_categories:
+    if category in sample_articles.columns:
+        print(f'{category}: annotated {sample_articles[category].count()} / {len(sample_articles[category])}')
+    else:
+        print(f'{category}: not started annotating yet')
+
 ask_for_annotations(sample_articles, 'topic')
+
+
 # %%
