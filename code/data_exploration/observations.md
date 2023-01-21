@@ -1,3 +1,6 @@
+# Articles
+- Some articles are unrelated (Alan Walker)
+
 # Sentences
 - Articles are very different in length -> maybe operate on the sentence level
 - slim BERT first with 2D tSNE: one component is amount of sentences

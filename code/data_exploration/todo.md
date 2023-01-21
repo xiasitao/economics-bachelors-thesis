@@ -28,6 +28,10 @@
 
 # Zero Shot
 - chi2 contingency test
+- sentiment
 
 # Semantic clustering
 - combine with topic model
+    - find topics in the clusters
+    - find SES-score percentages in the clusters
+    - perform chi2 tests by cluster for SES to see if SES varies based on semantic similarity

@@ -38,3 +38,5 @@
 - clustering theory
 
 # Zero-shot classification
+- BERT and BART
+- skipping the training step in lack of labels
