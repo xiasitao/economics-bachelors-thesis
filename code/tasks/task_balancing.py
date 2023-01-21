@@ -62,5 +62,7 @@ def task_balancing(n: int, produces: Path):
         language_articles = articles[articles['language_ml'] == language]
         balanced_language_articles = balance_role_models(data=language_articles, n_target=n, downsample=True, upsample=True, max_upsampling_factor=10)
         balanced_articles = balanced_language_articles if balanced_articles is None else pd.concat([balanced_articles, balanced_language_articles])
+    
+    balanced_articles = balanced_articles.reset_index(drop=True)
     balanced_articles.to_pickle(produces)
 
