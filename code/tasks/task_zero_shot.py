@@ -11,6 +11,12 @@ SOURCE_PATH = Path(__file__).parent.resolve()
 ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
+CLASSIFICATION_CATEGORIES = {
+    'topic': ['movie', 'music', 'sport', 'life'],
+    'difficulty': ['easy', 'difficult'],
+    'emotion': ['sadness', 'happiness', 'fear', 'anger', 'surprise', 'disgust'],  # https://online.uwa.edu/infographics/basic-emotions/
+}
+
 
 def zs_classify_articles(model: pipeline, articles: list, candidate_labels: list) -> tuple:
     """Classify a batch of articles using a pipeline against a list of candidate topics.
@@ -21,27 +27,30 @@ def zs_classify_articles(model: pipeline, articles: list, candidate_labels: list
         candidate_labels (list): List of possible labels
 
     Returns:
-        tuple: List of labels, list of entropies
+        tuple: List of labels, list of entropies, list of probabilities of the assigned label
     """    
     results = model(articles, candidate_labels)
     assigned_labels = [result['labels'][0] for result in results]
     score_list = np.array([result['scores'] for result in results])
     entropies = -np.sum(score_list * np.log(score_list), axis=1)
-    return assigned_labels, entropies
+    probabilities = score_list[:, 0]
+    return assigned_labels, entropies, probabilities
 
 
-TOPIC_CATEGORIES = {
-    'topic': ['movie', 'music', 'sport', 'life'],
-    'difficulty': ['easy', 'difficult'],
-    'emotion': ['sadness', 'happiness', 'fear', 'anger', 'surprise', 'disgust'],  # https://online.uwa.edu/infographics/basic-emotions/
-}
-
-
-ZERO_SHOT_BUILD_PATH  = BUILD_PATH / 'zero_shot_classification/zero_shot_classification.pkl'
+ZERO_SHOT_FILENAME_WILDCARD  = 'zero_shot_classification/zero_shot_classification_{}.pkl'
 @pytask.mark.skip()  # Execute with CUDA on Colab
 @pytask.mark.depends_on(BUILD_PATH / 'articles/articles_balanced_50.pkl')
-@pytask.mark.produces(ZERO_SHOT_BUILD_PATH)
-def task_zero_shot_classification(produces: Path, n_articles=10, incremental=True, device=None):
+@pytask.mark.parameterize(
+    "category, candidate_labels, produces, n_articles, incremental",
+    [(
+        category,
+        CLASSIFICATION_CATEGORIES[category],
+        BUILD_PATH / ZERO_SHOT_FILENAME_WILDCARD.format(category),
+        10,  # n_articles
+        True,  # incremental
+    ) for category in CLASSIFICATION_CATEGORIES]
+)
+def task_zero_shot_classification(category: str, candidate_labels: list, produces: Path, n_articles=10, incremental=True, device=None):
     """Perform zero-shot classification on the 50-articles-per-role-model data set.
     Perform with CUDA or on Colab (with CUDA) by setting the device to "cuda:0".
 
@@ -49,7 +58,7 @@ def task_zero_shot_classification(produces: Path, n_articles=10, incremental=Tru
         produces (Path): Output file path
         n_articles (int, optional): Number of articles to process in this call. Defaults to 10.
         incremental (bool, optional): Whether to only process articles that have not been processed yet. Defaults to False.
-    """    
+    """
     incremental = incremental and produces.exists()
     existing_data = None if not incremental else pd.read_pickle(produces)
 
@@ -63,29 +72,37 @@ def task_zero_shot_classification(produces: Path, n_articles=10, incremental=Tru
     
     article_data = articles_en[['article_id', 'content']].drop_duplicates()
     if incremental:
-        print(f'Incremental classification, excluding {len(existing_data)} existing records.')
         article_data = article_data[~(article_data['article_id'].isin(existing_data.index))]
     if n_articles is not None and n_articles > 0:
         article_data = article_data.sample(n=min(n_articles, len(article_data)), random_state=42)
+
+    print(f'Performing "{category}" ZSC on {len(article_data)} articles ({"incremental, excluding "+str(len(existing_data)) if incremental else "from start"}).')
     
     classification_data = pd.DataFrame(
         data=None,
         index=article_data['article_id'],
-        columns=[format_str.format(topic_category) for topic_category in TOPIC_CATEGORIES for format_str in ('{}', '{}_entropy')]
+        columns=[category, f'{category}_entropy', f'{category}_p']
     )
 
-    for topic_cateogory in TOPIC_CATEGORIES:
-        labels, entropies = zs_classify_articles(
-            model=zs_classifier,
-            articles=article_data['content'].to_list(),
-            candidate_labels=TOPIC_CATEGORIES[topic_cateogory]
-        )
-        classification_data[topic_cateogory] = labels
-        classification_data[f'{topic_cateogory}_entropy'] = entropies
+    labels, entropies, probabilities = zs_classify_articles(
+        model=zs_classifier,
+        articles=article_data['content'].to_list(),
+        candidate_labels=candidate_labels
+    )
+    classification_data[category] = labels
+    classification_data[f'{category}_entropy'] = entropies
+    classification_data[f'{category}_p'] = probabilities
 
     if incremental:
         classification_data = pd.concat([existing_data, classification_data])
     classification_data.to_pickle(produces)
 
 if __name__ == '__main__':
-    task_zero_shot_classification(ZERO_SHOT_BUILD_PATH, n_articles=10, incremental=True, device='cpu')
+    category = 'topic'
+    task_zero_shot_classification(
+        category=category,
+        candidate_labels=CLASSIFICATION_CATEGORIES[category],
+        produces=BUILD_PATH / ZERO_SHOT_FILENAME_WILDCARD.format(category),
+        n_articles=2,
+        incremental=True,
+    )

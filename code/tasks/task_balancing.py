@@ -45,10 +45,10 @@ def balance_role_models(data, n_target = 50, downsample=True, upsample=True, max
 
 @pytask.mark.depends_on(BUILD_PATH / 'articles/articles.pkl')
 @pytask.mark.parametrize(
-    "produces, n",
-    [(BUILD_PATH / f'articles/articles_balanced_{n}.pkl', n) for n in (50, 100, 200, 500)]
+    "n, produces",
+    [(n, BUILD_PATH / f'articles/articles_balanced_{n}.pkl') for n in (50, 100, 200, 500)]
 )
-def task_balancing(n: int, produces: Path):
+def task_balancing(produces: Path, n: int):
     """This task balances the number of article per role model and language by downsampling and upsampling.
     It provides data sets with 50, 100, 200, and 500 articles per role model.
 

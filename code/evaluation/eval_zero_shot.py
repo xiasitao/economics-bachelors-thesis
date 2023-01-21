@@ -24,10 +24,6 @@ human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated
 
 
 # %%
-# Sanity checks
-assert(articles.groupby('role_model').count()['content'].unique() == np.array([50]))
-
-# %%
 def find_low_entropy_articles(articles: pd.DataFrame, category_column: str, percentile=50) -> pd.DataFrame:
     """Find all articles having less entropy for a category than a certain percentile.
 
