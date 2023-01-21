@@ -1,9 +1,21 @@
-# Role model review
+# Introduction
+## Socioeconomic status
+- literature
+- Classic predictors
+- Role models as a new predictor
+
+## Role model review
 - role model literature
 - socioeconomic status literature
 - NLP in economics literature
 
+## NLP
+- NLP
+- NLP in economics
+
+
 # Data
+Describing what data is about, where it comes from, how it was processed, cleaned, and filtered.
 - SES data
     - origin
     - descriptives
@@ -24,6 +36,7 @@
         - necessary if articles/role models are counted per SES level in order to be able to compare both SES categories
         - also necessary if distribution of topics etc. is scrutinized because topics etc. strongly correlate with role models and topics could be unnaturally overweighted/underweighted just by the number of articles per role model
 
+
 # Topic Modelling
 - Theory
 - Data preparation for topic modelling
@@ -32,11 +45,18 @@
 - Hyperparameter tuning
     - iteratively examining number of topics
     - number of iterations
+    - convergence graph
+- Evaluation
+    -
 
-# Semantic similarity-based clustering
+
+# Zero-Shot Classification
 - BERT and SentenceBERT theory
-- clustering theory
-
-# Zero-shot classification
-- BERT and BART
+- BART
 - skipping the training step in lack of labels
+- categories and their labels
+- evaluation
+
+
+# Semantic Similarity-based Clustering
+- clustering theory
