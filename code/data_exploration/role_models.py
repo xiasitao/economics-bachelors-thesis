@@ -27,7 +27,7 @@ role_model_data = role_model_data.set_index('role_model')
 
 # %%
 
-articles = pd.read_pickle(BUILD_PATH / 'data.pkl')
+articles = pd.read_pickle(BUILD_PATH / 'articles/articles.pkl')
 # %%
 articles.join(role_model_data, on='role_model')
 # %%

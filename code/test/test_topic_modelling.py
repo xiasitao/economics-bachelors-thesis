@@ -17,11 +17,11 @@ from scipy.stats import chisquare, chi2_contingency
 
 
 # %%
-articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
+articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 articles = articles[articles['language_ml'] == 'en']
-ses = pd.read_pickle(BUILD_PATH / 'ses_scores_filtered.pkl')
+ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_filtered.pkl')
 articles = articles.join(ses, how='inner', on='role_model')
-with open(BUILD_PATH / 'topic_modelling.pkl', 'rb') as file:
+with open(BUILD_PATH / 'topic_modelling/topic_modelling.pkl', 'rb') as file:
     topic_words, article_topics = pickle.load(file)
 articles = articles.join(article_topics, how='inner', on='article_id')
 articles_per_SES = articles[articles['average_ses']==-1.0].count()['content'], articles[articles['average_ses']==+1.0].count()['content']

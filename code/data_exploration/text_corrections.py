@@ -216,7 +216,7 @@ def get_spacy_nlp(language: str) -> spacy.language.Language:
 hint_words = [letter_shift(word) for word in ('und', 'auch', 'ein', 'eine', 'der', 'die', 'das', 'for', 'and', 'with')]
 
 # %%
-source_files = [f'{ASSET_PATH}/role_model_articles_de.pkl', f'{ASSET_PATH}/role_model_articles_en.pkl']
+source_files = [ASSET_PATH / 'role_model_articles_de.pkl', ASSET_PATH / 'role_model_articles_en.pkl']
 articles = None
 for source_file in source_files:
     these_articles = pd.read_pickle(source_file)

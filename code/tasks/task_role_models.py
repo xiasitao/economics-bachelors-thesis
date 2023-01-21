@@ -7,7 +7,7 @@ ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 
-@pytask.mark.produces(BUILD_PATH / 'role_model_data.pkl')  
+@pytask.mark.produces(BUILD_PATH / 'role_models/role_model_data.pkl')  
 def task_role_model_data(produces: Path):
     """Bring role model information into a good shape for joining with article data.
 

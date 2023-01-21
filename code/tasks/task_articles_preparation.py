@@ -213,18 +213,18 @@ def slim_doc(doc: str, language: str, spacy_nlp: spacy.language.Language) -> str
 
 
 @pytask.mark.persist()
-@pytask.mark.depends_on(BUILD_PATH / 'role_model_data.pkl')
-@pytask.mark.produces(BUILD_PATH / 'articles.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'role_models/role_model_data.pkl')
+@pytask.mark.produces(BUILD_PATH / 'articles/articles.pkl')
 def task_article_preparation(produces: Path):
     """Load source files,
     clean content, add generate a slimmed-down version of the content without stopwords, numbers and punctuation,
     and identify obfuscated content.
 
     Args:
-        produces (Path): _description_
+        produces (Path): destionation file name
     """
     articles = None
-    source_files = [f'{ASSET_PATH}/role_model_articles_de.pkl', f'{ASSET_PATH}/role_model_articles_en.pkl']
+    source_files = [ASSET_PATH / 'role_model_articles_de.pkl',  ASSET_PATH / 'role_model_articles_en.pkl']
     for source_file in source_files:
         these_articles = pd.read_pickle(source_file)
         articles = these_articles if articles is None else pd.concat([articles, these_articles])
@@ -247,17 +247,17 @@ def task_article_preparation(produces: Path):
     processed_articles['obfuscated'] = processed_articles['obfuscated'].astype(bool)
 
     # Adding role model information
-    role_model_data = pd.read_pickle(BUILD_PATH / 'role_model_data.pkl')
+    role_model_data = pd.read_pickle(BUILD_PATH / 'role_models/role_model_data.pkl')
     processed_articles = processed_articles.join(role_model_data, on='role_model')
 
     processed_articles.to_pickle(produces)
 
 
 @pytask.mark.skip()
-@pytask.mark.depends_on(BUILD_PATH / 'articles.pkl')
-@pytask.mark.produces(BUILD_PATH / 'corpora.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'articles/articles.pkl')
+@pytask.mark.produces(BUILD_PATH / 'articles/corpora.pkl')
 def task_corpus_extraction(produces):
-    articles = pd.read_pickle(BUILD_PATH / 'articles.pkl')
+    articles = pd.read_pickle(BUILD_PATH / 'articles/articles.pkl')
     articles = articles[~(articles['obfuscated'])]
 
     corpora = {}

@@ -137,33 +137,33 @@ def equilibrate_role_models(role_model_scores: pd.DataFrame, group_column='preva
     return role_model_scores
 
 
-@pytask.mark.depends_on(BUILD_PATH / 'role_model_data.pkl')
-@pytask.mark.produces(BUILD_PATH / 'ses.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'role_models/role_model_data.pkl')
+@pytask.mark.produces(BUILD_PATH / 'role_models/ses.pkl')
 def task_ses(produces: Path):
     """Retreive cleaned SES data
     """    
     ses_data = pd.read_excel(ASSET_PATH / 'Role_models_by_SES_precleaned.xlsx')
-    role_model_data = pd.read_pickle(BUILD_PATH / 'role_model_data.pkl')
+    role_model_data = pd.read_pickle(BUILD_PATH / 'role_models/role_model_data.pkl')
     ses_data = clean_ses_data(ses_data, role_model_data)
     ses_data.to_pickle(produces)
 
 
-@pytask.mark.depends_on(BUILD_PATH / 'ses.pkl')
-@pytask.mark.produces(BUILD_PATH / 'ses_mentions.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'role_models/ses.pkl')
+@pytask.mark.produces(BUILD_PATH / 'role_models/ses_mentions.pkl')
 def task_ses_mentions(produces: Path):
     """List all role model mentions
     """
-    ses_data = pd.read_pickle(BUILD_PATH / 'ses.pkl')
+    ses_data = pd.read_pickle(BUILD_PATH / 'role_models/ses.pkl')
     mention_data = produce_role_model_mention_table(ses_data)
     mention_data.to_pickle(produces)
 
 
-@pytask.mark.depends_on(BUILD_PATH / 'ses_mentions.pkl')
-@pytask.mark.produces(BUILD_PATH / 'ses_scores.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'role_models/ses_mentions.pkl')
+@pytask.mark.produces(BUILD_PATH / 'role_models/ses_scores.pkl')
 def task_ses_model_scores(produces: Path):
     """ Assign scores to role models
     """
-    mention_data = pd.read_pickle(BUILD_PATH / 'ses_mentions.pkl')
+    mention_data = pd.read_pickle(BUILD_PATH / 'role_models/ses_mentions.pkl')
     score_data = produce_role_model_scores(
         mention_data=mention_data,
         rank_weights=[1/n for n in range(1, 6)]
@@ -171,12 +171,12 @@ def task_ses_model_scores(produces: Path):
     score_data.to_pickle(produces)
 
 
-@pytask.mark.depends_on(BUILD_PATH / 'ses.pkl')
-@pytask.mark.produces(BUILD_PATH / 'ses_scores_filtered.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'role_models/ses.pkl')
+@pytask.mark.produces(BUILD_PATH / 'role_models/ses_scores_filtered.pkl')
 def task_ses_model_filtering(produces: Path):
     """Filter out non-SES-unique role models.
     """    
-    scores = pd.read_pickle(BUILD_PATH / 'ses_scores.pkl')
+    scores = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
     filtered_scores = filter_role_models(
         scores,
         minimum_count=1,
@@ -185,12 +185,12 @@ def task_ses_model_filtering(produces: Path):
     filtered_scores.to_pickle(produces)
 
 
-@pytask.mark.depends_on(BUILD_PATH / 'ses_scores_filtered.pkl')
-@pytask.mark.produces(BUILD_PATH / 'ses_scores_balanced.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'role_models/ses_scores_filtered.pkl')
+@pytask.mark.produces(BUILD_PATH / 'role_models/ses_scores_balanced.pkl')
 def task_ses_model_equilibration(produces: Path):
     """Equilibrate role models
     such that an equal amount of low- and high-SES role models is present in the dataset.
     """
-    filtered_scores = pd.read_pickle(BUILD_PATH / 'ses_scores_filtered.pkl')
+    filtered_scores = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_filtered.pkl')
     equilibrated_scores = equilibrate_role_models(filtered_scores)
     equilibrated_scores.to_pickle(produces)

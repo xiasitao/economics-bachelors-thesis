@@ -12,13 +12,13 @@ from matplotlib.ticker import PercentFormatter
 from sklearn.utils import shuffle
 # %%
 # Load data
-articles = pd.read_pickle(BUILD_PATH / 'articles.pkl')
+articles = pd.read_pickle(BUILD_PATH / 'articles/articles.pkl')
 articles_en = articles[articles.language_ml == 'en']
-with open(BUILD_PATH / 'corpora.pkl', 'rb') as file:
+with open(BUILD_PATH / 'articles/corpora.pkl', 'rb') as file:
     corpora = pickle.load(file)
-with open(BUILD_PATH / 'sentence_tokens.pkl', 'rb') as file:
+with open(BUILD_PATH / 'articles/sentence_tokens.pkl', 'rb') as file:
     sentence_tokens = pickle.load(file)
-with open(BUILD_PATH / 'word_statistic.pkl', 'rb') as file:
+with open(BUILD_PATH / 'articles/word_statistic.pkl', 'rb') as file:
     word_statistics = pickle.load(file)
 
 # %%
@@ -43,7 +43,7 @@ def balance_role_models(data, n_target = 50, downsample=True, upsample=True, max
 
     # Check for each role model if downsampling or upsampling are necessary
     for role_model in data['role_model'].unique():
-        role_model_data = shuffle(data[data['role_model'] == role_model])
+        role_model_data = shuffle(data[data['role_model'] == role_model], random_state=42)
         role_model_data['orig_id'] = role_model_data.index
         if downsample and len(role_model_data) > n_target:
             role_model_data = role_model_data.iloc[0:n_target].reset_index(drop=True)

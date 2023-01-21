@@ -17,8 +17,8 @@ from sklearn_extra.cluster import KMedoids
 
 
  # %%
-articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
-ses_scores = pd.read_pickle(BUILD_PATH / 'ses_scores.pkl')
+articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
+ses_scores = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
 articles_en = articles[articles.language_ml == 'en']
 articles_en = articles_en.join(ses_scores[['average_ses', 'rank_weighted_ses', 'significance_weighted_ses']], on='role_model')
 
@@ -26,7 +26,7 @@ articles_en = articles_en.join(ses_scores[['average_ses', 'rank_weighted_ses', '
 
 # %%
 sentence_bert_encoder = st.SentenceTransformer('all-MiniLM-L6-v2')
-embeddings_path = BUILD_PATH / 'sbert_embeddings_en.pkl'
+embeddings_path = BUILD_PATH / 'semantic_similarity/sbert_embeddings_en.pkl'
 if embeddings_path.exists:
     with open(embeddings_path, 'rb') as file:
         embeddings = pickle.load(file)

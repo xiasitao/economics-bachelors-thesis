@@ -11,7 +11,7 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 # %%
 ses_data = pd.read_excel(ASSET_PATH / 'Role_models_by_SES_precleaned.xlsx')
-role_model_data = pd.read_pickle(BUILD_PATH / 'role_model_data.pkl')
+role_model_data = pd.read_pickle(BUILD_PATH / 'role_models/role_model_data.pkl')
 # %%
 # invalid_role_models = ses_data.join(role_model_data, how='left', on='Role_model_1')
 # invalid_role_models = invalid_role_models[(invalid_role_models['profession'].isna()) & ~(invalid_role_models['Role_model_1'].isna())]

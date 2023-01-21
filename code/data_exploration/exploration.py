@@ -18,13 +18,13 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 # %%
 # Load data
-articles = pd.read_pickle(BUILD_PATH / 'articles.pkl')
+articles = pd.read_pickle(BUILD_PATH / 'articles/articles.pkl')
 articles_en = articles[articles.language_ml == 'en']
-with open(BUILD_PATH / 'corpora.pkl', 'rb') as file:
+with open(BUILD_PATH / 'articles/corpora.pkl', 'rb') as file:
     corpora = pickle.load(file)
-with open(BUILD_PATH / 'sentence_tokens.pkl', 'rb') as file:
+with open(BUILD_PATH / 'articles/sentence_tokens.pkl', 'rb') as file:
     sentence_tokens = pickle.load(file)
-with open(BUILD_PATH / 'word_statistic.pkl', 'rb') as file:
+with open(BUILD_PATH / 'articles/word_statistic.pkl', 'rb') as file:
     word_statistics = pickle.load(file)
 
 

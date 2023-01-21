@@ -7,7 +7,7 @@ SOURCE_PATH = Path(__file__).parent.resolve()
 ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
-HUMAN_ANNOTATED_PATH = (BUILD_PATH / 'articles_human_annotated.pkl')
+HUMAN_ANNOTATED_PATH = (BUILD_PATH / 'articles/articles_human_annotated.pkl')
 
 
 # %%
@@ -38,7 +38,7 @@ def ask_for_annotations(sample_articles: pd.DataFrame, category: str, file_path:
     sample_articles.to_pickle(file_path)
 
 # %%
-sample_articles = pd.read_pickle(BUILD_PATH / 'articles_for_human_annotation.pkl')
+sample_articles = pd.read_pickle(BUILD_PATH / 'articles/articles_for_human_annotation.pkl')
 if HUMAN_ANNOTATED_PATH.exists():
     sample_articles = pd.read_pickle(HUMAN_ANNOTATED_PATH)
 

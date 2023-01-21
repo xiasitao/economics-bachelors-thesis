@@ -30,7 +30,7 @@ def balance_role_models(data, n_target = 50, downsample=True, upsample=True, max
 
     # Check for each role model if downsampling or upsampling are necessary
     for role_model in data['role_model'].unique():
-        role_model_data = shuffle(data[data['role_model'] == role_model])
+        role_model_data = shuffle(data[data['role_model'] == role_model], random_state=42)
         role_model_data['article_id'] = role_model_data.index
         if downsample and len(role_model_data) > n_target:
             role_model_data = role_model_data.iloc[0:n_target].reset_index(drop=True)
@@ -43,10 +43,10 @@ def balance_role_models(data, n_target = 50, downsample=True, upsample=True, max
     return new_data
 
 
-@pytask.mark.depends_on(BUILD_PATH / 'articles.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'articles/articles.pkl')
 @pytask.mark.parametrize(
     "produces, n",
-    [(BUILD_PATH / f'articles_balanced_{n}.pkl', n) for n in (50, 100, 200, 500)]
+    [(BUILD_PATH / f'articles/articles_balanced_{n}.pkl', n) for n in (50, 100, 200, 500)]
 )
 def task_balancing(n: int, produces: Path):
     """This task balances the number of article per role model and language by downsampling and upsampling.
@@ -56,7 +56,7 @@ def task_balancing(n: int, produces: Path):
         n (int): Number of articles per role model and language.
         produces (Path): Path to respective target file.
     """    
-    articles = pd.read_pickle(BUILD_PATH / 'articles.pkl')
+    articles = pd.read_pickle(BUILD_PATH / 'articles/articles.pkl')
     balanced_articles = None
     for language in articles['language_ml'].unique():
         language_articles = articles[articles['language_ml'] == language]

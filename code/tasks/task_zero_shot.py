@@ -37,9 +37,9 @@ TOPIC_CATEGORIES = {
 }
 
 
-ZERO_SHOT_BUILD_PATH  = BUILD_PATH / 'zero_shot_classification.pkl'
+ZERO_SHOT_BUILD_PATH  = BUILD_PATH / 'zero_shot_classification/zero_shot_classification.pkl'
 @pytask.mark.skip()  # Execute with CUDA on Colab
-@pytask.mark.depends_on(BUILD_PATH / 'articles_balanced_50.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 @pytask.mark.produces(ZERO_SHOT_BUILD_PATH)
 def task_zero_shot_classification(produces: Path, n_articles=10, incremental=True, device=None):
     """Perform zero-shot classification on the 50-articles-per-role-model data set.
@@ -53,7 +53,7 @@ def task_zero_shot_classification(produces: Path, n_articles=10, incremental=Tru
     incremental = incremental and produces.exists()
     existing_data = None if not incremental else pd.read_pickle(produces)
 
-    articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
+    articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
     articles_en = articles[articles['language_ml'] == 'en']
     zs_classifier = pipeline(
         'zero-shot-classification',

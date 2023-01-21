@@ -10,15 +10,15 @@ ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 @pytask.mark.skip()
-@pytask.mark.depends_on(BUILD_PATH / 'corpora.pkl')
-@pytask.mark.produces(BUILD_PATH / 'sentence_tokens.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'articles/corpora.pkl')
+@pytask.mark.produces(BUILD_PATH / 'articles/sentence_tokens.pkl')
 def task_sentence_tokenization(produces):
     """Collect all sentences in the corpus per language.
 
     Args:
         produces (Path): Path to destination file
     """    
-    with open(BUILD_PATH / 'corpora.pkl', 'rb') as file:
+    with open(BUILD_PATH / 'articles/corpora.pkl', 'rb') as file:
         corpora = pickle.load(file)
     
     sentences = {}
@@ -31,15 +31,15 @@ def task_sentence_tokenization(produces):
 
 
 @pytask.mark.skip()
-@pytask.mark.depends_on(BUILD_PATH / 'sentence_tokens.pkl')
-@pytask.mark.produces(BUILD_PATH / 'word_statistic.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'articles/sentence_tokens.pkl')
+@pytask.mark.produces(BUILD_PATH / 'articles/word_statistic.pkl')
 def task_word_statistic(produces):
     """Find the occurrence statistic of all words of the corpus per language
 
     Args:
         produces (Path): Path to destination file
     """    
-    with open(BUILD_PATH / 'sentence_tokens.pkl', 'rb') as file:
+    with open(BUILD_PATH / 'articles/sentence_tokens.pkl', 'rb') as file:
         sentence_tokens = pickle.load(file)
     
     frequencies = pd.DataFrame(columns=['language', 'frequency', 'stopword', 'punctuation'])

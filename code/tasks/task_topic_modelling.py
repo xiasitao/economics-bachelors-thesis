@@ -82,9 +82,9 @@ def find_topic_and_entropy(model: LdaModel, dictionary: Dictionary, doc: list) -
     entropy = -probabilities.dot(np.log(probabilities))
     return topic, entropy
 
-TOPIC_MODELLING_BUILD_PATH = BUILD_PATH / 'topic_modelling.pkl'
+TOPIC_MODELLING_BUILD_PATH = BUILD_PATH / 'topic_modelling/topic_modelling.pkl'
 @pytask.mark.skip()
-@pytask.mark.depends_on(BUILD_PATH / 'articles_balanced_50.pkl')
+@pytask.mark.depends_on(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 @pytask.mark.produces(TOPIC_MODELLING_BUILD_PATH)
 def task_topic_modelling(produces: Path, n_min=2, n_max=10):
     """Perform topic modelling on the 50-articles-per-role-model balanced article data set.
@@ -94,7 +94,7 @@ def task_topic_modelling(produces: Path, n_min=2, n_max=10):
         n_min (int, optional): Smalles number of topics to examine. Defaults to 2.
         n_max (int, optional): Largest number of topics to examine.. Defaults to 10.
     """    
-    articles = pd.read_pickle(BUILD_PATH / 'articles_balanced_50.pkl')
+    articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
     articles_en = articles[articles.language_ml == 'en']
     articles_en = articles_en[['article_id', 'content_slim']]
     articles_en['content_tokenized'] = articles_en['content_slim'].str.split(' ')
