@@ -12,9 +12,13 @@ ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 CLASSIFICATION_CATEGORIES = {
-    'topic': ['movie', 'music', 'sport', 'life'],
+    'article_type': ['news', 'report', 'opinion', 'entertainment'],  # https://www.studienkreis.de/deutsch/zeitung-merkmale-definition/
     'difficulty': ['easy', 'difficult'],
     'emotion': ['sadness', 'happiness', 'fear', 'anger', 'surprise', 'disgust'],  # https://online.uwa.edu/infographics/basic-emotions/
+    'sentiment': ['positive', 'negative'],
+    'sentiment_n': ['positive', 'neutral', 'negative'],
+    'topic': ['movie', 'music', 'sport', 'life'],
+    'writing_style': ['expository', 'persuasive', 'narrative', 'descriptive'],  # https://fosburit.com/education/4-types-of-article-writing/
 }
 
 
@@ -40,7 +44,7 @@ def zs_classify_articles(model: pipeline, articles: list, candidate_labels: list
 ZERO_SHOT_FILENAME_WILDCARD  = 'zero_shot_classification/zero_shot_classification_{}.pkl'
 @pytask.mark.skip()  # Execute with CUDA on Colab
 @pytask.mark.depends_on(BUILD_PATH / 'articles/articles_balanced_50.pkl')
-@pytask.mark.parameterize(
+@pytask.mark.parametrize(
     "category, candidate_labels, produces, n_articles, incremental",
     [(
         category,
@@ -76,7 +80,11 @@ def task_zero_shot_classification(category: str, candidate_labels: list, produce
     if n_articles is not None and n_articles > 0:
         article_data = article_data.sample(n=min(n_articles, len(article_data)), random_state=42)
 
-    print(f'Performing "{category}" ZSC on {len(article_data)} articles ({"incremental, excluding "+str(len(existing_data)) if incremental else "from start"}).')
+    if len(article_data) > 0:
+        print(f'Performing "{category}" ZSC on {len(article_data)} articles ({"incremental, excluding "+str(len(existing_data)) if incremental else "from start"}).')
+    else:
+        print(f'No articles to perform ZSC on, aborting.')
+        return
     
     classification_data = pd.DataFrame(
         data=None,
@@ -96,6 +104,7 @@ def task_zero_shot_classification(category: str, candidate_labels: list, produce
     if incremental:
         classification_data = pd.concat([existing_data, classification_data])
     classification_data.to_pickle(produces)
+
 
 if __name__ == '__main__':
     category = 'topic'
