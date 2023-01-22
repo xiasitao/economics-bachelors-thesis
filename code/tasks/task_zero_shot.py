@@ -18,7 +18,7 @@ CLASSIFICATION_CATEGORIES = {
     'sentiment': ['positive', 'negative'],
     'sentiment_n': ['positive', 'neutral', 'negative'],
     'topic': ['movie', 'music', 'sport', 'life'],
-    'writing_style': ['expository', 'persuasive', 'narrative', 'descriptive'],  # https://fosburit.com/education/4-types-of-article-writing/
+    'writing_style': ['expository', 'persuasive', 'narrative', 'embellished'],  # https://fosburit.com/education/4-types-of-article-writing/, https://www.grammarly.com/blog/types-of-writing/
 }
 
 

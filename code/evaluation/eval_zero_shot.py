@@ -119,7 +119,7 @@ def plot_category_distribution(category_distribution: pd.DataFrame, category_nam
 
 # %%
 category_distributions = find_category_distributions(articles, category_columns)
-plot_category_distribution(category_distributions['difficulty'], 'topic', relative=True)
+plot_category_distribution(category_distributions['topic'], 'topic', relative=True)
 
 
 # %%
@@ -131,11 +131,6 @@ chi2_per_label_test(category_distributions['difficulty'], articles_per_SES)
 
 
 # %%
-articles[
-    (articles.index.isin(find_low_entropy_articles(articles, 'topic', 50))) 
-    & (articles['topic'] == 'movie')
-].iloc[0].content
-# %%
 np.percentile(articles[articles['topic'] == 'movie'].topic_entropy, 75)
 # %%
 human_annotated_topic = human_annotated[~human_annotated['topic'].isna()]
@@ -144,5 +139,5 @@ topic_labels = np.unique(articles_with_annotation[['topic', 'topic_annotated']].
 topic_confusion_matrix = confusion_matrix(y_true=articles_with_annotation['topic_annotated'], y_pred=articles_with_annotation['topic'], labels=topic_labels)
 ConfusionMatrixDisplay(topic_confusion_matrix, display_labels=topic_labels).plot()
 # %%
-
+articles_with_annotation
 # %%
