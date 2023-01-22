@@ -20,6 +20,7 @@
     - filter out role models without SES majority
     - filter out role models only mentioned by a single SES group (problem: high SES role models might be very few then)
 - When filtering role models, check that enough articles are present
+- Compare professions of role models between SES groups
 
 # Topic model
 - fix hyperparameters
