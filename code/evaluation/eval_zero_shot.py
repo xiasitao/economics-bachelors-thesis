@@ -16,8 +16,20 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_filtered.pkl')
 articles = articles.join(ses, how='inner', on='role_model')
-zero_shot_data = pd.read_pickle(BUILD_PATH / 'zero_shot_classification/zero_shot_classification.pkl')
+
+
+# %%
+def collect_zero_shot_data():
+    zero_shot_data = None
+    for category in ['article_type', 'sentiment', 'sentiment_n', 'topic', 'writing_style']:
+        filename = BUILD_PATH / f'zero_shot_classification/zero_shot_classification_{category}.pkl'
+        if filename.exists:
+            category_data = pd.read_pickle(filename)
+            zero_shot_data = pd.concat([zero_shot_data, category_data], axis=1) if zero_shot_data is not None else category_data
+    return zero_shot_data
+zero_shot_data = collect_zero_shot_data()
 articles = articles.join(zero_shot_data, how='inner', on='article_id')
+
 articles_per_SES = articles[articles['average_ses']==-1.0].count()['content'], articles[articles['average_ses']==+1.0].count()['content']
 category_columns = [column for column in zero_shot_data.columns if not column.endswith('_entropy')]
 human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated.pkl')
@@ -123,21 +135,19 @@ plot_category_distribution(category_distributions['topic'], 'topic', relative=Tr
 
 
 # %%
-chi2_contingency_test(category_distributions['difficulty'])
+chi2_contingency_test(category_distributions['topic'])
 
 
 # %%
-chi2_per_label_test(category_distributions['difficulty'], articles_per_SES)
+chi2_per_label_test(category_distributions['topic'], articles_per_SES)
 
 
-# %%
-np.percentile(articles[articles['topic'] == 'movie'].topic_entropy, 75)
 # %%
 human_annotated_topic = human_annotated[~human_annotated['topic'].isna()]
 articles_with_annotation = articles.join(human_annotated_topic[['topic']], rsuffix='_annotated', how='inner')[['content', 'topic', 'topic_annotated']]
 topic_labels = np.unique(articles_with_annotation[['topic', 'topic_annotated']].values.ravel())
 topic_confusion_matrix = confusion_matrix(y_true=articles_with_annotation['topic_annotated'], y_pred=articles_with_annotation['topic'], labels=topic_labels)
 ConfusionMatrixDisplay(topic_confusion_matrix, display_labels=topic_labels).plot()
-# %%
-articles_with_annotation
+
+
 # %%
