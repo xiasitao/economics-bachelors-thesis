@@ -3,13 +3,15 @@
 TARGETPATH_xray="/home/maxi/Programmieren/vwl/econ_bachelors_thesis/"
 TARGETPATH_yankee="/home/maxi/Programming/econ_bachelors_thesis/"
 TARGETPATH="."
-if [ -f "$TARGETPATH_xray" ]
+if [ -d "$TARGETPATH_xray" ]
 then
-	TARGETPATH="$PATH_xray"
+	TARGETPATH="$TARGETPATH_xray"
+        echo "On xray" >&2
 fi
-if [ -f "$TARGETPATH_yankee" ]
+if [ -d "$TARGETPATH_yankee" ]
 then
-        TARGETPATH="$PATH_yankee"
+        TARGETPATH="$TARGETPATH_yankee"
+        echo "On yankee" >&2
 fi
 
 aws s3 sync "$TARGETPATH" "s3://econ-bachelors-thesis/" --exclude '*' \
