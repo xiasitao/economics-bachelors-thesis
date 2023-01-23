@@ -1,6 +1,5 @@
 # %%
 import pandas as pd
-import numpy as np
 
 from pathlib import Path
 SOURCE_PATH = Path(__file__).parent.resolve()
@@ -11,10 +10,7 @@ HUMAN_ANNOTATED_PATH = (BUILD_PATH / 'articles/articles_human_annotated.pkl')
 
 
 # %%
-def ask_for_annotations(sample_articles: pd.DataFrame, category: str, file_path: Path=HUMAN_ANNOTATED_PATH) -> pd.Series:
-    if category not in sample_articles.columns:
-        raise Exception(f'Invalid column: {category}')
-    
+def ask_for_annotations(sample_articles: pd.DataFrame, category: str, file_path: Path=HUMAN_ANNOTATED_PATH) -> pd.Series:    
     if category not in sample_articles.columns:
         sample_articles[category] = None
 
@@ -44,8 +40,6 @@ if HUMAN_ANNOTATED_PATH.exists():
 
 annotation_categories = {
     'topic': ['movie', 'music', 'sport', 'life'],
-    'difficulty': ['easy', 'difficult'],
-    'emotion': ['sadness', 'happiness', 'fear', 'anger', 'surprise', 'disgust'],
 }
 
 for category in annotation_categories:
