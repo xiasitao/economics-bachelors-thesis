@@ -20,21 +20,20 @@ from sklearn_extra.cluster import KMedoids
 articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 ses_scores = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
 articles_en = articles[articles.language_ml == 'en']
-articles_en = articles_en.join(ses_scores[['average_ses', 'rank_weighted_ses', 'significance_weighted_ses']], on='role_model')
-
+articles_en = articles_en.join(ses_scores[['average_ses', 'rank_weighted_ses', 'significance_weighted_ses']], on='role_model', how='inner')
 
 
 # %%
 sentence_bert_encoder = st.SentenceTransformer('all-MiniLM-L6-v2')
 embeddings_path = BUILD_PATH / 'semantic_similarity/sbert_embeddings_en.pkl'
-if embeddings_path.exists:
+if embeddings_path.exists():
     with open(embeddings_path, 'rb') as file:
         embeddings = pickle.load(file)
 else:
     embeddings = sentence_bert_encoder.encode(articles_en['content'].to_list())
     # embeddings = sentence_bert_encoder.encode(subset_en['content_slim'].to_list())
     with open(embeddings_path, 'wb') as file:
-        embeddings = pickle.dump(file)
+        pickle.dump(embeddings, file)
 
 
 # %%
