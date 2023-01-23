@@ -175,30 +175,30 @@ def plot_hypertopic_distribution_by_n(hypertopic_distributions: dict, hypertopic
 
 # %%
 topic_distributions = find_topic_distributions(articles, topic_columns)
-plot_topic_distribution(topic_distributions['topic_15'])
+plot_topic_distribution(topic_distributions['topic_2'])
 
 
 # %%
-chi2_contingency_test(topic_distributions['topic_15'])
+chi2_contingency_test(topic_distributions['topic_2'])
 # %%
 HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE = 'movie', 'sport', 'music', 'life'
 hypertopics = [HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE]
 print_topic_words(topic_words, 15)
 hypertopic_table = {
-    2: [HT_MOVIE, HT_SPORT],
-    3: [HT_MUSIC, HT_SPORT, HT_MOVIE],
-    4: [HT_MUSIC, HT_MOVIE, HT_SPORT, HT_LIFE],
-    5: [HT_MUSIC, HT_LIFE, HT_SPORT, HT_MOVIE, HT_LIFE],
-    6: [HT_MUSIC, HT_LIFE, HT_MOVIE, HT_SPORT, HT_LIFE, HT_LIFE],
-    7: [HT_MUSIC, HT_SPORT, HT_LIFE, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE],
-    8: [HT_MUSIC, HT_MOVIE, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
-    9: [HT_LIFE, HT_MUSIC, HT_MOVIE, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
-    10: [HT_LIFE, HT_MOVIE, HT_MUSIC, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
-    11: [HT_LIFE, HT_MOVIE, HT_MUSIC, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
-    12: [HT_LIFE, HT_MOVIE, HT_SPORT, HT_MUSIC, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
-    13: [HT_SPORT, HT_LIFE, HT_MOVIE, HT_MUSIC, HT_LIFE, HT_LIFE, HT_LIFE, HT_MOVIE, HT_LIFE, HT_MOVIE, HT_LIFE, HT_SPORT, HT_LIFE],
-    14: [HT_SPORT, HT_LIFE, HT_MOVIE, HT_MUSIC, HT_LIFE, HT_MOVIE, HT_MOVIE, HT_LIFE, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
-    15: [HT_SPORT, HT_MOVIE, HT_LIFE, HT_MUSIC, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE, HT_MOVIE, HT_SPORT, HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE, HT_LIFE],
+    2: [HT_LIFE, HT_MOVIE],
+    3: [HT_SPORT, HT_MUSIC, HT_MOVIE],
+    4: [HT_SPORT, HT_LIFE, HT_MOVIE, HT_LIFE],
+    5: [HT_LIFE, HT_SPORT, HT_MOVIE, HT_LIFE, HT_MUSIC],
+    6: [HT_MUSIC, HT_SPORT, HT_LIFE, HT_LIFE, HT_MOVIE, HT_LIFE],
+    7: [HT_MUSIC, HT_SPORT, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
+    8: [HT_SPORT, HT_LIFE, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_MUSIC],
+    9: [HT_SPORT, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_MUSIC, HT_LIFE],
+    10: [HT_SPORT, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_MUSIC, HT_LIFE],
+    11: [HT_SPORT, HT_MOVIE, HT_LIFE, HT_LIFE, HT_MUSIC, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
+    12: [HT_SPORT, HT_LIFE, HT_MOVIE, HT_LIFE, HT_MUSIC, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE],
+    13: [HT_SPORT, HT_LIFE, HT_MOVIE, HT_LIFE, HT_MUSIC, HT_LIFE, HT_LIFE, HT_SPORT, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
+    14: [HT_SPORT, HT_LIFE, HT_MOVIE, HT_LIFE, HT_MUSIC, HT_LIFE, HT_LIFE, HT_SPORT, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
+    15: [HT_LIFE, HT_SPORT, HT_MOVIE, HT_LIFE, HT_MUSIC, HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE],
 }
 assert(all([len(hypertopic_table[n]) == n for n in hypertopic_table]))
 """Observations:
@@ -211,4 +211,6 @@ assert(all([len(hypertopic_table[n]) == n for n in hypertopic_table]))
 article_hypertopics = find_hypertopics(articles, columns=topic_columns, hypertopic_table=hypertopic_table)
 hypertopics_distributions = find_topic_distributions(article_hypertopics, topic_columns)
 plot_hypertopic_distribution_by_n(hypertopics_distributions, hypertopics)
+
+
 # %%
