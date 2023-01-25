@@ -25,25 +25,6 @@ def filter_tokens(doc: list) -> list:
     ]
 
 
-def equilibrate_role_models(articles: pd.DataFrame, ses_data: pd.DataFrame) -> pd.DataFrame:
-    """Equilibrate role models such that for each prevalent_ses the same amount of role models are present
-
-    Args:
-        articles (pd.DataFrame): all articles relevant for these role models
-        ses_data (pd.DataFrame): substrate
-
-    Returns:
-        pd.DataFrame: substrate with equal amounts of role models for each prevalent ses
-    """    
-    ses_data = ses_data[ses_data.index.isin(articles['role_model'])]
-    minimum_count = ses_data.groupby('prevalent_ses').count()['count'].min()
-    ses_data = ses_data.sample(frac=1.0, random_state=42)
-    ses_data['_group_index'] = ses_data.groupby('prevalent_ses').cumcount()
-    ses_data = ses_data[ses_data['_group_index'] < minimum_count]
-    ses_data = ses_data.drop('_group_index', axis=1)
-    return ses_data
-
-
 def train_lda_model(n_topics: int, dictionary: Dictionary, corpus: list) -> tuple:
     """Train an LDA model on the corpus with a predefined number of topics.
 
@@ -64,23 +45,24 @@ def train_lda_model(n_topics: int, dictionary: Dictionary, corpus: list) -> tupl
     return model, topics
 
 
-def find_topic_and_entropy(model: LdaModel, dictionary: Dictionary, doc: list) -> tuple:
-    """Find the most probable topic and the topic distribution
-    entropt for a document.
+def find_topic_entropy_and_probability(model: LdaModel, dictionary: Dictionary, doc: list) -> tuple:
+    """Find the most probable topic, the topic distribution entropy, and the topic's probability for a document.
 
     Args:
         model (LdaModel): Topic model
         doc (list): Document as list of tokens
 
     Returns:
-        tuple: topic, entropy
+        tuple: topic, entropy, probability
     """    
     topic_probabilities = np.array(model[dictionary.doc2bow(filter_tokens(doc))])
     topics = topic_probabilities[:, 0]
     probabilities = topic_probabilities[:, 1]
     topic = topics[probabilities.argmax()]
     entropy = -probabilities.dot(np.log(probabilities))
-    return topic, entropy
+    probability = probabilities.max()
+    return topic, entropy, probability
+
 
 TOPIC_MODELLING_BUILD_PATH = BUILD_PATH / 'topic_modelling/topic_modelling.pkl'
 @pytask.mark.skip()
@@ -109,12 +91,12 @@ def task_topic_modelling(produces: Path, n_min=2, n_max=10):
     unique_articles = articles_en[['article_id', 'content_slim']].drop_duplicates().set_index('article_id', drop=True)
     unique_articles['content_tokenized'] = unique_articles['content_slim'].str.split(' ')
     all_n_topics = [i for i in range(n_min, n_max+1)]
-    article_topics = pd.DataFrame(data=None, columns=[wildcard.format(n) for n in all_n_topics for wildcard in ('topic_{}', 'topic_{}_entropy')], index=unique_articles.index)
+    article_topics = pd.DataFrame(data=None, columns=[wildcard.format(n) for n in all_n_topics for wildcard in ('topic_{}', 'topic_{}_entropy', 'topic_{}_p')], index=unique_articles.index)
     topic_words = {}
     for n_topics in all_n_topics:
         model, these_topic_words = train_lda_model(n_topics, corpus=corpus, dictionary=dictionary)
         topic_words[n_topics] = these_topic_words
-        article_topics[[f'topic_{n_topics}', f'topic_{n_topics}_entropy']] = unique_articles['content_tokenized'].parallel_apply(lambda doc: pd.Series(find_topic_and_entropy(model, dictionary, doc)))
+        article_topics[[f'topic_{n_topics}', f'topic_{n_topics}_entropy', f'topic_{n_topics}_p']] = unique_articles['content_tokenized'].parallel_apply(lambda doc: pd.Series(find_topic_entropy_and_probability(model, dictionary, doc)))
     
     # Save topic-classified articles
     with open(produces, 'wb') as file:
