@@ -12,13 +12,17 @@ ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 CLASSIFICATION_CATEGORIES = {
-    'article_type': ['news', 'report', 'opinion', 'entertainment'],  # https://www.studienkreis.de/deutsch/zeitung-merkmale-definition/
+    'article_type': ['news', 'report', 'opinion', 'entertainment'],
     'difficulty': ['easy', 'difficult'],
-    'emotion': ['sadness', 'happiness', 'fear', 'anger', 'surprise', 'disgust'],  # https://online.uwa.edu/infographics/basic-emotions/
+    'crime': ['innocent', 'criminal'],  # NEW
+    'crime_type': ['innocent', 'drugs', 'violence', 'sexual assault'],  # NEW
+    'emotion': ['sadness', 'happiness', 'fear', 'anger', 'surprise', 'disgust'],
+    'prosociality': ['prosocial', 'antisocial'],  # NEW
+    'relatability': ['relatable', 'distant'],  # NEW 
     'sentiment': ['positive', 'negative'],
     'sentiment_n': ['positive', 'neutral', 'negative'],
     'topic': ['movie', 'music', 'sport', 'life'],
-    'writing_style': ['expository', 'persuasive', 'narrative', 'embellished'],  # https://fosburit.com/education/4-types-of-article-writing/, https://www.grammarly.com/blog/types-of-writing/
+    'writing_style': ['expository', 'persuasive', 'narrative', 'embellished'],
 }
 
 
