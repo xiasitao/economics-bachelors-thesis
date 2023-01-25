@@ -30,6 +30,7 @@
 # Zero Shot
 - chi2 contingency test
 - sentiment
+- add prosocial and antisocial
 
 # Semantic clustering
 - combine with topic model
