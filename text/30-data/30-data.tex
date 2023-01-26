@@ -1,0 +1,24 @@
+% !TeX root = scaffold-30.tex
+\renewcommand{\imagepath}{../30-mot/img}
+
+\chapter{Data Overview and Preprocessing}
+For the analyses in this work, survey data of adolescents' celebrity role models and their socioeconomic status (SES) was used alongside online newspaper articles about these role models. In this chapter, each data set and its fundamental descriptive statistics are presented in details along with the respective preprocessing steps applied before the analyses.
+
+\section{Adolescents' Socioeconomic Status and their Role Models}
+The SES dimension of the data used in this work stems from a long-term study of the link between prosociality and SES started in 2011 \autocite{kosse_formation_2020}. This study had originally researched the influence of a year of student mentoring on the prosociality of second-graders from low-SES backgrounds. At the end of the original interview period, the cohort consisted of \SI{412}{children} from low- and \SI{97}{children} from high-SES backgrounds.
+
+\paragraph{Role Models }
+In a follow-up round of interviews in 2018, the now 13- and 14-year-old adolescents were interviewed about their role models. At this stage, \SI{245}{children} of low- and \SI{96}{children} of high SES participated in the interview.
+
+Every participant could name up to five role models, most of them, however, indicated just one. Not all answers were valid, only celebrities and groups of celebrities (e.g. bands) were counted, entire professions (``sportsmen/women'', ``YouTuber'') were excluded. In total, \SI{236}{} participants gave \SI{332}{} valid answers, resulting in a set of \SI{291}{} distinct role models (\SI{79}{} female, \SI{212}{} male). This means that, on average, each role model was mentioned much less than two times.\todo{Stress that this has severe implications (jitter, inaccuracy)}
+
+\paragraph{Role Models and SES}
+The role models were associated with SES status in two different ways:
+\begin{itemize}
+    \item In the \textit{distinct-SES} approach, only role models were considered who were mentioned only by either low- or high-SES survey participants exclusively. Role models who were mentioned by both low- and high-SES participants are excluded from this set. This set contains \SI{144}{} role models associated with low SES and \SI{44}{} role models associated with high SES. Formally, this set $\mathcal{R}_\text{distinct}$ of distinct-SES role models splits into $\mathcal{R}_\text{distinct, low}$ and $\mathcal{R}_\text{distinct, high}$ with $\left|\mathcal{R}_\text{distinct, low}\right| = \SI{144}{}, \left|\mathcal{R}_\text{distinct, low}\right| = \SI{44}{}, \left|\mathcal{R}_\text{distinct, low} \cap \mathcal{R}_\text{distinct, high}\right| = \SI{0}{}$.
+    
+    \item In the general approach, each role model is associated with low SES and high-SES if it was mentioned at least once by a participant in the respective SES group, resulting in \SI{}{} low- and \SI{}{} high-SES role models. Formally, this set $\mathcal{R}_\text{general}$ splits into $\mathcal{R}_\text{distinct, low}$ and $\mathcal{R}_\text{distinct, high}$ with $\left|\mathcal{R}_\text{distinct, low}\right| = \SI{}{}, \left|\mathcal{R}_\text{distinct, low}\right| = \SI{}{}, \left|\mathcal{R}_\text{distinct, low} \cap \mathcal{R}_\text{distinct, high}\right| = \SI{}{}$.
+\end{itemize}
+
+
+\section{Newspaper Articles}
