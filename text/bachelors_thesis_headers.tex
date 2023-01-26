@@ -1,0 +1,178 @@
+\documentclass[
+	twoside=false,
+	paper=a4,
+	fontsize=11pt,
+	parskip=half,
+	ngerman
+]{scrbook}
+
+\newif\ifprintversion
+\printversionfalse
+
+\newif\ifdraft
+\draftfalse
+
+% === Page  ===
+\ifprintversion
+  \usepackage[
+    paper=a4paper,
+    % bindingoffset=10mm,
+    twoside]
+  {geometry}
+\else 
+  \usepackage[paper=a4paper]{geometry}
+\fi
+
+\ifdraft
+  \usepackage{draftwatermark}
+  \SetWatermarkLightness{0.8}
+  \SetWatermarkText{preliminary (\today)}
+  \SetWatermarkAngle{0}
+  \SetWatermarkVerCenter{0.93\pdfpageheight}
+  \SetWatermarkScale{0.17}
+\fi
+
+% === Fonts  ===
+\DeclareUnicodeCharacter{2009}{\,} 
+\usepackage{noto}
+\usepackage{ebgaramond}
+\usepackage[scale=0.75]{sourcecodepro}
+\usepackage[cmintegrals,cmbraces]{newtxmath}
+\usepackage{ebgaramond-maths}
+% Redefining missing symbols
+% https://tex.stackexchange.com/questions/215270/can-someone-explain-this-weird-font-behavior-ebgaramond-maths
+\makeatletter
+  \DeclareSymbolFont{ntxletters}{OML}{ntxmi}{m}{it}
+  \SetSymbolFont{ntxletters}{bold}{OML}{ntxmi}{b}{it}
+  \re@DeclareMathSymbol{\leftharpoonup}{\mathrel}{ntxletters}{"28}
+  \re@DeclareMathSymbol{\leftharpoondown}{\mathrel}{ntxletters}{"29}
+  \re@DeclareMathSymbol{\rightharpoonup}{\mathrel}{ntxletters}{"2A}
+  \re@DeclareMathSymbol{\rightharpoondown}{\mathrel}{ntxletters}{"2B}
+  \re@DeclareMathSymbol{\triangleleft}{\mathbin}{ntxletters}{"2F}
+  \re@DeclareMathSymbol{\triangleright}{\mathbin}{ntxletters}{"2E}
+  \re@DeclareMathSymbol{\partial}{\mathord}{ntxletters}{"40}
+  \re@DeclareMathSymbol{\flat}{\mathord}{ntxletters}{"5B}
+  \re@DeclareMathSymbol{\natural}{\mathord}{ntxletters}{"5C}
+  \re@DeclareMathSymbol{\star}{\mathbin}{ntxletters}{"3F}
+  \re@DeclareMathSymbol{\smile}{\mathrel}{ntxletters}{"5E}
+  \re@DeclareMathSymbol{\frown}{\mathrel}{ntxletters}{"5F}
+  \re@DeclareMathSymbol{\sharp}{\mathord}{ntxletters}{"5D}
+  \re@DeclareMathAccent{\vec}{\mathord}{ntxletters}{"7E}
+\makeatother
+\renewcommand{\epsilon}{\varepsilon}
+\usepackage[]{todonotes}
+
+
+%\usepackage[osf, sc]{mathpazo}
+%\linespread{1.03}
+\usepackage{setspace}
+
+\usepackage[T1]{fontenc}
+\usepackage{eurosym}
+\newcommand{\red}[1]{\colorbox{red}{\textcolor{white}{\textbf{#1}}}}
+
+\addtokomafont{paragraph}{\small}
+\addtokomafont{subparagraph}{\tiny}
+
+\makeatletter
+\DeclareRobustCommand{\GaUsS}{%
+  G\kern-.35em
+  {
+    \sbox\z@ U\vbox to\ht\z@{
+      \hbox{\check@mathfonts\fontsize\sf@size\z@\math@fontsfalse\selectfont A}
+      \vss
+    }}\kern-.15emU\kern-.1667em\lower.5ex\hbox{S}\kern-.125emS
+}
+\makeatother
+
+
+% === Math stuff ===
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{braket}
+\usepackage[retain-explicit-plus, separate-uncertainty=true]{siunitx}
+\DeclareSIUnit\gauss{G}
+\sisetup{per-mode=fraction,fraction-function=\tfrac}
+\usepackage{physics}
+% Preventing italic variables in ket to interfere with the Ket
+\newcommand{\KetSpaced}[1]{\Ket{~#1}}
+\newcommand{\KetText}[1]{\Ket{\text{#1}}}
+
+% === Tables ===
+\usepackage{booktabs}
+\usepackage{tabu}
+\usepackage{tabularx}
+\usepackage{ltablex}
+\usepackage{multirow}
+\usepackage{longtable}
+
+% === Quotes  ===
+\usepackage{csquotes}
+\usepackage{epigraph}
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{stringcolor}{RGB}{154,91,145}  % rebecca
+\definecolor{keywordcolor}{RGB}{80,189,233} % blue
+\definecolor{commentcolor}{RGB}{255,0,0}  % red
+\lstset{
+  basicstyle=\ttfamily,
+  numbers=left,
+  breaklines=true,
+  language=Python,
+  otherkeywords={True,False},
+  commentstyle=\color{commentcolor},
+  keywordstyle=\color{keywordcolor}\bfseries,
+  stringstyle=\color{stringcolor},
+  emph={},
+  emphstyle={\color{keywordcolor}},
+}
+
+% === Graphics ===
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage{pgf}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.11}
+% \usepackage{float}
+\newcommand{\imagepath}{}
+\usepackage{rotating}
+
+\definecolor{thesisred}{RGB}{255,0,0}
+\definecolor{thesisgray}{RGB}{71,72,71}
+\definecolor{thesisrebecca}{RGB}{105,62,163}
+\definecolor{thesisfuchsia}{RGB}{154,91,145}
+\definecolor{thesisblue}{RGB}{80,189,233}
+
+% === Citations ===
+\usepackage[
+  %style=authoryear,
+  style=apa,
+  backend=biber,
+  sorting=nty,
+]{biblatex}
+\addbibresource{../EconBA.bib}
+\PassOptionsToPackage{hyphens}{url}
+\AtEveryBibitem{
+  \clearfield{urlyear}
+  \clearfield{note}
+  \clearfield{extra}
+  \clearfield{annotation}
+}{}
+
+% === Title ===
+\title{Idols and Socioeconomic Status}
+\subtitle{Exploring Role Models using Natural Language Processing}
+\newcommand{\titleDE}{Idole und sozioökonomischer Status}
+\newcommand{\subtitleDE}{Eine Untersuchung von 
+Vorbildern mittels Computerlinguistik}
+\author{Tobias Maximilian Philipp Schattauer}
+\date{February 2023}
+
+\makeatletter
+\usepackage[
+	pdftitle={\@title},
+	pdfauthor={Tobias Maximilian Philipp Schattauer},
+	pdfkeywords={}
+	]{hyperref}
+\makeatother
