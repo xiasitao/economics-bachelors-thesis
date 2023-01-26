@@ -20,7 +20,7 @@ human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated
 
 def collect_zero_shot_data():
     zero_shot_data = None
-    for category in ['article_type', 'emotion', 'sentiment', 'sentiment_n', 'topic', 'writing_style']:
+    for category in ['article_type', 'crime', 'crime_type', 'emotion', 'prosociality', 'relatability', 'sentiment', 'sentiment_n', 'topic', 'writing_style']:
         filename = BUILD_PATH / f'zero_shot_classification/zero_shot_classification_{category}.pkl'
         if filename.exists:
             category_data = pd.read_pickle(filename)
@@ -142,8 +142,8 @@ def plot_human_annotation_confusion_matrix(articles: pd.DataFrame, human_annotat
     ConfusionMatrixDisplay(category_confusion_matrix, display_labels=category_labels).plot()
 
 
-def evaluate_category(category_distributions: dict, category, articles_per_SES: tuple):
-    plot_category_distribution(category_distributions, category, relative=True)
+def evaluate_category(category_distributions: dict, category, articles_per_SES: tuple, relative_dist_plot: bool=True):
+    plot_category_distribution(category_distributions, category, relative=relative_dist_plot)
 
     contingency_chi2, contingency_p = chi2_contingency_test(category_distributions[category])
     print(f'Distribution chi2 test:\nchi2={contingency_chi2:.1f}, p={contingency_p:.3e}\n')
@@ -156,7 +156,9 @@ def evaluate_category(category_distributions: dict, category, articles_per_SES: 
 
 # %%
 category_distributions = find_category_distributions(articles, category_columns)
-evaluate_category(category_distributions, 'topic', articles_per_SES=articles_per_SES)
+evaluate_category(category_distributions, 'prosociality', articles_per_SES=articles_per_SES)
 
 
+# %%
+articles_per_SES
 # %%
