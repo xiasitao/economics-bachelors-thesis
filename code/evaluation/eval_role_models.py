@@ -35,7 +35,7 @@ scores_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.p
 print(f'Distinct set: #={len(scores_distinct)}, #low={len(scores_distinct[scores_distinct["low_ses"]==True])}, #high={len(scores_distinct[scores_distinct["high_ses"]==True])}')
 
 
-# %%
+
 # %%
 pd.read_pickle(ASSET_PATH / 'role_model_data.pkl')
 # %%

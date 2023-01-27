@@ -95,8 +95,10 @@ def produce_role_model_scores(mention_data: pd.DataFrame, rank_weights = [1, 1/2
     score_data['rank_weighted_ses'] = mention_data.groupby('role_model')['rank_weighted_ses'].mean()
     score_data['significance_weighted_ses'] = mention_data.groupby('role_model')['significance_weighted_ses'].mean()
 
-    score_data['low_ses'] = score_data['average_ses'] < 1.0
-    score_data['high_ses'] = score_data['average_ses'] > -1.0
+    score_data['low_ses_count'] = mention_data.groupby('role_model')['ses'].apply(lambda role_model_sess: role_model_sess.apply(lambda ses: 0 if ses==1.0 else 1).sum())
+    score_data['low_ses'] = score_data['low_ses_count'] > 0
+    score_data['high_ses_count'] = mention_data.groupby('role_model')['ses'].apply(lambda role_model_sess: role_model_sess.apply(lambda ses: 0 if ses==0.0 else 1).sum())
+    score_data['high_ses'] = score_data['high_ses_count'] > 0
 
     return score_data
 
