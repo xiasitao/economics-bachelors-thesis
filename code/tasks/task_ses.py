@@ -148,7 +148,8 @@ def task_role_model_data(produces: Path):
     Args:
         produces (Path): Output path
     """    
-    role_model_data = pd.read_excel(ASSET_PATH / 'role_model_data.xlsx')[['Star', 'Sex', 'Birth_year', 'Nationality', 'Profession_1']]
+    role_model_data = pd.read_excel(ASSET_PATH / 'role_model_data.xlsx')
+    role_model_data = role_model_data[['Star', 'Sex', 'Birth_year', 'Nationality', 'Profession_1']]
     role_model_data = role_model_data.rename({
         'Star': 'role_model',
         'Sex': 'sex',
@@ -158,15 +159,17 @@ def task_role_model_data(produces: Path):
     }, axis=1)
 
     role_model_data = role_model_data[~(role_model_data['role_model'].isna())]
-    role_model_data = role_model_data.drop_duplicates()
 
     role_model_data['role_model'] = role_model_data['role_model'].astype(str).str.strip()
     role_model_data['sex'] = role_model_data['sex'].astype(pd.Int64Dtype())
     role_model_data['birth_year'] = role_model_data['birth_year'].astype(pd.Int64Dtype())
     role_model_data['nationality'] = role_model_data['nationality'].astype(str)
     role_model_data['profession'] = role_model_data['profession'].astype(str)
-    
+
+    role_model_data = role_model_data.sort_values(by=['role_model', 'sex', 'birth_year', 'nationality', 'profession'])
+    role_model_data = role_model_data.drop_duplicates()
     role_model_data = role_model_data.set_index('role_model')
+    role_model_data = role_model_data[~role_model_data.index.duplicated(keep='first')]
     role_model_data.to_pickle(produces)
 
 

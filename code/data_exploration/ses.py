@@ -17,7 +17,6 @@ role_model_data = pd.read_pickle(BUILD_PATH / 'role_models/role_model_data.pkl')
 # invalid_role_models = invalid_role_models[(invalid_role_models['profession'].isna()) & ~(invalid_role_models['Role_model_1'].isna())]
 # invalid_role_models
 
-
 # %%
 def clean_ses_data(data: pd.DataFrame, role_model_data: pd.DataFrame) -> pd.DataFrame:
     """Clean up the SES data table.
