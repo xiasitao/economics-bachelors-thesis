@@ -109,6 +109,9 @@ def produce_role_model_scores(mention_data: pd.DataFrame, rank_weights = [1, 1/2
     score_data['rank_weighted_ses'] = mention_data.groupby('role_model')['rank_weighted_ses'].mean()
     score_data['significance_weighted_ses'] = mention_data.groupby('role_model')['significance_weighted_ses'].mean()
 
+    score_data['low_ses'] = score_data['average_ses'] < 1.0
+    score_data['high_ses'] = score_data['average_ses'] > -1.0
+
     return score_data
 role_model_scores = produce_role_model_scores(role_model_mentions)
 role_model_scores
@@ -187,4 +190,6 @@ all_unique = filter_role_models(role_model_scores, 1, True)
 equilibrate_role_models(all_unique).groupby('prevalent_ses').count()
 
 
+# %%
+role_model_scores[~role_model_scores['average_ses'].isin([-1.0, 1.0])]
 # %%

@@ -23,3 +23,14 @@ print('Role models by gender:', [f'{gender}: {number}' for (gender, number) in z
 
 
 # %%
+scores = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
+scores
+
+
+# %%
+scores_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
+scores_distinct
+
+
+# %%
+# %%

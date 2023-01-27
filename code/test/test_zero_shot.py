@@ -11,7 +11,7 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 # %%
 articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
-# ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_filtered.pkl')
+# ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
 # articles = articles.join(ses, how='inner', on='role_model')
 
 topic_data = pd.read_pickle(BUILD_PATH / 'zero_shot_classification/zero_shot_classification_topic.pkl')

@@ -20,7 +20,7 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 # %%
 articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 articles = articles[articles['language_ml'] == 'en']
-ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_filtered.pkl')
+ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
 articles = articles.join(ses, how='inner', on='role_model')
 with open(BUILD_PATH / 'topic_modelling/topic_modelling.pkl', 'rb') as file:
     topic_words, article_topics = pickle.load(file)
