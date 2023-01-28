@@ -14,13 +14,14 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 CLASSIFICATION_CATEGORIES = {
     'article_type': ['news', 'report', 'opinion', 'entertainment'],
     'difficulty': ['easy', 'difficult'],
-    'crime': ['innocent', 'criminal'],  # NEW
-    'crime_type': ['innocent', 'drugs', 'violence', 'sexual assault'],  # NEW
+    'crime': ['innocent', 'criminal'],
+    'crime_type': ['innocent', 'drugs', 'violence', 'sexual assault'],
     'emotion': ['sadness', 'happiness', 'fear', 'anger', 'surprise', 'disgust'],
-    'prosociality': ['prosocial', 'antisocial'],  # NEW
-    'relatability': ['relatable', 'distant'],  # NEW 
+    'prosociality': ['prosocial', 'antisocial'], 
+    'relatability': ['relatable', 'distant'], 
     'sentiment': ['positive', 'negative'],
     'sentiment_n': ['positive', 'neutral', 'negative'],
+    'success': ['success', 'failure'],  # NEW
     'topic': ['movie', 'music', 'sport', 'life'],
     'writing_style': ['expository', 'persuasive', 'narrative', 'embellished'],
 }
