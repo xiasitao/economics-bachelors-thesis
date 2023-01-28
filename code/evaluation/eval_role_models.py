@@ -14,9 +14,10 @@ mentions = pd.read_pickle(BUILD_PATH / 'role_models/ses_mentions.pkl')
 scores = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
 scores_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
 role_model_data = pd.read_pickle(BUILD_PATH / 'role_models/role_model_data.pkl')
-mentioned_role_model_data = role_model_data[role_model_data.index.isin(scores.index)]
-
 articles_balanced_50 = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
+articles_balanced_50 = articles_balanced_50[articles_balanced_50['language_ml']=='en']
+
+mentioned_role_model_data = role_model_data[role_model_data.index.isin(scores.index)]
 scores_after_balancing = scores[scores.index.isin(articles_balanced_50['role_model'])]
 scores_distinct_after_balancing = scores_distinct[scores_distinct.index.isin(articles_balanced_50['role_model'])]
 
@@ -42,7 +43,4 @@ print(f'Distinct set: #={len(scores_distinct)}, #low={len(scores_distinct[scores
 print(f'Distinct set after balancing: #={len(scores_distinct_after_balancing)}, #low={len(scores_distinct_after_balancing[scores_distinct_after_balancing["low_ses"]==True])}, #high={len(scores_distinct_after_balancing[scores_distinct_after_balancing["high_ses"]==True])}')
 
 
-
-# %%
-pd.read_pickle(ASSET_PATH / 'role_model_data.pkl')
 # %%

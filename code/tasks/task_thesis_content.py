@@ -35,6 +35,9 @@ def task_role_model_list(produces: Path):
     """    
     role_model_data = pd.read_pickle(BUILD_PATH / 'role_models/role_model_data.pkl')
     scores = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
+    articles_balanced_50 = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
+    articles_balanced_50 = articles_balanced_50[articles_balanced_50['language_ml']=='en']
+    scores = scores[scores.index.isin(articles_balanced_50['role_model'])]
     role_model_data = role_model_data.join(scores, how='inner')
     role_model_data = role_model_data.sort_index(key=lambda name: name.str.lower())
 

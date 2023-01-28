@@ -4,7 +4,7 @@
 \chapter{Data Overview and Preprocessing}
 For the analyses in this work, survey data of adolescents' celebrity role models and their \gls{ses} was used alongside online newspaper articles about these role models. In this chapter, each data set and its fundamental descriptive statistics are presented in details along with the respective preprocessing steps applied before the analyses.
 
-\section{Adolescents' Socioeconomic Status and their Role Models}
+\section{Adolescents' Socioeconomic Status and Role Models}
 The \gls{ses} dimension of the data used in this work stems from a long-term study on the link between prosociality and \gls{ses} started in 2011~\autocite{kosse_formation_2020}. This study had originally researched the influence of a year of student mentoring on the prosociality of second-graders from low-\gls{ses} backgrounds living in German Northrhine-Westphalia. At the end of the original interview period, the cohort consisted of \SI{412}{children} from low- and \SI{97}{children} from high-\gls{ses} backgrounds. A participant was labeled low-\gls{ses} if their household's income was below Germany's \SI{30}{\percent} income quantile at the time, or none of their parents had a degree permitting university studies, or they were raised by a single parent~\autocite{kosse_formation_2020}.
 
 \paragraph{Role Models}
@@ -23,8 +23,6 @@ The role models were associated with \gls{ses} status in two different ways:
 \end{itemize}
 
 Note that, on average, each role model was mentioned only \SI{1.54}{times}. \SI{158}{} of them were mentioned only once, only four of them were mentioned four times or more often which means that most role models' \gls{ses} association is hence not based on a lot of statistical variation. This association is hence not so well-grounded and must be dealt with carefully. The idea of filtering out role models who were just mentioned once, however, was decided against because then the number of high-\gls{ses} role models would have become too small to say anything meaningful about this group.
-
-All role models used for the following analyses along with their basic information are listed in table~\ref{tab:role_model_overview} in the appendix chapter~\ref{ch:data_appendix}.
 
 
 \section{Newspaper Articles}
@@ -66,15 +64,15 @@ This is a potential threat to the \gls{nlp} analyses to be conducted in this wor
 
 To combat this, the number of articles per role model was balanced by downsampling and upsampling \autocite{kumar_5_2021} with a target of \SI{50}{} articles per role model. If a role model was reported about in more then \SI{50}{} articles, a random subset of articles was selected (downsampling). If a role model had $n < \SI{50}{}$ articles, the articles were repeated $\lceil \frac{50}{n} \rceil$ times and then cut off at the 50th article. Role models that would require more than \SI{10}{} repetitions were excluded in order not to give a few articles too much weight.
 
-After balancing, \SI{9200}{} newspaper articles about \SI{184}{} role models remained in the data set. Table~\ref{tab:role_models_after_balancing} lists the number of role models remaining after balancing for the \textit{general} and \textit{distinct-\gls{ses}} analysis approaches. These were used for analyzing the output of the \gls{nlp} algorithms per \gls{ses}-group.
+After balancing, \SI{9200}{} newspaper articles about \SI{184}{} role models remained in the data set. Table~\ref{tab:role_models_after_balancing} lists the number of role models remaining after balancing for the \textit{general} and \textit{distinct-\gls{ses}} analysis approaches. They are listed along with their basic information in table~\ref{tab:role_model_overview} in the appendix chapter~\ref{ch:data_appendix}. These were used for analyzing the output of the \gls{nlp} algorithms per \gls{ses}-group.
 
 \begin{table}
     \centering
     \begin{tabular}{lcccc}
         \toprule 
         set & role models & low-\gls{ses} & high-\gls{ses} & low- \& high-\gls{ses} \\ \toprule 
-        $\mathcal{R}_\text{general}$ & \SI{208}{} & \SI{167}{} & \SI{68}{} & \SI{27}{} \\
-        $\mathcal{R}_\text{distinct}$ & \SI{181}{} & \SI{140}{} & \SI{41}{} & \SI{0}{} \\
+        $\mathcal{R}_\text{general}$ & \SI{184}{} & \SI{151}{} & \SI{57}{} & \SI{24}{} \\
+        $\mathcal{R}_\text{distinct}$ & \SI{160}{} & \SI{127}{} & \SI{33}{} & \SI{0}{} \\
         \bottomrule
     \end{tabular}
     \caption{Number of valid role models after balancing the number of articles per role model for the \textit{general} and the \textit{distinct-\gls{ses}} approach}
