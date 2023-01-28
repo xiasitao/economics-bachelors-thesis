@@ -12,8 +12,13 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 ses = pd.read_pickle(BUILD_PATH / 'role_models/ses.pkl')
 mentions = pd.read_pickle(BUILD_PATH / 'role_models/ses_mentions.pkl')
 scores = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
+scores_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
 role_model_data = pd.read_pickle(BUILD_PATH / 'role_models/role_model_data.pkl')
 mentioned_role_model_data = role_model_data[role_model_data.index.isin(scores.index)]
+
+articles_balanced_50 = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
+scores_after_balancing = scores[scores.index.isin(articles_balanced_50['role_model'])]
+scores_distinct_after_balancing = scores_distinct[scores_distinct.index.isin(articles_balanced_50['role_model'])]
 
 # %%
 print('Number of children with sensible role models:', len(ses))
@@ -27,12 +32,14 @@ print('Role models by gender:', [f'{gender}: {number}' for (gender, number) in z
 print('Role models by count:', [f'{gender}: {number}' for (gender, number) in zip(*np.unique(scores['count'], return_counts=True))])
 
 # %%
-print(f'Role model set: #={len(scores)}, #low={len(scores[scores["low_ses"]==True])}, #high={len(scores[scores["high_ses"]==True])} #high&low={len(scores[(scores["low_ses"]==True) & (scores["high_ses"]==True)])}')
+print(f'General set: #={len(scores)}, #low={len(scores[scores["low_ses"]==True])}, #high={len(scores[scores["high_ses"]==True])} #high&low={len(scores[(scores["low_ses"]==True) & (scores["high_ses"]==True)])}')
+print(f'General set after balancing: #={len(scores_after_balancing)}, #low={len(scores_after_balancing[scores_after_balancing["low_ses"]==True])}, #high={len(scores_after_balancing[scores_after_balancing["high_ses"]==True])} #high&low={len(scores_after_balancing[(scores_after_balancing["low_ses"]==True) & (scores_after_balancing["high_ses"]==True)])}')
 
 
 # %%
-scores_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
+
 print(f'Distinct set: #={len(scores_distinct)}, #low={len(scores_distinct[scores_distinct["low_ses"]==True])}, #high={len(scores_distinct[scores_distinct["high_ses"]==True])}')
+print(f'Distinct set after balancing: #={len(scores_distinct_after_balancing)}, #low={len(scores_distinct_after_balancing[scores_distinct_after_balancing["low_ses"]==True])}, #high={len(scores_distinct_after_balancing[scores_distinct_after_balancing["high_ses"]==True])}')
 
 
 

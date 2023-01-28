@@ -154,11 +154,19 @@
 \addbibresource{../EconBA.bib}
 \PassOptionsToPackage{hyphens}{url}
 \AtEveryBibitem{
-  \clearfield{urlyear}
+  %\clearfield{urlyear}
   \clearfield{note}
   \clearfield{extra}
   \clearfield{annotation}
 }{}
+
+
+% === Glossary ===
+\usepackage[acronym]{glossaries}
+\makeglossaries
+\newacronym{nlp}{NLP}{natural language processing}
+\newacronym{ses}{SES}{socioeconomic status}
+
 
 % === Title ===
 \title{Idols and Socioeconomic Status}

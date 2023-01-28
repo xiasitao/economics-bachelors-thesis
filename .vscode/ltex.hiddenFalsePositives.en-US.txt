@@ -1,0 +1,2 @@
+{"rule":"EN_WORD_COHERENCY","sentence":"^\\QIn this thesis, only English newspaper articles were used for the \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q analyses as the programming libraries and natural language models are best suited for English texts.\\E$"}
+{"rule":"EN_WORD_COHERENCY","sentence":"^\\QThe newspaper articles published before the interviews and the ones published afterwards were not analyzed separately, hence ignoring any potential changes in the role models' newspaper coverage after the interviews.\\E$"}
