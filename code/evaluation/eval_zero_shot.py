@@ -17,6 +17,7 @@ articles_raw = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
 ses_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
 human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated.pkl')
+human_annotated = pd.concat([human_annotated, pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')])
 
 def collect_zero_shot_data():
     zero_shot_data = None

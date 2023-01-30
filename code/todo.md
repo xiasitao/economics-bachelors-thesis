@@ -5,7 +5,7 @@
 - Compare professions of role models between SES groups
 
 # Topic model
-- fix hypertopics
+- make accuracy plot
 - alternative: only fit low and high SES articles and compare topics, plot topic distributions
 
 # Zero Shot

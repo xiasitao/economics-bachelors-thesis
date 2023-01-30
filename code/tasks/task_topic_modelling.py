@@ -68,15 +68,16 @@ TOPIC_MODELLING_BUILD_PATH = BUILD_PATH / 'topic_modelling/topic_modelling.pkl'
 @pytask.mark.skip()
 @pytask.mark.depends_on(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 @pytask.mark.produces(TOPIC_MODELLING_BUILD_PATH)
-def task_topic_modelling(produces: Path, all_n_topics=[2,3,4,5,6,7,8,9,10]):
+def task_topic_modelling(produces: Path, all_n_topics=[2,3,4,5,6,7,8,9,10], articles: pd.DataFrame=None):
     """Perform topic modelling on the 50-articles-per-role-model balanced article data set.
 
     Args:
         produces (Path): Destination file path
-        n_min (int, optional): Smalles number of topics to examine. Defaults to 2.
-        n_max (int, optional): Largest number of topics to examine.. Defaults to 10.
+        all_n_topics (list[int]): List of all n_topics to model for.
+        articles (pd.DataFrame): Preset set of articles to perform topic modelling on.
     """    
-    articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
+    if articles is None:
+        articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
     articles_en = articles[articles.language_ml == 'en']
     articles_en = articles_en[['article_id', 'content_slim']]
     articles_en['content_tokenized'] = articles_en['content_slim'].str.split(' ')
@@ -103,8 +104,33 @@ def task_topic_modelling(produces: Path, all_n_topics=[2,3,4,5,6,7,8,9,10]):
         pickle.dump((topic_words, article_topics,), file)
 
 
+def task_ses_separated_topic_modelling(all_n_topics=[5, 10, 15, 20]):
+    articles_raw = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
+    articles_raw = articles_raw[articles_raw.language_ml == 'en']
+    ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
+    articles = articles_raw.join(ses, how='inner', on='role_model')
+    ses_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
+    articles_distinct = articles_raw.join(ses_distinct, how='inner', on='role_model')
+    
+    low_ses_articles = articles[articles['low_ses']]
+    print('Modelling with low-SES articles...')
+    task_topic_modelling(BUILD_PATH / 'topic_modelling/topic_modelling_low_ses.pkl', all_n_topics=all_n_topics, articles=low_ses_articles)
+    high_ses_articles = articles[articles['high_ses']]
+    print('Modelling with high-SES articles...')
+    task_topic_modelling(BUILD_PATH / 'topic_modelling/topic_modelling_high_ses.pkl', all_n_topics=all_n_topics, articles=high_ses_articles)
+
+    low_ses_articles_distinct = articles_distinct[articles_distinct['low_ses']]
+    print('Modelling with distinct low-SES articles...')
+    task_topic_modelling(BUILD_PATH / 'topic_modelling/topic_modelling_low_ses_distinct.pkl', all_n_topics=all_n_topics, articles=low_ses_articles_distinct)
+    high_ses_articles_distinct = articles_distinct[articles_distinct['high_ses']]
+    print('Modelling with distinct high-SES articles...')
+    task_topic_modelling(BUILD_PATH / 'topic_modelling/topic_modelling_high_ses_distinct.pkl', all_n_topics=all_n_topics, articles=high_ses_articles_distinct)
+
+
 if __name__ == '__main__':
-    task_topic_modelling(
-        TOPIC_MODELLING_BUILD_PATH,
-        all_n_topics=[2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,40,50]
-    )
+    # task_topic_modelling(
+    #     TOPIC_MODELLING_BUILD_PATH,
+    #     all_n_topics=[2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,40,50]
+    # )
+
+    task_ses_separated_topic_modelling()
