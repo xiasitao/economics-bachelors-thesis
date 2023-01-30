@@ -13,9 +13,9 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 
 # %%
-articles = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
-ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
-articles = articles.join(ses, how='inner', on='role_model')
+articles_raw = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
+ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
+ses_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
 human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated.pkl')
 
 def collect_zero_shot_data():
@@ -27,10 +27,19 @@ def collect_zero_shot_data():
             zero_shot_data = pd.concat([zero_shot_data, category_data], axis=1) if zero_shot_data is not None else category_data
     return zero_shot_data
 zero_shot_data = collect_zero_shot_data()
-articles = articles.join(zero_shot_data, how='inner', on='article_id')
-
-articles_per_SES = articles[articles['average_ses']==-1.0].count()['content'], articles[articles['average_ses']==+1.0].count()['content']
 category_columns = [column for column in zero_shot_data.columns if not column.endswith('_entropy') and not column.endswith('_p')]
+
+
+# %%
+def load_prepare_article_data(articles_raw: pd.DataFrame, ses: pd.DataFrame, zero_shot_data: pd.DataFrame):
+    articles = articles_raw.join(ses, how='inner', on='role_model')
+    articles = articles.join(zero_shot_data, how='inner', on='article_id')
+    articles_per_SES = articles[articles['low_ses']].count()['content'], articles[articles['high_ses']].count()['content']
+    return articles, articles_per_SES
+
+articles, articles_per_SES = load_prepare_article_data(articles_raw, ses, zero_shot_data)
+articles_distinct, articles_per_SES_distinct = load_prepare_article_data(articles_raw, ses_distinct, zero_shot_data)
+
 
 
 # %%
@@ -63,11 +72,11 @@ def find_category_distributions(articles: pd.DataFrame, category_columns: list) 
     """    
     category_distributions = {}
     for category in category_columns:
-        category_articles = articles[['average_ses', 'content', category]]
+        category_articles = articles[['low_ses', 'high_ses', 'content', category]]
         category_articles = category_articles[~category_articles[category].isna()]
         category_distribution = pd.DataFrame(data=None, index=category_articles[category].unique(), columns=['low', 'high'])
-        category_distribution['low'] = category_articles[category_articles['average_ses'] == -1.0].groupby(category).count()['content']
-        category_distribution['high'] = category_articles[category_articles['average_ses'] == +1.0].groupby(category).count()['content']
+        category_distribution['low'] = category_articles[category_articles['low_ses']].groupby(category).count()['content']
+        category_distribution['high'] = category_articles[category_articles['high_ses']].groupby(category).count()['content']
         category_distributions[category] = category_distribution
     return category_distributions
 
@@ -111,18 +120,24 @@ def chi2_contingency_test(distribution: pd.DataFrame) -> tuple:
     return result.statistic, result.pvalue
 
 
-def plot_category_distribution(category_distributions: dict, category: str, relative=True):
+def plot_category_distribution(category_distributions: dict, category: str, relative=True, show_title: bool=True, additional_title_text=None):
     """Plot the distribution of articles over the categories for low and high SES.
 
     Args:
         category_distribution (pd.DataFrame): Distribution matrix with categories (index) and SES (columns)
         category_name (str): Name of the category
         relative (bool, optional): Whether to normalize frequencies for each SES level. Defaults to True.
+        show_title (bool, optional): Whether to show a title indicating the category. Defaults to False.
+        additional_title_text (str, optional): Additional string to be shown in the title.
     """
     category_distribution = category_distributions[category].copy().sort_index()
 
     fig, ax = plt.gcf(), plt.gca()
-    ax.set_title(f'{category.capitalize()} distribution by SES')
+    title = f'{category.capitalize()} distribution by SES' if show_title else ''
+    if additional_title_text is not None:
+        title = (' - ' if title != '' else '').join([title, additional_title_text])
+    if title != '':
+        ax.set_title(title)
     if relative:
         ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
         category_distribution = category_distribution.apply(lambda col: col/col.sum())
@@ -142,23 +157,44 @@ def plot_human_annotation_confusion_matrix(articles: pd.DataFrame, human_annotat
     ConfusionMatrixDisplay(category_confusion_matrix, display_labels=category_labels).plot()
 
 
-def evaluate_category(category_distributions: dict, category, articles_per_SES: tuple, relative_dist_plot: bool=True):
-    plot_category_distribution(category_distributions, category, relative=relative_dist_plot)
+def evaluate_category(
+        articles: pd.DataFrame,
+        category: str,
+        articles_per_SES: tuple,
+        human_annotated: pd.DataFrame=None,
+        relative_dist_plot: bool=True,
+        is_distinct: bool=None,
+        show_title: bool=True
+    ):
+    category_distributions = find_category_distributions(articles, category_columns)
+    
+    distinct_text = None
+    if is_distinct is not None:
+        distinct_text = 'distinct' if is_distinct else 'general'
+    plot_category_distribution(category_distributions, category, relative=relative_dist_plot, additional_title_text=distinct_text, show_title=show_title)
 
     contingency_chi2, contingency_p = chi2_contingency_test(category_distributions[category])
     print(f'Distribution chi2 test:\nchi2={contingency_chi2:.1f}, p={contingency_p:.3e}\n')
 
     print('Per-label chi2 test:')
     print(chi2_per_label_test(category_distributions[category], articles_per_SES))
-
-    plot_human_annotation_confusion_matrix(articles, human_annotated, category)
+    
+    if human_annotated is not None:
+        plot_human_annotation_confusion_matrix(articles, human_annotated, category)
 
 
 # %%
-category_distributions = find_category_distributions(articles, category_columns)
-evaluate_category(category_distributions, 'prosociality', articles_per_SES=articles_per_SES)
+evaluate_category(articles, 'prosociality', articles_per_SES=articles_per_SES, human_annotated=human_annotated, is_distinct=False)
+
+
+# %%
+evaluate_category(articles_distinct, 'prosociality', articles_per_SES=articles_per_SES_distinct, human_annotated=human_annotated, is_distinct=False)
+
 
 
 # %%
 articles_per_SES
+# %%
+category_distributions_distinct
+
 # %%

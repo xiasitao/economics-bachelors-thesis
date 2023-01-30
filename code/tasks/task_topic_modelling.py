@@ -68,7 +68,7 @@ TOPIC_MODELLING_BUILD_PATH = BUILD_PATH / 'topic_modelling/topic_modelling.pkl'
 @pytask.mark.skip()
 @pytask.mark.depends_on(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 @pytask.mark.produces(TOPIC_MODELLING_BUILD_PATH)
-def task_topic_modelling(produces: Path, n_min=2, n_max=10):
+def task_topic_modelling(produces: Path, all_n_topics=[2,3,4,5,6,7,8,9,10]):
     """Perform topic modelling on the 50-articles-per-role-model balanced article data set.
 
     Args:
@@ -90,10 +90,10 @@ def task_topic_modelling(produces: Path, n_min=2, n_max=10):
     # Predicting with unique articles
     unique_articles = articles_en[['article_id', 'content_slim']].drop_duplicates().set_index('article_id', drop=True)
     unique_articles['content_tokenized'] = unique_articles['content_slim'].str.split(' ')
-    all_n_topics = [i for i in range(n_min, n_max+1)]
     article_topics = pd.DataFrame(data=None, columns=[wildcard.format(n) for n in all_n_topics for wildcard in ('topic_{}', 'topic_{}_entropy', 'topic_{}_p')], index=unique_articles.index)
     topic_words = {}
     for n_topics in all_n_topics:
+        print(f'Modelling for {n_topics} topics...')
         model, these_topic_words = train_lda_model(n_topics, corpus=corpus, dictionary=dictionary)
         topic_words[n_topics] = these_topic_words
         article_topics[[f'topic_{n_topics}', f'topic_{n_topics}_entropy', f'topic_{n_topics}_p']] = unique_articles['content_tokenized'].parallel_apply(lambda doc: pd.Series(find_topic_entropy_and_probability(model, dictionary, doc)))
@@ -104,4 +104,7 @@ def task_topic_modelling(produces: Path, n_min=2, n_max=10):
 
 
 if __name__ == '__main__':
-    task_topic_modelling(TOPIC_MODELLING_BUILD_PATH, 2, 15)
+    task_topic_modelling(
+        TOPIC_MODELLING_BUILD_PATH,
+        all_n_topics=[2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,40,50]
+    )
