@@ -20,6 +20,11 @@ human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated
 human_annotated = pd.concat([human_annotated, pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')])
 
 def collect_zero_shot_data():
+    """Collect all zero-shot data from the different pickle files.
+
+    Returns:
+        pd.DataFrame: Zero-shot data for each article.
+    """    
     zero_shot_data = None
     for category in ['article_type', 'crime', 'crime_type', 'emotion', 'prosociality', 'relatability', 'sentiment', 'sentiment_n', 'topic', 'writing_style']:
         filename = BUILD_PATH / f'zero_shot_classification/zero_shot_classification_{category}.pkl'
@@ -33,6 +38,16 @@ category_columns = [column for column in zero_shot_data.columns if not column.en
 
 # %%
 def load_prepare_article_data(articles_raw: pd.DataFrame, ses: pd.DataFrame, zero_shot_data: pd.DataFrame):
+    """Combine article data, ses, and topic data.
+
+    Args:
+        articles (pd.DataFrame): Articles
+        ses (pd.DataFrame): SES scores
+        zero_shot_data (pd.DataFrame): Category associations of the articles.
+
+    Returns:
+        tuple: articles [pd.DataFrame], articles_per_SES [tuple]
+    """
     articles = articles_raw.join(ses, how='inner', on='role_model')
     articles = articles.join(zero_shot_data, how='inner', on='article_id')
     articles_per_SES = articles[articles['low_ses']].count()['content'], articles[articles['high_ses']].count()['content']
@@ -147,6 +162,13 @@ def plot_category_distribution(category_distributions: dict, category: str, rela
 
 
 def plot_human_annotation_confusion_matrix(articles: pd.DataFrame, human_annotated: pd.DataFrame, category: str):
+    """Plot the confusion matrix for a certain category.
+
+    Args:
+        articles (pd.DataFrame): Article data with category associations.
+        human_annotated (pd.DataFrame): Human annotated data.
+        category (str): Category column
+    """    
     if category not in human_annotated.columns:
         return
     human_annotated_category = human_annotated[~human_annotated[category].isna()]
@@ -167,6 +189,18 @@ def evaluate_category(
         is_distinct: bool=None,
         show_title: bool=True
     ):
+    """Plot the category distributions, show the chi2 statistics, and
+    if possible, show the confusion matrix.
+
+    Args:
+        articles (pd.DataFrame): Article data with category associations.
+        category (str): category column
+        articles_per_SES (tuple): Reference articles number per SES
+        human_annotated (pd.DataFrame, optional): Human annotation data for confusion matrix. Defaults to None.
+        relative_dist_plot (bool, optional): Plot the distribution with relative frequencies. Defaults to True.
+        is_distinct (bool, optional): Whether to indicate the distinct-SES dataset. Defaults to None.
+        show_title (bool, optional): Show a title in the distribution plot. Defaults to True.
+    """    
     category_distributions = find_category_distributions(articles, category_columns)
     
     distinct_text = None
@@ -195,7 +229,6 @@ evaluate_category(articles_distinct, 'prosociality', articles_per_SES=articles_p
 
 # %%
 articles_per_SES
-# %%
-category_distributions_distinct
+
 
 # %%

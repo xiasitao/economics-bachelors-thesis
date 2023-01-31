@@ -12,7 +12,7 @@ ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 from scipy.stats import chisquare, chi2_contingency
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score
 
 
 # %%
@@ -27,6 +27,16 @@ with open(BUILD_PATH / 'topic_modelling/topic_modelling.pkl', 'rb') as file:
 topic_columns = [column for column in article_topics.columns if not column.endswith('_entropy')]
 
 def load_prepare_articles(articles: pd.DataFrame, ses: pd.DataFrame, article_topics: pd.DataFrame):
+    """Combine article data, ses, and topic data.
+
+    Args:
+        articles (pd.DataFrame): Articles
+        ses (pd.DataFrame): SES scores
+        article_topics (pd.DataFrame): Topics associations of the articles.
+
+    Returns:
+        tuple: articles [pd.DataFrame], articles_per_SES [tuple]
+    """
     articles = articles.join(ses, how='inner', on='role_model')
     articles = articles.join(article_topics, how='inner', on='article_id')
     articles_per_SES = articles[articles['low_ses']].count()['content'], articles[articles['high_ses']].count()['content']
@@ -41,31 +51,6 @@ assert(articles.groupby('role_model').count()['content'].unique() == np.array([5
 
 
 # %%
-def find_SES_distribution_per_topic(articles: pd.DataFrame, n_topics: int) -> tuple:
-    topics_distribution_articles = articles[[f'topic_{n_topics}', 'prevalent_ses', 'content']].groupby([f'topic_{n_topics}', 'prevalent_ses']).count()
-    topics_distribution_role_models = articles[[f'topic_{n_topics}', 'prevalent_ses', 'role_model']].groupby([f'topic_{n_topics}', 'prevalent_ses']).nunique()
-    return topics_distribution_articles, topics_distribution_role_models
-
-
-def plot_SES_distribution_per_topic(articles: pd.DataFrame, n_topics: int, mode='articles', topic_names=None):
-    topics_distribution_articles, topics_distribution_role_models = find_SES_distribution_per_topic(articles, n_topics)
-    plt.figure(figsize=(10, 2*n_topics))
-    plt.title(f'SES distribution within topics')
-    for i, topic_index in enumerate(topics_distribution_articles.index.get_level_values(0).unique()):
-        ax = plt.subplot(len(topics_distribution_articles)//3+1, 3, i+1)
-        ax.set_title(f'topic {int(topic_index)}' if topic_names is None or n_topics not in topic_names else topic_names[n_topics][i])
-        if mode == 'articles':
-            this_topic_distribution = topics_distribution_articles.loc[topic_index]
-        elif mode == 'role_models':
-            this_topic_distribution = topics_distribution_role_models.loc[topic_index]
-        else:
-            raise Exception(f'Mode {mode} unknown, use articles or role_models.')
-        ax.bar(['low', 'high'], this_topic_distribution['content'], label=mode.replace('_', ' '))
-    plt.legend()
-    plt.tight_layout()
-    plt.show()
-
-
 def find_topic_distributions(articles: pd.DataFrame, columns: list) -> dict:   
     """Find the distribution of topics for low and high SES for number of topics available.
 
@@ -172,6 +157,14 @@ def find_hypertopics(articles: pd.DataFrame, hypertopic_table: dict, columns: li
 
 
 def plot_hypertopic_distribution_by_n(hypertopic_distributions: dict, hypertopics: list, articles_per_SES: tuple=None):
+    """Plot the low-SES article portion of each hypertopic over varying n_topics. 
+    This is for consistency checking: If the lines converge, one can assume that varying n_topics doesn't change the prediction of the topic distribution much.
+
+    Args:
+        hypertopic_distributions (dict): Dict with the hypertopic distributions for all relevant n_topics. Output of find_topics_distributions.
+        hypertopics (list): Hypertopics to draw graphs for.
+        articles_per_SES (tuple, optional): Reference distribution of articles to compare to. Defaults to None.
+    """    
     ns = [re.match(r'topic_(\d+)', column).groups()[0] for column in hypertopic_distributions]
     low_ses_hypertopic_frequencies = pd.DataFrame(data=0, index=hypertopics, columns=ns)
     high_ses_hypertopic_frequencies = pd.DataFrame(data=0, index=hypertopics, columns=ns)
@@ -183,8 +176,8 @@ def plot_hypertopic_distribution_by_n(hypertopic_distributions: dict, hypertopic
     ax.set_title('Hypertopic distributions')
     ax.set_ylabel('percentage of low SES articles')
     ax.set_xlabel('number of topics')
+    ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
     for hypertopic in hypertopics:
-        ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
         ax.plot([int(n) for n in ns], low_ses_hypertopic_frequencies.loc[hypertopic]/(low_ses_hypertopic_frequencies.loc[hypertopic]+high_ses_hypertopic_frequencies.loc[hypertopic]), label=hypertopic)
     if articles_per_SES is not None:
         overall_ratio = articles_per_SES[0]/(articles_per_SES[0]+articles_per_SES[1])
@@ -194,33 +187,79 @@ def plot_hypertopic_distribution_by_n(hypertopic_distributions: dict, hypertopic
     fig.show()
 
 
-def plot_human_annotation_confusion_matrix(hypertopic_data: pd.DataFrame, human_annotated: pd.DataFrame, n_topics: int):
-    annotation_category = 'topic'
-    if annotation_category not in human_annotated.columns:
+def plot_human_annotation_confusion_matrix(article_hypertopic_data: pd.DataFrame, human_annotated: pd.DataFrame, n_topics: int):
+    """Plot the confusion matrix for hypertopics.
+
+    Args:
+        article_hypertopic_data (pd.DataFrame): Dataframe with the hypertopic for each article.
+        human_annotated (pd.DataFrame): Human annotated articles.
+        n_topics (int): n_topics to plot confusion matrix for.
+    """    
+    annotation_column = 'topic'
+    if annotation_column not in human_annotated.columns:
         raise Exception('No topics in human annotations.')
     hypertopic_column = f'topic_{n_topics}'
-    if hypertopic_column not in hypertopic_data.columns:
+    if hypertopic_column not in article_hypertopic_data.columns:
         raise Exception(f'No {hypertopic_column} in articles with hypertopics.')
     
-    human_annotated_topic = human_annotated[~human_annotated[annotation_category].isna()]
+    human_annotated_topic = human_annotated[~human_annotated[annotation_column].isna()]
     if len(human_annotated_topic) == 0:
         return
-    articles_with_annotation = hypertopic_data.join(human_annotated_topic[[annotation_category]], on='article_id', how='inner')[['content', hypertopic_column, annotation_category]]
-    topic_labels = np.unique(articles_with_annotation[[hypertopic_column, annotation_category]].values.ravel())
-    topic_confusion_matrix = confusion_matrix(y_true=articles_with_annotation[annotation_category], y_pred=articles_with_annotation[hypertopic_column], labels=topic_labels)
+    articles_with_annotation = article_hypertopic_data.join(human_annotated_topic[[annotation_column]], on='article_id', how='inner')[['content', hypertopic_column, annotation_column]]
+    topic_labels = np.unique(articles_with_annotation[[hypertopic_column, annotation_column]].values.ravel())
+    topic_confusion_matrix = confusion_matrix(y_true=articles_with_annotation[annotation_column], y_pred=articles_with_annotation[hypertopic_column], labels=topic_labels)
     fig, ax = plt.gcf(), plt.gca()
     ax.set_title(f'{n_topics} topics')
     ConfusionMatrixDisplay(topic_confusion_matrix, display_labels=topic_labels).plot(ax=ax)
 
 
-def evaluate_topic(
+def plot_accuracy_by_n(article_hypertopic_data: pd.DataFrame,  human_annotated: pd.DataFrame):
+    """Plot the accuracy over varying n_topics.
+
+    Args:
+        article_hypertopic_data (pd.DataFrame): Dataframe indicating the hypertopic for each article.
+        human_annotated (pd.DataFrame): Human annotation data for a subset of the articles.
+    """    
+    annotation_column = 'topic'
+    ns = [int(re.match(r'topic_(\d+)', column).groups()[0]) for column in article_hypertopic_data.columns if re.match(r'topic_(\d+)', column) is not None]
+
+    human_annotated_topic = human_annotated[~human_annotated[annotation_column].isna()]
+    if len(human_annotated_topic) == 0:
+        return
+    articles_with_annotation = article_hypertopic_data.join(human_annotated_topic[[annotation_column]], on='article_id', how='inner')
+
+    accuracies = []
+    for n in ns:
+        true_hypertopics = articles_with_annotation[annotation_column]
+        predicted_hypertopics = articles_with_annotation[f'topic_{n}']
+        accuracy = accuracy_score(true_hypertopics, predicted_hypertopics)
+        accuracies.append(accuracy)
+    
+    fig, ax = plt.gcf(), plt.gca()
+    ax.set_xlabel('number of topics')
+    ax.set_ylabel('accuracy')
+    ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
+    ax.plot(ns, accuracies)
+    ax.grid()
+    fig.show()
+
+
+def evaluate_topics_for_n(
         articles: pd.DataFrame,
         n_topics: int,
         articles_per_SES: tuple,
-        human_annotated: pd.DataFrame=None,
         relative_dist_plot: bool=True,
         is_distinct: bool=None
     ):
+    """Plot the topic distributions, calculate the chi2 scores.
+
+    Args:
+        articles (pd.DataFrame): Articles with topics.
+        n_topics (int): n_topics to evaluate for.
+        articles_per_SES (tuple): Reference article count per SES.
+        relative_dist_plot (bool, optional): Whether to plot relative frequencies in the distribution plot. Defaults to True.
+        is_distinct (bool, optional): Is the distinct-SES dataset used? Used for annotation the plot. Defaults to None.
+    """    
     column_name = f'topic_{n_topics}'
     topic_distributions = find_topic_distributions(articles, topic_columns)
     
@@ -234,23 +273,20 @@ def evaluate_topic(
 
     print('Per-label chi2 test:')
     print(chi2_per_label_test(topic_distributions[column_name], articles_per_SES))
-    
-    if human_annotated is not None:
-        plot_human_annotation_confusion_matrix(articles, human_annotated, column_name)
 
 
 # %%
-evaluate_topic(articles, 5, articles_per_SES=articles_per_SES, is_distinct=False)
+evaluate_topics_for_n(articles, 5, articles_per_SES=articles_per_SES, is_distinct=False)
 
 
 # %%
-evaluate_topic(articles_distinct, 5, articles_per_SES=articles_per_SES_distinct, is_distinct=True)
+evaluate_topics_for_n(articles_distinct, 5, articles_per_SES=articles_per_SES_distinct, is_distinct=True)
 
 
 # %%
 HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE = 'movie', 'sport', 'music', 'life'
 hypertopics = [HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE]
-print_topic_words(topic_words, 50)
+print_topic_words(topic_words, 60)
 hypertopic_table = {
     2: [HT_LIFE, HT_MOVIE],
     3: [HT_SPORT, HT_MUSIC, HT_MOVIE],
@@ -287,6 +323,15 @@ hypertopic_table = {
         HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 20
         HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE, HT_LIFE,  # 25
     ],
+    35: [
+        HT_LIFE, HT_SPORT, HT_SPORT, HT_SPORT, HT_MUSIC,  # 0
+        HT_LIFE, HT_SPORT, HT_LIFE, HT_MOVIE, HT_LIFE,  # 5 
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_MOVIE, # 10
+        HT_MUSIC, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 15
+        HT_LIFE, HT_SPORT, HT_LIFE, HT_MOVIE, HT_LIFE,  # 20
+        HT_SPORT, HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE,  # 25
+        HT_LIFE, HT_MUSIC, HT_LIFE, HT_LIFE, HT_LIFE,  # 30
+    ],
     40: [
         HT_LIFE, HT_SPORT, HT_MUSIC, HT_MUSIC, HT_LIFE,  # 0
         HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE,  # 5
@@ -296,6 +341,17 @@ hypertopic_table = {
         HT_LIFE, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE,  # 25
         HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT,  # 30
         HT_LIFE, HT_MUSIC, HT_LIFE, HT_SPORT, HT_SPORT,  # 35
+    ],
+    45: [
+        HT_LIFE, HT_SPORT, HT_MUSIC, HT_MOVIE, HT_LIFE,  # 0
+        HT_LIFE, HT_SPORT, HT_LIFE, HT_SPORT, HT_LIFE,  # 5
+        HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE,HT_LIFE,  # 10
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 15
+        HT_SPORT, HT_LIFE, HT_MUSIC, HT_LIFE, HT_SPORT,  # 20
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_MUSIC, HT_MUSIC,  # 25
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 30
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT,  # 35
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 40
     ],
     50: [
         HT_LIFE, HT_MOVIE, HT_SPORT, HT_MUSIC, HT_SPORT,  # 0
@@ -308,6 +364,33 @@ hypertopic_table = {
         HT_SPORT, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE,  # 35
         HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 40
         HT_LIFE, HT_SPORT, HT_SPORT, HT_SPORT, HT_LIFE,  # 45
+    ],
+    55: [
+        HT_LIFE, HT_SPORT, HT_LIFE, HT_MUSIC, HT_MOVIE,  # 0
+        HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 5
+        HT_LIFE, HT_MUSIC, HT_SPORT, HT_LIFE, HT_LIFE,  # 10
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT,  # 15
+        HT_LIFE, HT_MOVIE, HT_MUSIC, HT_LIFE, HT_LIFE,  # 20
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_MOVIE, HT_LIFE,  # 25
+        HT_LIFE, HT_MOVIE, HT_LIFE, HT_LIFE, HT_MUSIC,  # 30
+        HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 35
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT,  # 40
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT, HT_SPORT,  # 45
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT,  # 50
+    ],
+    60: [
+        HT_SPORT, HT_LIFE, HT_MUSIC, HT_MOVIE, HT_LIFE,  # 0
+        HT_SPORT, HT_SPORT, HT_LIFE, HT_LIFE, HT_MUSIC,  # 5
+        HT_MUSIC, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 10
+        HT_LIFE, HT_LIFE, HT_MUSIC, HT_MUSIC, HT_LIFE,  # 15
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_MOVIE, HT_LIFE,  # 20
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 25
+        HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT,  # 30
+        HT_SPORT, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE,  # 35
+        HT_SPORT, HT_LIFE, HT_SPORT, HT_LIFE, HT_LIFE,  # 40
+        HT_SPORT, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE,  # 45
+        HT_LIFE, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE,  # 50
+        HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE, HT_LIFE,  # 55
     ]
 }
 #generator = np.random.Generator(np.random.PCG64(42))
@@ -322,14 +405,20 @@ def hypertopic_crosscheck(hypertopic_table: "dict[int, list[str]]", topic_words,
         words = [topic_words[n_topics][i] for i in indices]
         print(hypertopic.upper())
         print(f'  {words}\n')
-hypertopic_crosscheck(hypertopic_table, topic_words, 50)
+hypertopic_crosscheck(hypertopic_table, topic_words, 60)
 
 
 # %%
-hypertopic_columns = [col for col in topic_columns]
+hypertopic_columns = [col for col in topic_columns if col not in [wc.format(n) for n in (65, 70) for wc in ('topic_{}', 'topic_{}_p', 'topic_{}_entropy')]]
 article_hypertopics = find_hypertopics(articles, columns=hypertopic_columns, hypertopic_table=hypertopic_table)
 hypertopics_distributions = find_topic_distributions(article_hypertopics, hypertopic_columns)
 plot_hypertopic_distribution_by_n(hypertopics_distributions, hypertopics, articles_per_SES=articles_per_SES)
+
+
+# %% 
+article_hypertopics_distinct = find_hypertopics(articles_distinct, columns=hypertopic_columns, hypertopic_table=hypertopic_table)
+hypertopics_distributions_distinct = find_topic_distributions(article_hypertopics_distinct, hypertopic_columns)
+plot_hypertopic_distribution_by_n(hypertopics_distributions_distinct, hypertopics, articles_per_SES=articles_per_SES_distinct)
 
 
 # %%
@@ -337,10 +426,16 @@ plot_human_annotation_confusion_matrix(article_hypertopics, human_annotated, 40)
 
 
 # %%
-to_evaluate = 'topic_40'
-plot_topic_distribution(hypertopics_distributions[to_evaluate])
-print(chi2_contingency_test(hypertopics_distributions[to_evaluate]))
-print(chi2_per_label_test(hypertopics_distributions[to_evaluate], articles_per_SES))
+plot_human_annotation_confusion_matrix(article_hypertopics_distinct, human_annotated, 40)
 
 
+# %%
+to_evaluate = 'topic_50'
+plot_topic_distribution(hypertopics_distributions_distinct[to_evaluate])
+print(chi2_contingency_test(hypertopics_distributions_distinct[to_evaluate]))
+print(chi2_per_label_test(hypertopics_distributions_distinct[to_evaluate], articles_per_SES_distinct))
+
+
+# %%
+plot_accuracy_by_n(article_hypertopics_distinct, human_annotated)
 # %%
