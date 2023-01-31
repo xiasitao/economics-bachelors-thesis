@@ -47,8 +47,15 @@ Describing what data is about, where it comes from, how it was processed, cleane
     - number of iterations
     - convergence graph
 - Evaluation
-    -
-
+    - no proper number of topics found
+        - inconsistent
+        - few topics: very broad, too much variation in topic assignment
+        - many topics: topics very fine grained, too much influenced by singular articles
+    - accuracy not consistent (human annotation)
+    - model too elastic in the input data
+        - topic words contain many names and specifics
+        - topics are too vague, contain more than one topic
+        - topics don't confer unambiguous sentiment
 
 # Zero-Shot Classification
 - BERT and SentenceBERT theory
@@ -56,6 +63,9 @@ Describing what data is about, where it comes from, how it was processed, cleane
 - skipping the training step in lack of labels
 - categories and their labels
 - evaluation
+- fundamental advantages:
+    - no overfitting
+    - much more stable depending on the inputs, more robust model basis
 
 
 # Semantic Similarity-based Clustering

@@ -4,7 +4,6 @@ import pickle
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
-from scipy.stats import chisquare
 import re
 
 from pathlib import Path
@@ -143,7 +142,8 @@ def plot_topic_distribution(topic_distribution: pd.DataFrame, relative=True, add
         ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
         ax.set_ylabel('topic article percentage')
         topic_distribution = topic_distribution.apply(lambda col: col/col.sum())
-    topic_distribution.index = topic_distribution.index.astype(int)
+    if topic_distribution.index.dtype == float:
+        topic_distribution.index = topic_distribution.index.astype(int)
     topic_distribution.plot(kind='bar', ax=ax)
     fig.show()
 
@@ -188,7 +188,7 @@ def plot_hypertopic_distribution_by_n(hypertopic_distributions: dict, hypertopic
         ax.plot([int(n) for n in ns], low_ses_hypertopic_frequencies.loc[hypertopic]/(low_ses_hypertopic_frequencies.loc[hypertopic]+high_ses_hypertopic_frequencies.loc[hypertopic]), label=hypertopic)
     if articles_per_SES is not None:
         overall_ratio = articles_per_SES[0]/(articles_per_SES[0]+articles_per_SES[1])
-        ax.plot(ns, len(ns)*[overall_ratio], '--', label='all articles', color='grey', )
+        ax.plot([int(n) for n in ns], len(ns)*[overall_ratio], '--', label='all articles', color='grey', )
     ax.legend()
     ax.grid()
     fig.show()
@@ -250,7 +250,7 @@ evaluate_topic(articles_distinct, 5, articles_per_SES=articles_per_SES_distinct,
 # %%
 HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE = 'movie', 'sport', 'music', 'life'
 hypertopics = [HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE]
-print_topic_words(topic_words, 15)
+print_topic_words(topic_words, 50)
 hypertopic_table = {
     2: [HT_LIFE, HT_MOVIE],
     3: [HT_SPORT, HT_MUSIC, HT_MOVIE],
@@ -287,6 +287,28 @@ hypertopic_table = {
         HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 20
         HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE, HT_LIFE,  # 25
     ],
+    40: [
+        HT_LIFE, HT_SPORT, HT_MUSIC, HT_MUSIC, HT_LIFE,  # 0
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE,  # 5
+        HT_MOVIE, HT_LIFE, HT_MOVIE, HT_SPORT, HT_LIFE,  # 10
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT, HT_LIFE,  # 15
+        HT_LIFE, HT_SPORT, HT_MUSIC, HT_MUSIC, HT_LIFE,  # 20
+        HT_LIFE, HT_MOVIE, HT_LIFE, HT_LIFE, HT_LIFE,  # 25
+        HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_SPORT,  # 30
+        HT_LIFE, HT_MUSIC, HT_LIFE, HT_SPORT, HT_SPORT,  # 35
+    ],
+    50: [
+        HT_LIFE, HT_MOVIE, HT_SPORT, HT_MUSIC, HT_SPORT,  # 0
+        HT_LIFE, HT_LIFE, HT_MOVIE, HT_LIFE, HT_LIFE,  # 5
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_MUSIC,  # 10
+        HT_LIFE, HT_LIFE, HT_MUSIC, HT_LIFE, HT_SPORT,  # 15
+        HT_MUSIC, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 20
+        HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 25
+        HT_LIFE, HT_LIFE, HT_MUSIC, HT_LIFE, HT_SPORT,  # 30
+        HT_SPORT, HT_SPORT, HT_LIFE, HT_LIFE, HT_LIFE,  # 35
+        HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE, HT_LIFE,  # 40
+        HT_LIFE, HT_SPORT, HT_SPORT, HT_SPORT, HT_LIFE,  # 45
+    ]
 }
 #generator = np.random.Generator(np.random.PCG64(42))
 #hypertopic_table = {n: sorted(hypertopic_table[n], key=lambda k: generator.random()) for n in hypertopic_table}
@@ -299,20 +321,26 @@ def hypertopic_crosscheck(hypertopic_table: "dict[int, list[str]]", topic_words,
         indices = [n for n, val in enumerate(hypertopic_table[n_topics]) if val==hypertopic]
         words = [topic_words[n_topics][i] for i in indices]
         print(hypertopic.upper())
-        print(f'  {words}')
-        print()
-hypertopic_crosscheck(hypertopic_table, topic_words, 30)
+        print(f'  {words}\n')
+hypertopic_crosscheck(hypertopic_table, topic_words, 50)
 
 
 # %%
-hypertopic_columns = [col for col in topic_columns if not '40' in col and not '50' in col]
+hypertopic_columns = [col for col in topic_columns]
 article_hypertopics = find_hypertopics(articles, columns=hypertopic_columns, hypertopic_table=hypertopic_table)
 hypertopics_distributions = find_topic_distributions(article_hypertopics, hypertopic_columns)
 plot_hypertopic_distribution_by_n(hypertopics_distributions, hypertopics, articles_per_SES=articles_per_SES)
 
 
 # %%
-plot_human_annotation_confusion_matrix(article_hypertopics, human_annotated, 15)
+plot_human_annotation_confusion_matrix(article_hypertopics, human_annotated, 40)
+
+
+# %%
+to_evaluate = 'topic_40'
+plot_topic_distribution(hypertopics_distributions[to_evaluate])
+print(chi2_contingency_test(hypertopics_distributions[to_evaluate]))
+print(chi2_per_label_test(hypertopics_distributions[to_evaluate], articles_per_SES))
 
 
 # %%

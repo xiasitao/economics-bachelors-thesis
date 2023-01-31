@@ -128,9 +128,9 @@ def task_ses_separated_topic_modelling(all_n_topics=[5, 10, 15, 20]):
 
 
 if __name__ == '__main__':
-    # task_topic_modelling(
-    #     TOPIC_MODELLING_BUILD_PATH,
-    #     all_n_topics=[2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,40,50]
-    # )
+    task_topic_modelling(
+        TOPIC_MODELLING_BUILD_PATH,
+        all_n_topics=[2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,25,30,35,40,45,50,55,60,65,70]
+    )
 
-    task_ses_separated_topic_modelling()
+    # task_ses_separated_topic_modelling()
