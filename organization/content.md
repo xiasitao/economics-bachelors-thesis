@@ -52,10 +52,27 @@ Describing what data is about, where it comes from, how it was processed, cleane
         - few topics: very broad, too much variation in topic assignment
         - many topics: topics very fine grained, too much influenced by singular articles
     - accuracy not consistent (human annotation)
+        - accuracy changing with n_topics inconsistently
+        - low-SES percentage changing with n_topics inconsistently
     - model too elastic in the input data
         - topic words contain many names and specifics
         - topics are too vague, contain more than one topic
         - topics don't confer unambiguous sentiment
+
+# Semantic Clustering
+- sweet spot at 15-20 clusters
+    - too few: too much overlap between hypertopics
+    - too many: topics become too specific and cannot be sensible associated, too many names
+    - selected n=15
+- topics show significant SES differences
+    - discussion
+    - compare with n=10, n=20 -> consistent
+    - compare with zero shot (later)
+- better than topic modeling
+    - model doesn't entirely depend on specialized corpus
+    - no overfitting
+    - qualitative: improves topic words
+
 
 # Zero-Shot Classification
 - BERT and SentenceBERT theory

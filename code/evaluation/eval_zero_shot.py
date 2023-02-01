@@ -26,7 +26,7 @@ def collect_zero_shot_data():
         pd.DataFrame: Zero-shot data for each article.
     """    
     zero_shot_data = None
-    for category in ['article_type', 'crime', 'crime_type', 'emotion', 'prosociality', 'relatability', 'sentiment', 'sentiment_n', 'topic', 'writing_style']:
+    for category in ['article_type', 'crime', 'crime_type', 'emotion', 'prosociality', 'relatability', 'sentiment', 'sentiment_n', 'topic', 'topic_l', 'writing_style']:
         filename = BUILD_PATH / f'zero_shot_classification/zero_shot_classification_{category}.pkl'
         if filename.exists:
             category_data = pd.read_pickle(filename)

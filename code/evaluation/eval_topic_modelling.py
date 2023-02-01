@@ -6,13 +6,13 @@ import matplotlib.ticker as ticker
 import numpy as np
 import re
 
+from scipy.stats import chisquare, chi2_contingency
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score
+
 from pathlib import Path
 SOURCE_PATH = Path(__file__).parent.resolve()
 ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
-
-from scipy.stats import chisquare, chi2_contingency
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score
 
 
 # %%
@@ -24,7 +24,7 @@ human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated
 human_annotated = pd.concat([human_annotated, pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')])
 with open(BUILD_PATH / 'topic_modelling/topic_modelling.pkl', 'rb') as file:
     topic_words, article_topics = pickle.load(file)
-topic_columns = [column for column in article_topics.columns if not column.endswith('_entropy')]
+topic_columns = [column for column in article_topics.columns if not column.endswith('_entropy') and not column.endswith('_p')]
 
 def load_prepare_articles(articles: pd.DataFrame, ses: pd.DataFrame, article_topics: pd.DataFrame):
     """Combine article data, ses, and topic data.
