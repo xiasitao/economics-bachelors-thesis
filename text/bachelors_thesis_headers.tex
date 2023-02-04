@@ -164,6 +164,8 @@
 % === Glossary ===
 \usepackage[acronym]{glossaries}
 \makeglossaries
+\newacronym{bert}{BERT}{Bidirectional Encoder Representations from Transformers}
+\newacronym{lda}{LDA}{Latent Dirichlet allocation}
 \newacronym{nlp}{NLP}{natural language processing}
 \newacronym{ses}{SES}{socioeconomic status}
 
@@ -179,7 +181,7 @@ Vorbildern mittels Computerlinguistik}
 
 \makeatletter
 \usepackage[
-	pdftitle={\@title},
+	pdftitle={\@title: \@subtitle},
 	pdfauthor={Tobias Maximilian Philipp Schattauer},
 	pdfkeywords={}
 	]{hyperref}

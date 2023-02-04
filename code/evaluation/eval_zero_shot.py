@@ -219,7 +219,7 @@ def evaluate_category(
 
 
 # %%
-evaluate_category(articles, 'prosociality', articles_per_SES=articles_per_SES, human_annotated=human_annotated, is_distinct=False)
+evaluate_category(articles, 'topic_l', articles_per_SES=articles_per_SES, human_annotated=human_annotated, is_distinct=False)
 
 
 # %%
