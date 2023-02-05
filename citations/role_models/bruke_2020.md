@@ -1,4 +1,0 @@
-- accessible vs inaccessible role models
-- mostly selecting relatable, successful role models
-- accessible: overcoming difficulties, building success
-- inaccessible: shaping future

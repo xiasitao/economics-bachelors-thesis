@@ -1,0 +1,2 @@
+- relevance as predictor for role models' effectiveness
+- attainable vs unattainable success influence participants' pos/neg attitude towards themselves

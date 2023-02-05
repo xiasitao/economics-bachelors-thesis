@@ -1,0 +1,7 @@
+- role models
+    - between mentors and heroes
+    - "worthy of imitation in some area of life"
+    - may or may not be direct interaction to them
+    - present, historical, fictional
+    - identification channels: similarity, imitation, assimilation
+    - evidence on educational effects

@@ -1,15 +1,26 @@
-# Why SES?
-- of children: parental background (Kosse 2017)
-    - attention: causality cannot go from role models to SES
-    - only correlation
-- links to prosociality (Kosse 2017)
-
 # Why role models?
 - link to prosociality (Hurd 2011)
 - so far: a lot of mentoring role model literature
 - access to idol role models
     - channels (news, videos, social media)
     - short assessment of how impactful role model journalism is for consumers of role models
+- accessibility (Strasser-Burke 2020), (Bird 2012)
+
+
+# Why SES?
+- of children: parental background (Kosse 2017)
+    - attention: causality cannot go from role models to SES
+    - only correlation
+- disadvantaged and minorities (Strasser-Burke 2020, Bird 2012, Hurd 2012)
+- SES correlations
+    - prosociality (Kosse 2017)
+    - child development
+    - education
+    - newspaper consumption
+- goal
+    - eliciting role model and ses correlation
+    - potential to mitigate social gap (citation! Maybe Falk 2020)
+
 
 # Why NLP?
 
@@ -34,6 +45,9 @@
 
 ## Why crime and prosociality
 - crime & prosociality: prosociality
+
+## Why relatability:
+- accessibility of role models (Bird 2012, Strasser-Burke 2020)
 
 # Aims of the thesis
 - methodological exploration
