@@ -1,0 +1,3 @@
+- impact of SES on news media use
+- danger of "political inequality" increase through news media use
+- negative impact of high-SES on tabloid consumption, infer: text style correlates with SES

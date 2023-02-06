@@ -1,0 +1,1 @@
+- sport star example of role models carrying certain connatation, infer: topics can also carry sentiment

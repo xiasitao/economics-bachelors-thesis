@@ -1,0 +1,2 @@
+- news consumption depending on SES
+- importance of media environments (country-wise)

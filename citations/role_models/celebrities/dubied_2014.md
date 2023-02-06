@@ -1,0 +1,3 @@
+- ubiquity of celebrity news
+- link to democracy and politics
+- link to social inequalities, preserving them

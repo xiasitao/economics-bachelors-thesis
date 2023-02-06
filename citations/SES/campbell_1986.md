@@ -1,0 +1,9 @@
+- social resources
+    - network of people around
+    - realizing interest
+    - gathering information
+    - role model pendant
+- positive correlation between SES and access to social resources
+    - basically networks' SES measures correlate with own SES
+- SES measures
+    - education, occupational prestige, income

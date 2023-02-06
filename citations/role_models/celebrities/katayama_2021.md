@@ -1,0 +1,2 @@
+- too special
+- role of activism

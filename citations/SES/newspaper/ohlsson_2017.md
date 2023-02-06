@@ -1,0 +1,1 @@
+- cultural capital is predictor of quality vs popular news

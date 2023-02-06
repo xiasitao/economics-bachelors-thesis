@@ -4,7 +4,7 @@
 ## Data
 - more mentions per role model
 - survey
-    - preset role models (threat: non-freely selected role model, adv: more control of scopes, more control over topics, more role model variation)
+    - preset role models (threat: non-freely selected role model, adv: more control of scopes/research scopes chosen directly, more control over topics, more role model variation)
     - 
 
 # NLP and Inference
