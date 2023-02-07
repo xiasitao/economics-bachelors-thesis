@@ -45,7 +45,6 @@ articles, articles_per_SES = load_prepare_articles(articles_raw, ses, article_to
 articles_distinct, articles_per_SES_distinct = load_prepare_articles(articles_raw, ses_distinct, article_topics)
 
 
-# %%
 # Sanity checks
 assert(articles.groupby('role_model').count()['content'].unique() == np.array([50]))
 
@@ -173,7 +172,6 @@ def plot_hypertopic_distribution_by_n(hypertopic_distributions: dict, hypertopic
         high_ses_hypertopic_frequencies[n] = hypertopic_distributions[f'topic_{n}']['high']
     
     fig, ax = plt.gcf(), plt.gca()
-    ax.set_title('Hypertopic distributions')
     ax.set_ylabel('percentage of low SES articles')
     ax.set_xlabel('number of topics')
     ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
@@ -409,7 +407,7 @@ hypertopic_crosscheck(hypertopic_table, topic_words, 60)
 
 
 # %%
-hypertopic_columns = [col for col in topic_columns if col not in [wc.format(n) for n in (65, 70) for wc in ('topic_{}', 'topic_{}_p', 'topic_{}_entropy')]]
+hypertopic_columns = [col for col in topic_columns if col not in [wc.format(n) for n in (2,3,4,6,7,8,9,11,12,13,14,65, 70) for wc in ('topic_{}', 'topic_{}_p', 'topic_{}_entropy')]]
 article_hypertopics = find_hypertopics(articles, columns=hypertopic_columns, hypertopic_table=hypertopic_table)
 hypertopics_distributions = find_topic_distributions(article_hypertopics, hypertopic_columns)
 plot_hypertopic_distribution_by_n(hypertopics_distributions, hypertopics, articles_per_SES=articles_per_SES)

@@ -237,7 +237,6 @@ def plot_hypertopic_distribution_by_n(hypertopic_distributions: dict, hypertopic
         high_ses_hypertopic_frequencies[n] = hypertopic_distributions[f'cluster_{n}']['high']
     
     fig, ax = plt.gcf(), plt.gca()
-    ax.set_title('Hypertopic distributions')
     ax.set_ylabel('percentage of low SES articles')
     ax.set_xlabel('number of topics')
     ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))

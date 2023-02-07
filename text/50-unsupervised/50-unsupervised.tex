@@ -1,6 +1,7 @@
 % !TeX root = scaffold-50.tex
 \renewcommand{\imagepath}{../50-unsupervised/img}
 \newcommand{\ntopics}{n_\text{topics}}
+\newcommand{\nclusters}{n_\text{clusters}}
 
 \chapter{Unsupervised Analysis: Topic Modelling}
 In this chapter, the topics of the celebrity newspaper articles are examined using the topic modelling technique. After showing that using \gls{lda} alone does not yield robust and reliable results, semantic-similarity clustering is shown to improve the quality of the topic extraction.  Finally, the significance of differences in the topic distributions of low-\gls{ses} and high-\gls{ses} newspaper articles are discussed.
@@ -85,8 +86,29 @@ Additionally, the share of low-\gls{ses} articles for each assigned hypertopic w
 
 The author guesses that one of the reasons for these inconsistent variations in topic assignment is the newspaper articles operate on a very limited set of topics, roughly covered by the for hypertopics, which do expose considerable overlaps (e.g. movie-related articles having similarity to life stories, film music-related articles talking about movies). This could render the topic models incapable of capturing distinct groups of articles, rather than assigning topics seemingly randomly.
 
-As a potential fix, training topic models on the low-\gls{ses} and high-\gls{ses} corpora separately was tried, but led to similar inconsistencies. Instead, the topic modelling approach was enhanced by the use of a pretained transformer model as described in the next section.
+As a potential fix, training topic models on the low-\gls{ses} and high-\gls{ses} corpora separately was tried, but led to similar inconsistencies. Instead, the topic modelling approach was enhanced by the use of a pretained transformer model providing semantic embeddings as described in the next section.
 
-\section{Improvement with Semantic Embeddings}
+\section{Improvement with a Pretrained Model}
+In order to mitigate the issue that the \gls{lda} topic model was apparently incapable of clearly separating articles by their meaning, a pretrained semantic embedding model was added to the modelling process. Each article was assigned a vector representation by the pretrained SentenceBERT model. These representation were then clustered by the KMeans algorithm, with each cluster representing one topic. In this way, the process of assigning topics to each article did not depend on the newspaper article corpus anymore but instead only on a pretrained model. \gls{lda} with $\ntopics=1$ was then used to assign a single set of topic words to each of these clusters, such that in the end the output of the modelling process had the same structure as for using \gls{lda}. Figure~\ref{fig:embedding_modelling_schema} illustrates the modelling process in this scheme.
+
+\begin{figure}
+    \centering
+    \includegraphics[]{\imagepath/embedding_modelling_schema.pdf}
+    \caption{Schematic of the topic modelling process with SentenceBERT semantic embeddings and KMeans clustering: The article texts are transformed into embeddings, a vector representation of text, by the pretrained SentenceBERT transformer model. Then the KMeans algorithm clusters these embeddings into $\nclusters$ clusters of articles. Each of these sets of articles represents a topic whose topic words are found by separate \gls{lda} models (with $\ntopics=1$) for each cluster.}\label{fig:embedding_modelling_schema}
+\end{figure}
+
+Again, hypertopics were assigned to each set of topic words for comparing and assessing consistency across $\nclusters$. With this enhance approach, more consistency in varying $\ntopics$ was achieved in terms of hypertopic accuracy and the portion of low-\gls{ses} articles per hypertopic, as can be seend from figures~\ref{fig:accuracy_by_nclusters} and~\ref{fig:lowshare_by_nclusters}.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{\imagepath/acc_by_n_embeddings.png}
+    \caption{Accuracy of the  enhanced model-assigned hypertopics compared to human-annotated data as a function of the number of topics: The accuracy is higher and more consistent across the different numbers of clusters compared to the \gls{lda} approach. A value of $\nclusters=15$ seems promising.\todo[inline]{replace}}\label{fig:accuracy_by_nclusters}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.5]{\imagepath/low_ses_by_n_embeddings.png}
+    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is rather consistent around $\nclusters=15$, making it a promising choice.\todo[inline]{replace}}\label{fig:lowshare_by_nclusters}
+\end{figure}
 
 \section{Discussion}
