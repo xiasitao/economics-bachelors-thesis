@@ -1,4 +1,5 @@
-import pytask
+"""This script produces assets for the data chapter of the thesis.
+"""
 import pandas as pd
 import numpy as np
 
@@ -25,9 +26,7 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 
 ROLE_MODEL_LIST_PATH = BUILD_PATH / 'thesis/role_model_overview.tex'
-@pytask.mark.depends_on(BUILD_PATH / 'role_models/ses_scores.pkl')
-@pytask.mark.produces(ROLE_MODEL_LIST_PATH)
-def task_role_model_list(produces: Path):
+def produce_role_model_list(produces: Path):
     """Produce the list of role models.
 
     Args:
@@ -52,10 +51,7 @@ def task_role_model_list(produces: Path):
 
 
 ARTICLES_PER_ROLE_MODEL_PATH = BUILD_PATH / 'thesis/role_model_article_distribution.pgf'
-@pytask.mark.depends_on(BUILD_PATH / 'articles/articles.pkl')
-@pytask.mark.depends_on(BUILD_PATH / 'articles/articles_balanced_50.pkl')
-@pytask.mark.produces(ARTICLES_PER_ROLE_MODEL_PATH)
-def task_articles_per_role_model_distribution(produces: Path):
+def plot_articles_per_role_model_distribution(produces: Path):
     articles = pd.read_pickle(BUILD_PATH / 'articles/articles.pkl')
     articles = articles[articles['language_ml']=='en']
     balanced = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
@@ -80,5 +76,5 @@ def task_articles_per_role_model_distribution(produces: Path):
 
 
 if __name__ == '__main__':
-    task_role_model_list(ROLE_MODEL_LIST_PATH)
-    task_articles_per_role_model_distribution(ARTICLES_PER_ROLE_MODEL_PATH)
+    produce_role_model_list(ROLE_MODEL_LIST_PATH)
+    plot_articles_per_role_model_distribution(ARTICLES_PER_ROLE_MODEL_PATH)

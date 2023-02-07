@@ -98,11 +98,11 @@ def chi2_per_label_test(distribution: pd.DataFrame, articles_per_SES: tuple) -> 
         raise ValueError('Cannot accept relative frequencies.')
 
     results = pd.DataFrame(None, columns=['chi2', 'p'], index=distribution.index)
-    for category in distribution.index:
-        frequencies = distribution.loc[category]
+    for topic in distribution.index:
+        frequencies = distribution.loc[topic]
         expected_frequencies = np.array(articles_per_SES)/np.sum(np.array(articles_per_SES)) * np.sum(frequencies)
-        result = chisquare(distribution.loc[category], expected_frequencies)
-        results.loc[category] = [result.statistic, result.pvalue]
+        result = chisquare(distribution.loc[topic], expected_frequencies)
+        results.loc[topic] = [result.statistic, result.pvalue]
     return results.sort_index()
 
 
@@ -299,7 +299,7 @@ def evaluate_hypertopics_for_n(
 # %%
 HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE = 'movie', 'sport', 'music', 'life'
 hypertopics = [HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE]
-print_cluster_topics_words(cluster_topics, 50)
+print_cluster_topics_words(cluster_topics, 20)
 hypertopic_table = {
     4: [HT_LIFE, HT_LIFE, HT_SPORT, HT_MOVIE], 
     5: [HT_LIFE, HT_SPORT, HT_LIFE, HT_MUSIC, HT_LIFE],
@@ -383,7 +383,12 @@ hypertopics_columns = [f'cluster_{n}' for n in hypertopic_table]
 
 
 #%% 
-print_cluster_topics_words(cluster_adjectives, 50)
+print_cluster_topics_words(cluster_adjectives, 20)
+
+
+#%%
+topics_distribution = find_topic_distributions(articles, cluster_columns)
+topics_distribution_distinct = find_topic_distributions(articles_distinct, cluster_columns)
 
 
 # %%
@@ -423,6 +428,14 @@ evaluate_hypertopics_for_n(hypertopics_distributions[evaluate_for], find_article
 
 
 # %%
-evaluate_for = 'cluster_20'
 evaluate_hypertopics_for_n(hypertopics_distributions_distinct[evaluate_for], find_articles_per_SES(articles_distinct))
+
+
+# %%
+evaluate_hypertopics_for_n(topics_distribution[evaluate_for], find_articles_per_SES(articles))
+
+
+# %%
+evaluate_hypertopics_for_n(topics_distribution_distinct[evaluate_for], find_articles_per_SES(articles_distinct))
+
 # %%
