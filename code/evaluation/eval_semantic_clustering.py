@@ -26,6 +26,8 @@ article_clusters = pd.read_pickle(BUILD_PATH / 'semantic_similarity/semantic_clu
 cluster_columns = [column for column in article_clusters.columns]
 with open(BUILD_PATH / 'semantic_similarity/semantic_topics.pkl', 'rb') as file:
     cluster_topics = pickle.load(file)
+with open(BUILD_PATH / 'semantic_similarity/semantic_topics_adjectives.pkl', 'rb') as file:
+    cluster_adjectives = pickle.load(file)
 
 def load_prepare_articles(articles: pd.DataFrame, ses: pd.DataFrame, article_clusters: pd.DataFrame):
     """Combine article data, ses, and topic data.
@@ -197,6 +199,8 @@ def plot_human_annotation_confusion_matrix(article_hypertopic_data: pd.DataFrame
     articles_with_annotation = article_hypertopic_data.join(human_annotated_topic[[annotation_column]], on='article_id', how='inner')[['content', hypertopic_column, annotation_column]]
     topic_labels = np.unique(articles_with_annotation[[hypertopic_column, annotation_column]].values.ravel())
     topic_confusion_matrix = confusion_matrix(y_true=articles_with_annotation[annotation_column], y_pred=articles_with_annotation[hypertopic_column], labels=topic_labels)
+    accuracy = accuracy_score(articles_with_annotation[annotation_column], articles_with_annotation[hypertopic_column])
+    print(f'Accuracy for {n_clusters} clusters: {accuracy*100:.2f}%')
     fig, ax = plt.gcf(), plt.gca()
     ax.set_title(f'{n_clusters} clusters')
     ConfusionMatrixDisplay(topic_confusion_matrix, display_labels=topic_labels).plot(ax=ax)
@@ -377,6 +381,11 @@ hypertopic_table = {
 assert(all([len(hypertopic_table[n]) == n for n in hypertopic_table]))
 hypertopics_columns = [f'cluster_{n}' for n in hypertopic_table]
 
+
+#%% 
+print_cluster_topics_words(cluster_adjectives, 50)
+
+
 # %%
 article_hypertopics = find_hypertopics(articles, hypertopic_table, hypertopics_columns)
 hypertopics_distributions = find_topic_distributions(article_hypertopics, hypertopics_columns)
@@ -385,11 +394,11 @@ hypertopics_distributions_distinct = find_topic_distributions(article_hypertopic
 
 
 # %%
-plot_human_annotation_confusion_matrix(article_hypertopics, human_annotated, 15)
+plot_human_annotation_confusion_matrix(article_hypertopics, human_annotated, 20)
 
 
 # %%
-plot_human_annotation_confusion_matrix(article_hypertopics_distinct, human_annotated_distinct, 15)
+plot_human_annotation_confusion_matrix(article_hypertopics_distinct, human_annotated_distinct, 20)
 
 
 # %%

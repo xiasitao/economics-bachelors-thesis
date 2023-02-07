@@ -38,13 +38,13 @@ The newspaper articles published before the interviews and the ones published af
 \subsection*{Text Cleaning}
 In order to be fed into the \gls{nlp} algorithm for analysis, the article texts were put through multiple stages of text cleaning and preparation:
 
-\paragraph{Raw} The \textit{raw} stage is text content from the online newspaper website as extracted by the webscraping algorithm without any other filtering.
-
-\paragraph{Content} For the \textit{content} stage, all internet hyperlinks and non-latin characters were removed from the \textit{raw} texts, and sentence boundaries were unified. At this stage, the text is still human-readable and was used as an input for the semantic similarity-based language model (see chapter \todo{add ref}).
-
-\paragraph{Slim Content} For the \textit{slim content} stage, the \textit{content} texts were all put to lower case, stop words, numerals, and punctuation were removed. All words were lemmatized, meaning that flectional words were replaced with their respective grammatical base form. These operations were suggested in \textcite[p. 254]{vajjala_practical_2020}.
-
-\paragraph{Nouns and Verbs} In the \textit{nouns and verbs} stage, the text is deprived of most of its linguistic structure, with only nouns and verbs in their base form. This stage was used as an input for the topic modelling algorithm (see chapter \todo{add ref})
+\begin{itemize}
+    \item \textit{Raw}: The \textit{raw} stage is text content from the online newspaper website as extracted by the webscraping algorithm without any other filtering.
+    \item \textit{Content}: For the \textit{content} stage, all internet hyperlinks and non-latin characters were removed from the \textit{raw} texts, and sentence boundaries were unified. At this stage, the text is still human-readable and was used as an input for the semantic similarity-based language model (see chapter \todo{add ref}).
+    \item \textit{Slim Content}: For the \textit{slim content} stage, the \textit{content} texts were all put to lower case, stop words, numerals, and punctuation were removed. All words were lemmatized, meaning that flectional words were replaced with their respective grammatical base form. These operations were suggested in \textcite[p. 254]{vajjala_practical_2020}. Stopword removal was performed using the \textit{nltk} library~\autocite{bird_natural_2019}, lemmatization was performed using the \textit{spaCy} library~\autocite{spacy_spacy_nodate}.
+    \item \textit{Nouns and Verbs}: In this stage, the text is deprived of most of its linguistic structure, with only nouns and verbs in their base form. This stage was used as an input for the topic modelling approach (see chapter~\ref{ch:unsupervised}). The part of speech was identified and the base form of words was retrieved with the \textit{nltk} library~\autocite{bird_natural_2019}.
+    \item \textit{Adjectives and Adverbs}: In this stage, similar to the \textit{nouns and verbs} stage, only adjects and adverbs are kept in their base for. This stage was also used as an input to the topic modelling approach (see chapter~\ref{ch:unsupervised}). Also this stage was prepared with the \textit{nltk} library~\autocite{bird_natural_2019}.
+\end{itemize}
 
 Even though the articles' content had already been pre-cleaned from pop-ups and cookie banners by \textcite{fenske_using_2022}, a few artifacts remained in the data set. These articles were, however, not filtered out in order not to accidentally remove entire articles just slightly polluted by cookie banners, user comments or social-media insets.
 

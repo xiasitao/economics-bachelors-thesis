@@ -18,20 +18,42 @@ ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 
-def filter_tokens(doc: list) -> list:
+def filter_tokens(doc: list, pos_to_keep=['verbs', 'nouns']) -> list:
+    """Filter out tokens from a token list. Filtering out tokes with length 0 or 1, and filtering out
+    tokens whose part of speech is not among the selected POS.
+
+    Args:
+        doc (list): _description_
+        pos_to_keep (list, optional): _description_. Defaults to ['verbs', 'nouns'].
+
+    Returns:
+        list: _description_
+    """    
     nltk_tokens = word_tokenize(' '.join(doc))
+
+    pos_labels = []
+    if 'verbs' in pos_to_keep:
+        pos_labels += ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
+    if 'nouns' in pos_to_keep:
+        pos_labels += ['FW', 'NN', 'NNS', 'NNP', 'NNPS',]
+    if 'adjectives' in pos_to_keep:
+        pos_labels += ['JJ', 'JJR', 'JJS']
+    if 'adverbs' in pos_to_keep:
+        pos_labels += ['RB', 'RBR', 'RBS']
+
     return [token[0] for token in pos_tag(nltk_tokens)
         if len(token[0]) > 1
         and token[0] != 've'
-        and token[1] in ('FW', 'NN', 'NNS', 'NNP', 'NNPS', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ')  # https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
+        and token[1] in pos_labels  # https://www.ling.upenn.edu/courses/Fall_2003/ling001/penn_treebank_pos.html
     ]
 
 
-def find_topic(articles_slim: "list[str]") -> "list[str]":
+def find_topic(articles_slim: "list[str]", pos: "list[str]") -> "list[str]":
     """Find the major topic in a list of slimmed articles.
 
     Args:
         articles_slim (list[str]): Slimmed down article texts.
+        pos (list[str]): List of parts of speech to keep.
 
     Returns:
         list[str]: List of words characterizing the topic
@@ -40,7 +62,7 @@ def find_topic(articles_slim: "list[str]") -> "list[str]":
     dictionary = Dictionary(articles_tokenized)
     dictionary.filter_extremes(no_below=5, no_above=0.3)
     dictionary[0]
-    corpus = [dictionary.doc2bow(filter_tokens(article)) for article in articles_tokenized]
+    corpus = [dictionary.doc2bow(filter_tokens(article, pos)) for article in articles_tokenized]
 
     iterations = 500
     passes = 4
@@ -120,14 +142,16 @@ def task_semantic_clustering(produces: Path, all_n_clusters=[4,5,6,8,10,15,20,25
 
 
 SEMANTIC_TOPICS_PATH = BUILD_PATH / 'semantic_similarity/semantic_topics.pkl'
+SEMANTIC_TOPICS_PATH_ADJECTIVES = BUILD_PATH / 'semantic_similarity/semantic_topics_adjectives.pkl'
 @pytask.mark.produces(SEMANTIC_CLUSTERS_PATH)
 @pytask.mark.depends_on(BUILD_PATH / 'semantic_similarity/semantic_clusters.pkl')
 @pytask.mark.depends_on(BUILD_PATH / 'articles/articles_balanced_50.pkl')
-def task_semantic_cluster_topic_modelling(produces: Path):
+def task_semantic_cluster_topic_modelling(produces: Path, pos=['nouns', 'verbs']):
     """Find topic word lists for every cluster.
 
     Args:
         produces (Path): Destination path.
+        pos (list(str)): List of parts of speech to
     """    
     cluster_data = pd.read_pickle(BUILD_PATH / 'semantic_similarity/semantic_clusters.pkl')
     articles_raw = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
@@ -143,7 +167,7 @@ def task_semantic_cluster_topic_modelling(produces: Path):
             print(f'{cluster_label} ', end='', flush=True)
             cluster_article_ids = cluster_data[cluster_data[n_clusters_column]==cluster_label].index.unique()
             cluster_articles = articles[articles['article_id'].isin(cluster_article_ids)]
-            topic = find_topic(cluster_articles['content_slim'].to_list())
+            topic = find_topic(cluster_articles['content_slim'].to_list(), pos=pos)
             this_n_topics[cluster_label] = topic
         print()
         cluster_topics[n_clusters_column] = this_n_topics
@@ -154,6 +178,7 @@ def task_semantic_cluster_topic_modelling(produces: Path):
 
 if __name__ == '__main__':
     # task_semantic_embedding(SBERT_VECTORS_PATH)
-    task_semantic_clustering(SEMANTIC_CLUSTERS_PATH)
-    task_semantic_cluster_topic_modelling(SEMANTIC_TOPICS_PATH)
+    # task_semantic_clustering(SEMANTIC_CLUSTERS_PATH)
+    # task_semantic_cluster_topic_modelling(SEMANTIC_TOPICS_PATH)
+    task_semantic_cluster_topic_modelling(SEMANTIC_TOPICS_PATH_ADJECTIVES, pos=['adjectives', 'adverbs'])
     

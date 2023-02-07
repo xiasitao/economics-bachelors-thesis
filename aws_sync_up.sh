@@ -21,4 +21,5 @@ aws s3 sync "$TARGETPATH" "s3://econ-bachelors-thesis/" --exclude '*' \
     --include "build/articles/articles_human_annotated_distinct.pkl" \
     --include "build/role_models/*" \
     --include "build/zero_shot_classification/*" \
-    --include "build/topic_modelling/*"
+    --include "build/topic_modelling/*" \
+    --include "build/semantic_similarity/*"

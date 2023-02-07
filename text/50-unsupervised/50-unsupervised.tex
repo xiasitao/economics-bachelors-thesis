@@ -3,7 +3,7 @@
 \newcommand{\ntopics}{n_\text{topics}}
 \newcommand{\nclusters}{n_\text{clusters}}
 
-\chapter{Unsupervised Analysis: Topic Modelling}
+\chapter{Unsupervised Analysis: Topic Modelling}\label{ch:unsupervised}
 In this chapter, the topics of the celebrity newspaper articles are examined using the topic modelling technique. After showing that using \gls{lda} alone does not yield robust and reliable results, semantic-similarity clustering is shown to improve the quality of the topic extraction.  Finally, the significance of differences in the topic distributions of low-\gls{ses} and high-\gls{ses} newspaper articles are discussed.
 
 The main focus is to find the prevailing topics in the celebrity newspaper articles and to examine any differences in the distribution of these topics between the low-\gls{ses} and high-\gls{ses} groups.\todo{Motivate more again}
@@ -95,9 +95,11 @@ As the quality of the topic modelling approach could not be substantially improv
 \section{Improvement with a Pretrained Model}
 In order to mitigate the issue that the \gls{lda} topic model was apparently incapable of consistenly separating articles by their meaning, a pretrained semantic embedding model was added to the modelling process. It was used assign to every newspaper article a vector representation of its meaning (semantics) that could be partitioned into topics by a clustering algorithm:
 
-As a first step, each article was assigned a $384$ dimensional vector representation by the pretrained SentenceBERT model (implemention with \textcite{sbertsentencetransformers_sentencetransformers_2022}, see chapter~\ref{ch:sentencebert}). As suggested by \textcite{black_using_2020}, these representations were first dimensionality-reduced to \SI{50}{} dimensions using \gls{pca}~\autocite{pearson_liii_1901} and then further reduced to \SI{3}{} dimensions using \gls{tsne}~\autocite{maaten_visualizing_2008}. This procedure yielded a three-dimensional semantic vector representation of each article, such that articles with similar meaning are closer to each other in this vector space than articles with a large difference in meaning.
+As a first step, each article in the \textit{content} stage, meaning the original article with only minimal cleaning applied, was assigned a $384$ dimensional vector representation by the pretrained SentenceBERT model (implemention with \textcite{sbertsentencetransformers_sentencetransformers_2022}, see chapter~\ref{ch:sentencebert}). As suggested by \textcite{black_using_2020}, these representations were first dimensionality-reduced to \SI{50}{} dimensions using \gls{pca}~\autocite{pearson_liii_1901} and then further reduced to \SI{3}{} dimensions using \gls{tsne}~\autocite{maaten_visualizing_2008}. This procedure yielded a three-dimensional semantic vector representation of each article, such that articles with similar meaning are closer to each other in this vector space than articles with a large difference in meaning.
 
-In the next step, these vectors were then used as input for the KMeans clustering algorithm~\autocite{1967} for partitioning the articles according to their meaning. This algorithm produced $\nclusters$ clusters, each one representing one topic. Figure~\ref{fig:clusters} shows the articles' vector representation and the clusters for $\nclusters=5$ in two dimensions. In this way, the process of assigning topics to each article did not depend on the newspaper article corpus anymore but instead on a pretrained model. \gls{lda} with $\ntopics=1$ was then used to assign a single set of topic words to each of these clusters, such that in the end the output of the modelling process had the same structure as for using \gls{lda}. 
+In the next step, these vectors were then used as input for the KMeans clustering algorithm~\autocite{1967} for partitioning the articles according to their meaning, such that articles with similar meaning are rather within the same cluster whereas articles with differing meaning are more likely to be in different clusters. This algorithm produced $\nclusters$ clusters, each one representing one topic. Figure~\ref{fig:clusters} shows the articles' vector representation and the clusters for $\nclusters=5$ in two dimensions. In this way, the process of assigning topics to each article did not depend on the newspaper article corpus anymore but instead on a pretrained model.
+
+Finally \gls{lda} with $\ntopics=1$ was applied on the articles of each cluster in the \textit{nouns and verbs} stage, hence with most of the structure removed from the text. In this way, each cluster was assigned a single set of topic words, such that in the end the output of the modelling process had the same structure as for using \gls{lda}.
 
 Figure~\ref{fig:embedding_modelling_schema} illustrates this modelling procedure from the articles, over the vector representations, to the clusters representing topics. In figure~
 
@@ -110,7 +112,7 @@ Figure~\ref{fig:embedding_modelling_schema} illustrates this modelling procedure
 \begin{figure}
     \centering
     \includegraphics[]{\imagepath/embedding_modelling_schema.pdf}
-    \caption{Schematic of the topic modelling process with SentenceBERT semantic embeddings and KMeans clustering: The article texts are transformed into embeddings, a vector representation of text, by the pretrained SentenceBERT transformer model. Then the KMeans algorithm clusters these embeddings into $\nclusters$ clusters of articles. Each of these sets of articles represents a topic whose topic words are found by separate \gls{lda} models (with $\ntopics=1$) for each cluster.}\label{fig:embedding_modelling_schema}
+    \caption{Schematic of the topic modelling process with SentenceBERT semantic embeddings and KMeans clustering: The article texts (in the \textit{content} stage) are transformed into embeddings, a vector representation of text, by the pretrained SentenceBERT transformer model. These representations are dimensionality-reduced with \gls{pca} and \gls{tsne}. Then the KMeans algorithm clusters the articles into $\nclusters$ clusters. Each of these sets of articles represents a topic whose topic words are found by separate \gls{lda} models (with $\ntopics=1$, taking the articles in the \textit{nouns and verbs} stage as input) for each cluster.}\label{fig:embedding_modelling_schema}
 \end{figure}
 
 \paragraph{Accuracy and Consistency}
@@ -129,6 +131,10 @@ Again, hypertopics were assigned to each set of topic words for evaluating the a
 \end{figure}
 
 \paragraph{Evaluation}
+In order to evaluate the 
+
+\paragraph{Alternative Approach: Adjectives and Adverbs}
+
 
 
 \section{Discussion}
