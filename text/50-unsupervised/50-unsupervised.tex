@@ -8,7 +8,7 @@ In this chapter, the topics of the celebrity newspaper articles are examined usi
 
 The main focus is to find the prevailing topics in the celebrity newspaper articles and to examine any differences in the distribution of these topics between the low-\gls{ses} and high-\gls{ses} groups.\todo{Motivate more again}
 
-\section{Shortcomings of \gls{lda} Topic Modelling}
+\section{Shortcomings of LDA Topic Modelling}
 In a first attempt, \gls{lda} model instances (see chapter~\ref{ch:lda}) were trained for a varying number of topics $\ntopics$. The corpus of all relevant newspaper articles comprised the 50-article balanced data set ensuring that role models with many articles could not induce a topic bias in the models. The texts were fed to the models in the \textit{noun and verb} stage in order to focus on the meaning-bearing elements of the texts.
 
 Each of these model instances yielded a set of $\ntopics$ topics. Each topic $t$ is defined by a list $T_{\ntopics, t}$ of characterizing topic words. Each model assigned to every newspaper article $i$ estimated probabilities $p_{i, t}$ that article $i$ would belong to the topic $t$. Each newspaper article $i$ was assigned a topic $t_i$ by selecting the topic with the maximum probability:
@@ -80,7 +80,7 @@ Additionally, the share of low-\gls{ses} articles for each assigned hypertopic w
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/low_ses_by_n_topic_modelling.png}
+    \includegraphics[scale=0.5]{\imagepath/low_ses_by_n_topic_modelling.png}
     \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is not consistent over a range from \SI{5}{} to \SI{50}{} topics, indicating that the assigment of articles to topics is not very reliable.\todo[inline]{replace}}\label{fig:lowshare_per_ntopics}
 \end{figure}
 
