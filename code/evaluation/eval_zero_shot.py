@@ -78,20 +78,20 @@ def find_articles_per_SES(articles: pd.DataFrame, column='content') -> tuple:
 
 
 def filter_out_low_entropy_labels(articles: pd.DataFrame, percentile: float, category_columns: list) -> pd.DataFrame:
-    """Set the label of all 
+    """Set the label of all cateogories with entropy above a certain percentile to nan.
 
     Args:
         articles (pd.DataFrame): articles
         category_columns (list): list of all category columns to filter for
-        percentile (float): Entropy percentile below which everying is to be filtered out. Between 0.0 and 1.0.
+        percentile (float): Entropy percentile above which everying is to be filtered out. Between 0.0 and 1.0.
 
-    Returns:
+    Returns:articles_filtered[~articles_filtered['topic_60'].isna()]['topic_60_entropy'].mean()
         list: Article ids, their category values and their entropies that have entropy lower than the percentile.
     """
     articles = articles.copy()
     for column in category_columns:
         percentile_boundary = np.percentile(articles[f'{column}_entropy'], 100*percentile)
-        articles[column] = articles[column].mask(articles[f'{column}_entropy'] < percentile_boundary)
+        articles[column] = articles[column].mask(articles[f'{column}_entropy'] > percentile_boundary)
     return articles
 
 
@@ -251,6 +251,6 @@ evaluate_category(articles_distinct, 'prosociality', articles_per_SES=find_artic
 
 
 # %%
-filtered_articles = filter_out_low_entropy_labels(articles, 0.3, category_columns)
+filtered_articles = filter_out_low_entropy_labels(articles, 0.8, category_columns)
 evaluate_category(filtered_articles, 'topic_l', articles_per_SES=find_articles_per_SES(filtered_articles, column='topic_l'), human_annotated=human_annotated, is_distinct=False)
 # %%

@@ -64,12 +64,12 @@ def find_articles_per_SES(articles: pd.DataFrame, column='content') -> tuple:
 
 
 def filter_out_low_entropy_labels(articles: pd.DataFrame, percentile: float, topic_columns: list) -> pd.DataFrame:
-    """Set the label of all 
+    """Set the label of all articles with entropy above a certain percentil to nan.
 
     Args:
         articles (pd.DataFrame): articles
         topic_columns (list): list of all topic columns to filter for
-        percentile (float): Entropy percentile below which everying is to be filtered out. Between 0.0 and 1.0.
+        percentile (float): Entropy percentile above which everying is to be filtered out. Between 0.0 and 1.0.
 
     Returns:
         list: Article ids, their category values and their entropies that have entropy lower than the percentile.
@@ -77,7 +77,7 @@ def filter_out_low_entropy_labels(articles: pd.DataFrame, percentile: float, top
     articles = articles.copy()
     for column in topic_columns:
         percentile_boundary = np.percentile(articles[f'{column}_entropy'], 100*percentile)
-        articles[column] = articles[column].mask(articles[f'{column}_entropy'] < percentile_boundary)
+        articles[column] = articles[column].mask(articles[f'{column}_entropy'] > percentile_boundary)
     return articles
 
 
@@ -93,9 +93,10 @@ def find_topic_distributions(articles: pd.DataFrame, columns: list) -> dict:
     """
     topic_distributions = {}
     for n_topics_column in columns:
-        topic_distribution = pd.DataFrame(data=None, index=articles[n_topics_column].unique(), columns=['low', 'high'])
-        topic_distribution['low'] = articles[articles['low_ses']].groupby(n_topics_column).count()['content']
-        topic_distribution['high'] = articles[articles['high_ses']].groupby(n_topics_column).count()['content']
+        n_topic_articles = articles[~articles[n_topics_column].isna()]
+        topic_distribution = pd.DataFrame(data=None, index=n_topic_articles[n_topics_column].unique(), columns=['low', 'high'])
+        topic_distribution['low'] = n_topic_articles[n_topic_articles['low_ses']].groupby(n_topics_column).count()['content']
+        topic_distribution['high'] = n_topic_articles[n_topic_articles['high_ses']].groupby(n_topics_column).count()['content']
         topic_distributions[n_topics_column] = topic_distribution
     return topic_distributions
 
@@ -482,4 +483,11 @@ hypertopics_distributions_filtered = find_topic_distributions(article_hypertopic
 plot_hypertopic_distribution_by_n(hypertopics_distributions_filtered, hypertopics, articles_per_SES=find_articles_per_SES(articles_filtered))
 # %%
 plot_accuracy_by_n(article_hypertopics_filtered, human_annotated)
+# %%
+to_evaluate = 'topic_15'
+plot_topic_distribution(hypertopics_distributions_filtered[to_evaluate])
+print(chi2_contingency_test(hypertopics_distributions_filtered[to_evaluate]))
+print(chi2_per_label_test(hypertopics_distributions_filtered[to_evaluate], find_articles_per_SES(articles_filtered, to_evaluate)))
+
+
 # %%
