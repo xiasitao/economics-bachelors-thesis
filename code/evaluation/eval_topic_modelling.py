@@ -286,7 +286,7 @@ evaluate_topics_for_n(articles_distinct, 5, articles_per_SES=articles_per_SES_di
 # %%
 HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE = 'movie', 'sport', 'music', 'life'
 hypertopics = [HT_MOVIE, HT_SPORT, HT_MUSIC, HT_LIFE]
-print_topic_words(topic_words, 60)
+print_topic_words(topic_words, 50)
 hypertopic_table = {
     2: [HT_LIFE, HT_MOVIE],
     3: [HT_SPORT, HT_MUSIC, HT_MOVIE],

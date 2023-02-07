@@ -1,0 +1,1 @@
+- alternative topic models that find special aspects instead of general aspects of documents -> could be useful for checking odd occurrences of words as indicators of something exceptional rather than mundane general topics?

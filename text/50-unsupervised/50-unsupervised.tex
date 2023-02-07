@@ -22,20 +22,39 @@ Figure~\ref{fig:topic_modelling_schema} illustrates the modelling and assigment 
     \caption{Schematic of the topic modelling setup with \gls{lda}: Many models for different numbers $\ntopics$ of topics are trained, each of them yields a list of topics that are characterized by topic words, as well as topic probabilities for each article.}\label{fig:topic_modelling_schema}
 \end{figure}
 
-Sensible values for the model hyperparameters (except $\ntopics$) were found by trial and error. The following steps were taken to search for an optimal number of topics.\todo{Motivate more, why we look for n and what advantages and disadvantages a high and a low n have.}
+The \gls{lda} algorithm depends on a set of hyperparameters, most of which are related to its underlying optimization process.  Sensible values for these were found by trial and error. The one hyperparameter that is crucial for the interpretation of this analysis is $\ntopics$. It determines the granularity of the topics the model provides for the comparison of the low- and high-\gls{ses} groups. The trade-off between a low and a high number of topics is expected to be a well-graspable set of topics with considerable overlaps and therefore poor specificity for low $\ntopics$, in contrast to highly delimited niche-topics suffering from a lack of generality for high $\ntopics$. For choosing an appropriate $\ntopics$ in this work, it was required that the topics assigned to articles be consistent for small variations of $\ntopics$, since only then it can be assumed that the assignment of the articles to the low- and high-\gls{ses} groups will not just be a random effect. The search for an optimal number of topics included introducing of so-called \textit{hypertopics} to make model output topics comparable as well as assessing ranges for $\ntopics$ with respect to hypertopic accuracy and consistency of the \gls{ses} assignment.
 
 \paragraph{Assigning Hypertopics}
-As the topics are only defined by a list of characterizing words, the individual topics can semantically overlap, and topics which are output by different model instances cannot directly be compared. In order to still be able to compare the model outputs for different $n_\text{topics}$, each topic was manually assigned one of the four \textit{hypertopics} movie, music, sport, and life (with life being intended as a miscellaneous category for all topics not covered by the other three hypertopics). Each article $i$ with topic $t$ was by that means also assigned a hypertopic $h$:
+As the model output topics are only defined by a list of characterizing words, the individual topics can overlap in term of their meaning (e.g. different kinds of sport), and the topics obtained for different $\ntopics$ cannot be compared without human intuition. In order to still be able to compare the model outputs for different $\ntopics$, each topic was manually assigned one of the four \textit{hypertopics} movie, music, sport, and life (with life being intended as a miscellaneous category for all topics not covered by the other three hypertopics). These four hypertopics were heuristically selected while examining the model output topics. Each article $i$ with topic $t$ was by that means also assigned a hypertopic $h$:
 \begin{align}
     h_i = h(t_i)
 \end{align}
+Table~\ref{tab:hypertopics} shows examples of the model output topics and their manually assigned hypertopics and shows the generality vs specificity trade-off in terms of the chosen $\ntopics$.
+
+\begin{table}
+    \centering
+    \begin{tabular}{clc}
+        \toprule
+        $\ntopics$ & topic words for exemplary topics (model output) & hypertopic \\
+        \toprule 
+        \multirow{3}{*}{5} & love video fan people thing song feel music share life & \textit{life}\\
+        & game player team season goal win league sport club score & \textit{sport}\\
+        & film llc st ave dr series movie season actor michael & \textit{movie}\\
+        \midrule
+        \multirow{3}{*}{50} & music artist business sony continue record label company team partner & \textit{music} \\
+        & inc property water art road town science management development site & \textit{life} \\
+        & fc week injury season run football quarter marcel yard dortmund & \textit{sport} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Example of model output topics and their respective hypertopics. Comparing the \textit{sport} hypertopic examples for $\ntopics = 5$ and $\ntopics = 50$ shows how a larger amount of model topics makes the topics more specific, here by referencing a particular sport and a particular sports club.}\label{tab:hypertopics}
+\end{table}
 
 With every article associated to a hypertopic, it is possible to compare the distribution of articles and \gls{ses} groups across hypertopics for different $\ntopics$ as well as verifying topic assignments with the human-annotated data.
 
 \paragraph{Accuracy and Consistency}
 In the next step, the accuracy of the topic models was assessed with the human-annotated data and the consistency of the predictions for different $\ntopics$.
 
-The accuracy of the hypertopic assignment was calculated as the ratio of artciles with correct hypertopic assigment by the model and all articles that were human-annotated:
+The accuracy of the hypertopic assignment was calculated as the ratio of articles with correct hypertopic assignment by the model and all articles that were human-annotated:
 \begin{align}
     acc = \frac{
         \left|
@@ -52,21 +71,21 @@ Figure~\ref{fig:accuracy_by_ntopics} reveals that the accuracy is not steady acr
 
 \begin{figure}
     \centering
-    \caption{Accuracy of the model-assigned hypertopics as a function of the number of topics: The accuracy of comparably low and not consistent across the different numbers of topics.}\label{fig:accuracy_by_ntopics}
+    \includegraphics[scale=0.5]{\imagepath/acc_by_n_topic_modelling.png}
+    \caption{Accuracy of the model-assigned hypertopics compared to human-annotated data as a function of the number of topics: The accuracy is comparably low and not consistent across the different numbers of topics.\todo[inline]{replace}}\label{fig:accuracy_by_ntopics}
 \end{figure}
 
-Additionally, the share of low-\gls{ses} articles for each assigned hypertopic was scrutinized in order to assess the influence of $\ntopics$ in the modelling quality. This share is plotted in figure~\ref{fig:lowshare_per_ntopics} across $\ntopics$. The fact that there is no range of $\ntopics$ where this share is consistent for small variations of $\ntopics$ suggests, that the assignment of articles to the hypertopics is to a large extent random and that the model is incapable of making a reliable prediction of an article's topic.\todo{Explain more why you took exactly this share and not anything else.}
+Additionally, the share of low-\gls{ses} articles for each assigned hypertopic was used as a measure for topic assignment consistency across $\ntopics$. This share is plotted in figure~\ref{fig:lowshare_per_ntopics}. The fact that there is no range of $\ntopics$ where this share is consistent for small variations of $\ntopics$ suggests that the assignment of articles to the hypertopics is to a considerable extent random and that the model is incapable of making a reliable prediction of an article's topic.\todo{Explain more why you took exactly this share and not anything else.}
 
 \begin{figure}
     \centering
-    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is not consistent over a range from \SI{5}{} to \SI{50}{} topics, indicating that the assigment of articles to topics is not reliable.}\label{fig:lowshare_per_ntopics}
+    \includegraphics[scale=0.5]{img/low_ses_by_n_topic_modelling.png}
+    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is not consistent over a range from \SI{5}{} to \SI{50}{} topics, indicating that the assigment of articles to topics is not very reliable.\todo[inline]{replace}}\label{fig:lowshare_per_ntopics}
 \end{figure}
 
+The author guesses that one of the reasons for these inconsistent variations in topic assignment is the newspaper articles operate on a very limited set of topics, roughly covered by the for hypertopics, which do expose considerable overlaps (e.g. movie-related articles having similarity to life stories, film music-related articles talking about movies). This could render the topic models incapable of capturing distinct groups of articles, rather than assigning topics seemingly randomly.
 
-
-
-
-
+As a potential fix, training topic models on the low-\gls{ses} and high-\gls{ses} corpora separately was tried, but led to similar inconsistencies. Instead, the topic modelling approach was enhanced by the use of a pretained transformer model as described in the next section.
 
 \section{Improvement with Semantic Embeddings}
 
