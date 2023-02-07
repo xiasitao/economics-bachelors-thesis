@@ -76,12 +76,12 @@ Figure~\ref{fig:accuracy_by_ntopics} reveals that the accuracy is not steady acr
     \caption{Accuracy of the model-assigned hypertopics compared to human-annotated data as a function of the number of topics: The accuracy is comparably low and not consistent across the different numbers of topics.\todo[inline]{replace}}\label{fig:accuracy_by_ntopics}
 \end{figure}
 
-Additionally, the share of low-\gls{ses} articles for each assigned hypertopic was used as a measure for topic assignment consistency across $\ntopics$. This share is plotted in figure~\ref{fig:lowshare_per_ntopics}. The fact that there is no range of $\ntopics$ where this share is consistent for small variations of $\ntopics$ suggests that the assignment of articles to the hypertopics is to a considerable extent random and that the model is incapable of making a reliable prediction of an article's topic.\todo{Explain more why you took exactly this share and not anything else.}
+Additionally, the share of low-\gls{ses} articles for each assigned hypertopic was used as a measure for topic assignment consistency across $\ntopics$. This share is plotted in figure~\ref{fig:lowshare_per_ntopics}. The fact that there is no range of $\ntopics$ where this share is consistent for small variations of $\ntopics$ suggests that the assignment of articles to the hypertopics is to a considerable extent random and that the model is incapable of making a reliable prediction of an article's topic.\todo{Explain more why you took exactly this share and not anything else.} These observations did not differ significantly if the \textit{distinct-\gls{ses}} set of articles was used instead.
 
 \begin{figure}
     \centering
     \includegraphics[scale=0.5]{\imagepath/low_ses_by_n_topic_modelling.png}
-    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is not consistent over a range from \SI{5}{} to \SI{50}{} topics, indicating that the assigment of articles to topics is not very reliable.\todo[inline]{replace}}\label{fig:lowshare_per_ntopics}
+    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is not consistent over a range from \SI{5}{} to \SI{50}{} topics, indicating that the assigment of articles to topics is not very reliable. The share of low-\gls{ses} articles among all articles is shown as a reference.\todo[inline]{replace}}\label{fig:lowshare_per_ntopics}
 \end{figure}
 
 The author guesses that one of the reasons for these inconsistent variations in topic assignment is the newspaper articles operate on a very limited set of topics, roughly covered by the for hypertopics, which do expose considerable overlaps (e.g. movie-related articles having similarity to life stories, film music-related articles talking about movies). This could render the topic models incapable of capturing distinct groups of articles, rather than assigning topics seemingly randomly.
@@ -89,7 +89,9 @@ The author guesses that one of the reasons for these inconsistent variations in 
 As a potential fix, training topic models on the low-\gls{ses} and high-\gls{ses} corpora separately was tried, but led to similar inconsistencies. Instead, the topic modelling approach was enhanced by the use of a pretained transformer model providing semantic embeddings as described in the next section.
 
 \section{Improvement with a Pretrained Model}
-In order to mitigate the issue that the \gls{lda} topic model was apparently incapable of clearly separating articles by their meaning, a pretrained semantic embedding model was added to the modelling process. Each article was assigned a vector representation by the pretrained SentenceBERT model. These representation were then clustered by the KMeans algorithm, with each cluster representing one topic. In this way, the process of assigning topics to each article did not depend on the newspaper article corpus anymore but instead only on a pretrained model. \gls{lda} with $\ntopics=1$ was then used to assign a single set of topic words to each of these clusters, such that in the end the output of the modelling process had the same structure as for using \gls{lda}. Figure~\ref{fig:embedding_modelling_schema} illustrates the modelling process in this scheme.
+In order to mitigate the issue that the \gls{lda} topic model was apparently incapable of consistenly separating articles by their meaning, a pretrained semantic embedding model was added to the modelling process. In this way, the process of finding the topics
+
+Each article was assigned a vector representation by the pretrained SentenceBERT model. These representation were then clustered by the KMeans algorithm, with each cluster representing one topic. In this way, the process of assigning topics to each article did not depend on the newspaper article corpus anymore but instead only on a pretrained model. \gls{lda} with $\ntopics=1$ was then used to assign a single set of topic words to each of these clusters, such that in the end the output of the modelling process had the same structure as for using \gls{lda}. Figure~\ref{fig:embedding_modelling_schema} illustrates the modelling process in this scheme.
 
 \begin{figure}
     \centering
@@ -97,7 +99,7 @@ In order to mitigate the issue that the \gls{lda} topic model was apparently inc
     \caption{Schematic of the topic modelling process with SentenceBERT semantic embeddings and KMeans clustering: The article texts are transformed into embeddings, a vector representation of text, by the pretrained SentenceBERT transformer model. Then the KMeans algorithm clusters these embeddings into $\nclusters$ clusters of articles. Each of these sets of articles represents a topic whose topic words are found by separate \gls{lda} models (with $\ntopics=1$) for each cluster.}\label{fig:embedding_modelling_schema}
 \end{figure}
 
-Again, hypertopics were assigned to each set of topic words for comparing and assessing consistency across $\nclusters$. With this enhance approach, more consistency in varying $\ntopics$ was achieved in terms of hypertopic accuracy and the portion of low-\gls{ses} articles per hypertopic, as can be seend from figures~\ref{fig:accuracy_by_nclusters} and~\ref{fig:lowshare_by_nclusters}.
+Again, hypertopics were assigned to each set of topic words for comparing and assessing consistency across $\nclusters$. With this enhanced approach, more consistency in varying $\ntopics$ was achieved in terms of hypertopic accuracy and the portion of low-\gls{ses} articles per hypertopic, as can be seend from figures~\ref{fig:accuracy_by_nclusters} and~\ref{fig:lowshare_by_nclusters}. As the highest accuracy was achieved with $\nclusters=15$, this choice was kept for the following analysis. 
 
 \begin{figure}
     \centering
@@ -108,7 +110,7 @@ Again, hypertopics were assigned to each set of topic words for comparing and as
 \begin{figure}
     \centering
     \includegraphics[scale=0.5]{\imagepath/low_ses_by_n_embeddings.png}
-    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is rather consistent around $\nclusters=15$, making it a promising choice.\todo[inline]{replace}}\label{fig:lowshare_by_nclusters}
+    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is comparably consistent around $\nclusters=15$ for all hypertopics, making it a promising choice. The share of low-\gls{ses} articles among all articles is shown as a reference.\todo[inline]{replace}}\label{fig:lowshare_by_nclusters}
 \end{figure}
 
 \section{Discussion}

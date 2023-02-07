@@ -21,7 +21,7 @@ articles_raw = articles_raw[articles_raw['language_ml']=='en']
 ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
 ses_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
 human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated.pkl')
-human_annotated = pd.concat([human_annotated, pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')])
+human_annotated_distinct = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')
 with open(BUILD_PATH / 'topic_modelling/topic_modelling.pkl', 'rb') as file:
     topic_words, article_topics = pickle.load(file)
 topic_columns = [column for column in article_topics.columns if not column.endswith('_entropy') and not column.endswith('_p')]
@@ -424,7 +424,7 @@ plot_human_annotation_confusion_matrix(article_hypertopics, human_annotated, 40)
 
 
 # %%
-plot_human_annotation_confusion_matrix(article_hypertopics_distinct, human_annotated, 40)
+plot_human_annotation_confusion_matrix(article_hypertopics_distinct, human_annotated_distinct, 40)
 
 
 # %%
@@ -435,5 +435,9 @@ print(chi2_per_label_test(hypertopics_distributions_distinct[to_evaluate], artic
 
 
 # %%
-plot_accuracy_by_n(article_hypertopics_distinct, human_annotated)
+plot_accuracy_by_n(article_hypertopics, human_annotated)
+
+
+# %%
+plot_accuracy_by_n(article_hypertopics_distinct, human_annotated_distinct)
 # %%

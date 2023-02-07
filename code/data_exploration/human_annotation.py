@@ -9,7 +9,7 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 HUMAN_ANNOTATED_PATH = (BUILD_PATH / 'articles/articles_human_annotated.pkl')
 HUMAN_ANNOTATED_PATH_DISTINCT = (BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')
 
-DISTINCT=False
+DISTINCT=True
 
 # %%
 def ask_for_annotations(sample_articles: pd.DataFrame, category: str, file_path) -> pd.Series:    
@@ -57,7 +57,6 @@ if not DISTINCT:
     ask_for_annotations(sample_articles, 'topic', file_path=HUMAN_ANNOTATED_PATH)
 else:
     ask_for_annotations(sample_articles_distinct, 'topic', file_path=HUMAN_ANNOTATED_PATH_DISTINCT)
-
 
 
 # %%
