@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
 from scipy.stats import chisquare, chi2_contingency
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, accuracy_score
 
 from pathlib import Path
 SOURCE_PATH = Path(__file__).parent.resolve()
@@ -16,8 +16,6 @@ BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 articles_raw = pd.read_pickle(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
 ses_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
-human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated.pkl')
-human_annotated = pd.concat([human_annotated, pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')])
 
 def collect_zero_shot_data():
     """Collect all zero-shot data from the different pickle files.
@@ -36,7 +34,6 @@ zero_shot_data = collect_zero_shot_data()
 category_columns = [column for column in zero_shot_data.columns if not column.endswith('_entropy') and not column.endswith('_p')]
 
 
-# %%
 def load_prepare_article_data(articles_raw: pd.DataFrame, ses: pd.DataFrame, zero_shot_data: pd.DataFrame):
     """Combine article data, ses, and topic data.
 
@@ -50,30 +47,52 @@ def load_prepare_article_data(articles_raw: pd.DataFrame, ses: pd.DataFrame, zer
     """
     articles = articles_raw.join(ses, how='inner', on='role_model')
     articles = articles.join(zero_shot_data, how='inner', on='article_id')
-    articles_per_SES = articles[articles['low_ses']].count()['content'], articles[articles['high_ses']].count()['content']
-    return articles, articles_per_SES
+    return articles
 
-articles, articles_per_SES = load_prepare_article_data(articles_raw, ses, zero_shot_data)
-articles_distinct, articles_per_SES_distinct = load_prepare_article_data(articles_raw, ses_distinct, zero_shot_data)
+articles = load_prepare_article_data(articles_raw, ses, zero_shot_data)
+articles_distinct = load_prepare_article_data(articles_raw, ses_distinct, zero_shot_data)
 
+human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated.pkl')
+human_annotated_distinct = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')
+def add_topic_l_to_human_annotations(human_annotated: pd.DataFrame) -> pd.DataFrame:
+    human_annotated = human_annotated.copy()
+    if 'topic' in human_annotated.columns:
+        human_annotated['topic_l'] = human_annotated['topic'].apply(lambda topic: topic if topic!='life' else 'social')
+    return human_annotated
+human_annotated, human_annotated_distinct = add_topic_l_to_human_annotations(human_annotated), add_topic_l_to_human_annotations(human_annotated_distinct)
 
 
 # %%
-def find_low_entropy_articles(articles: pd.DataFrame, category_column: str, percentile=50) -> pd.DataFrame:
-    """Find all articles having less entropy for a category than a certain percentile.
+def find_articles_per_SES(articles: pd.DataFrame, column='content') -> tuple:
+    """Count the number of articles with low and high SES having a valid entry in a certain column.
+
+    Args:
+        articles (pd.DataFrame): article data
+        column (str, optional): Reference column to determine if article is to be considered in the counting. If nan/None, then do not count. Defaults to 'content'.
+
+    Returns:
+        tuple: _description_
+    """    
+    low, high = articles[articles['low_ses']].count()[column], articles[articles['high_ses']].count()[column]
+    return low, high
+
+
+def filter_out_low_entropy_labels(articles: pd.DataFrame, percentile: float, category_columns: list) -> pd.DataFrame:
+    """Set the label of all 
 
     Args:
         articles (pd.DataFrame): articles
-        category_column (str): column name to filter for
-        percentile (int, optional): Percentile, from 0 to 100. Defaults to 50.
+        category_columns (list): list of all category columns to filter for
+        percentile (float): Entropy percentile below which everying is to be filtered out. Between 0.0 and 1.0.
 
     Returns:
         list: Article ids, their category values and their entropies that have entropy lower than the percentile.
-    """    
-    articles = articles[[category_column, f'{category_column}_entropy']]
-    percentile_boundary = np.percentile(articles[f'{category_column}_entropy'], percentile)
-    articles = articles[articles[f'{category_column}_entropy'] >= percentile_boundary]
-    return articles.index.values.tolist()
+    """
+    articles = articles.copy()
+    for column in category_columns:
+        percentile_boundary = np.percentile(articles[f'{column}_entropy'], 100*percentile)
+        articles[column] = articles[column].mask(articles[f'{column}_entropy'] < percentile_boundary)
+    return articles
 
 
 def find_category_distributions(articles: pd.DataFrame, category_columns: list) -> dict:   
@@ -149,11 +168,8 @@ def plot_category_distribution(category_distributions: dict, category: str, rela
     category_distribution = category_distributions[category].copy().sort_index()
 
     fig, ax = plt.gcf(), plt.gca()
-    title = f'{category.capitalize()} distribution by SES' if show_title else ''
-    if additional_title_text is not None:
-        title = (' - ' if title != '' else '').join([title, additional_title_text])
-    if title != '':
-        ax.set_title(title)
+    if additional_title_text is not None and additional_title_text != '':
+        ax.set_title(additional_title_text)
     if relative:
         ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
         category_distribution = category_distribution.apply(lambda col: col/col.sum())
@@ -175,8 +191,11 @@ def plot_human_annotation_confusion_matrix(articles: pd.DataFrame, human_annotat
     if len(human_annotated_category) == 0:
         return
     articles_with_annotation = articles.join(human_annotated_category[[category]], rsuffix='_annotated', on='article_id', how='inner')[['content', category, f'{category}_annotated']]
+    articles_with_annotation = articles_with_annotation[~articles_with_annotation[category].isna()]
     category_labels = np.unique(articles_with_annotation[[category, f'{category}_annotated']].values.ravel())
     category_confusion_matrix = confusion_matrix(y_true=articles_with_annotation[f'{category}_annotated'], y_pred=articles_with_annotation[category], labels=category_labels)
+    accuracy = accuracy_score(articles_with_annotation[f'{category}_annotated'], articles_with_annotation[category])
+    print(f'accuracy of {category}: {accuracy*100:.2f}%')
     ConfusionMatrixDisplay(category_confusion_matrix, display_labels=category_labels).plot()
 
 
@@ -219,16 +238,19 @@ def evaluate_category(
 
 
 # %%
-evaluate_category(articles, 'topic_l', articles_per_SES=articles_per_SES, human_annotated=human_annotated, is_distinct=False)
+evaluate_category(articles, 'topic', articles_per_SES=find_articles_per_SES(articles), human_annotated=human_annotated, is_distinct=False)
+# %%
+evaluate_category(articles_distinct, 'topic', articles_per_SES=find_articles_per_SES(articles_distinct), human_annotated=human_annotated_distinct, is_distinct=True)
+# %%
+evaluate_category(articles, 'topic_l', articles_per_SES=find_articles_per_SES(articles), human_annotated=human_annotated, is_distinct=False)
+# %%
+evaluate_category(articles_distinct, 'topic_l', articles_per_SES=find_articles_per_SES(articles_distinct), human_annotated=human_annotated_distinct, is_distinct=True)
+
+# %%
+evaluate_category(articles_distinct, 'prosociality', articles_per_SES=find_articles_per_SES(articles_distinct), human_annotated=human_annotated, is_distinct=True)
 
 
 # %%
-evaluate_category(articles_distinct, 'prosociality', articles_per_SES=articles_per_SES_distinct, human_annotated=human_annotated, is_distinct=False)
-
-
-
-# %%
-articles_per_SES
-
-
+filtered_articles = filter_out_low_entropy_labels(articles, 0.3, category_columns)
+evaluate_category(filtered_articles, 'topic_l', articles_per_SES=find_articles_per_SES(filtered_articles, column='topic_l'), human_annotated=human_annotated, is_distinct=False)
 # %%

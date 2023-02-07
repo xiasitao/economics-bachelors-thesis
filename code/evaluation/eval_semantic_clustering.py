@@ -21,7 +21,7 @@ articles_raw = articles_raw[articles_raw['language_ml']=='en']
 ses = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores.pkl')
 ses_distinct = pd.read_pickle(BUILD_PATH / 'role_models/ses_scores_distinct.pkl')
 human_annotated = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated.pkl')
-human_annotated = pd.concat([human_annotated, pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')])
+human_annotated_distinct = pd.read_pickle(BUILD_PATH / 'articles/articles_human_annotated_distinct.pkl')
 article_clusters = pd.read_pickle(BUILD_PATH / 'semantic_similarity/semantic_clusters.pkl')
 cluster_columns = [column for column in article_clusters.columns]
 with open(BUILD_PATH / 'semantic_similarity/semantic_topics.pkl', 'rb') as file:
@@ -40,13 +40,26 @@ def load_prepare_articles(articles: pd.DataFrame, ses: pd.DataFrame, article_clu
     """
     articles = articles.join(ses, how='inner', on='role_model')
     articles = articles.join(article_clusters, how='inner', on='article_id')
-    articles_per_SES = articles[articles['low_ses']].count()['content'], articles[articles['high_ses']].count()['content']
-    return articles, articles_per_SES
-articles, articles_per_SES = load_prepare_articles(articles_raw, ses, article_clusters)
-articles_distinct, articles_per_SES_distinct = load_prepare_articles(articles_raw, ses_distinct, article_clusters)
+    return articles
+articles = load_prepare_articles(articles_raw, ses, article_clusters)
+articles_distinct = load_prepare_articles(articles_raw, ses_distinct, article_clusters)
 
 
 # %%
+def find_articles_per_SES(articles: pd.DataFrame, column='content') -> tuple:
+    """Count the number of articles with low and high SES having a valid entry in a certain column.
+
+    Args:
+        articles (pd.DataFrame): article data
+        column (str, optional): Reference column to determine if article is to be considered in the counting. If nan/None, then do not count. Defaults to 'content'.
+
+    Returns:
+        tuple: _description_
+    """    
+    low, high = articles[articles['low_ses']].count()[column], articles[articles['high_ses']].count()[column]
+    return low, high
+
+
 def find_topic_distributions(articles: pd.DataFrame, columns: list) -> dict:   
     """Find the distribution of topics for low and high SES for number of topics available.
 
@@ -367,10 +380,16 @@ hypertopics_columns = [f'cluster_{n}' for n in hypertopic_table]
 # %%
 article_hypertopics = find_hypertopics(articles, hypertopic_table, hypertopics_columns)
 hypertopics_distributions = find_topic_distributions(article_hypertopics, hypertopics_columns)
+article_hypertopics_distinct = find_hypertopics(articles_distinct, hypertopic_table, hypertopics_columns)
+hypertopics_distributions_distinct = find_topic_distributions(article_hypertopics_distinct, hypertopics_columns)
 
 
 # %%
-plot_human_annotation_confusion_matrix(article_hypertopics, human_annotated, 25)
+plot_human_annotation_confusion_matrix(article_hypertopics, human_annotated, 15)
+
+
+# %%
+plot_human_annotation_confusion_matrix(article_hypertopics_distinct, human_annotated_distinct, 15)
 
 
 # %%
@@ -378,11 +397,23 @@ plot_accuracy_by_n(article_hypertopics, human_annotated)
 
 
 # %%
-plot_hypertopic_distribution_by_n(hypertopics_distributions, hypertopics, articles_per_SES)
+plot_accuracy_by_n(article_hypertopics_distinct, human_annotated_distinct)
 
 
 # %%
-evaluate_for = 'cluster_15'
-evaluate_hypertopics_for_n(hypertopics_distributions[evaluate_for], articles_per_SES)
+plot_hypertopic_distribution_by_n(hypertopics_distributions, hypertopics, find_articles_per_SES(articles))
 
+
+# %%
+plot_hypertopic_distribution_by_n(hypertopics_distributions_distinct, hypertopics, find_articles_per_SES(articles_distinct))
+
+
+# %%
+evaluate_for = 'cluster_20'
+evaluate_hypertopics_for_n(hypertopics_distributions[evaluate_for], find_articles_per_SES(articles))
+
+
+# %%
+evaluate_for = 'cluster_20'
+evaluate_hypertopics_for_n(hypertopics_distributions_distinct[evaluate_for], find_articles_per_SES(articles_distinct))
 # %%

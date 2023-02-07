@@ -35,14 +35,13 @@ def load_prepare_articles(articles: pd.DataFrame, ses: pd.DataFrame, article_top
         article_topics (pd.DataFrame): Topics associations of the articles.
 
     Returns:
-        tuple: articles [pd.DataFrame], articles_per_SES [tuple]
+        pd.DataFrame: articles
     """
     articles = articles.join(ses, how='inner', on='role_model')
     articles = articles.join(article_topics, how='inner', on='article_id')
-    articles_per_SES = articles[articles['low_ses']].count()['content'], articles[articles['high_ses']].count()['content']
-    return articles, articles_per_SES
-articles, articles_per_SES = load_prepare_articles(articles_raw, ses, article_topics)
-articles_distinct, articles_per_SES_distinct = load_prepare_articles(articles_raw, ses_distinct, article_topics)
+    return articles
+articles = load_prepare_articles(articles_raw, ses, article_topics)
+articles_distinct = load_prepare_articles(articles_raw, ses_distinct, article_topics)
 
 
 # Sanity checks
@@ -50,6 +49,38 @@ assert(articles.groupby('role_model').count()['content'].unique() == np.array([5
 
 
 # %%
+def find_articles_per_SES(articles: pd.DataFrame, column='content') -> tuple:
+    """Count the number of articles with low and high SES having a valid entry in a certain column.
+
+    Args:
+        articles (pd.DataFrame): article data
+        column (str, optional): Reference column to determine if article is to be considered in the counting. If nan/None, then do not count. Defaults to 'content'.
+
+    Returns:
+        tuple: _description_
+    """    
+    low, high = articles[articles['low_ses']].count()[column], articles[articles['high_ses']].count()[column]
+    return low, high
+
+
+def filter_out_low_entropy_labels(articles: pd.DataFrame, percentile: float, topic_columns: list) -> pd.DataFrame:
+    """Set the label of all 
+
+    Args:
+        articles (pd.DataFrame): articles
+        topic_columns (list): list of all topic columns to filter for
+        percentile (float): Entropy percentile below which everying is to be filtered out. Between 0.0 and 1.0.
+
+    Returns:
+        list: Article ids, their category values and their entropies that have entropy lower than the percentile.
+    """
+    articles = articles.copy()
+    for column in topic_columns:
+        percentile_boundary = np.percentile(articles[f'{column}_entropy'], 100*percentile)
+        articles[column] = articles[column].mask(articles[f'{column}_entropy'] < percentile_boundary)
+    return articles
+
+
 def find_topic_distributions(articles: pd.DataFrame, columns: list) -> dict:   
     """Find the distribution of topics for low and high SES for number of topics available.
 
@@ -151,7 +182,7 @@ def find_hypertopics(articles: pd.DataFrame, hypertopic_table: dict, columns: li
     hypertopics[['average_ses', 'low_ses', 'high_ses', 'content']] = articles[['average_ses', 'low_ses', 'high_ses', 'content']]
     for column in columns:
         n_topics = int(re.match(r'topic_(\d+)', column).groups()[0])
-        hypertopics[f'topic_{n_topics}'] = articles[f'topic_{n_topics}'].apply(lambda topic: hypertopic_table[n_topics][int(topic)])
+        hypertopics[f'topic_{n_topics}'] = articles[f'topic_{n_topics}'].apply(lambda topic: hypertopic_table[n_topics][int(topic)] if not np.isnan(topic) else np.nan)
     return hypertopics
 
 
@@ -228,8 +259,9 @@ def plot_accuracy_by_n(article_hypertopic_data: pd.DataFrame,  human_annotated: 
 
     accuracies = []
     for n in ns:
-        true_hypertopics = articles_with_annotation[annotation_column]
-        predicted_hypertopics = articles_with_annotation[f'topic_{n}']
+        articles_with_annotation_for_n = articles_with_annotation[~articles_with_annotation[f'topic_{n}'].isna()]
+        true_hypertopics = articles_with_annotation_for_n[annotation_column]
+        predicted_hypertopics = articles_with_annotation_for_n[f'topic_{n}']
         accuracy = accuracy_score(true_hypertopics, predicted_hypertopics)
         accuracies.append(accuracy)
     
@@ -274,11 +306,11 @@ def evaluate_topics_for_n(
 
 
 # %%
-evaluate_topics_for_n(articles, 5, articles_per_SES=articles_per_SES, is_distinct=False)
+evaluate_topics_for_n(articles, 5, articles_per_SES=find_articles_per_SES(articles), is_distinct=False)
 
 
 # %%
-evaluate_topics_for_n(articles_distinct, 5, articles_per_SES=articles_per_SES_distinct, is_distinct=True)
+evaluate_topics_for_n(articles_distinct, 5, articles_per_SES=find_articles_per_SES(articles_distinct), is_distinct=True)
 
 
 # %%
@@ -410,13 +442,13 @@ hypertopic_crosscheck(hypertopic_table, topic_words, 60)
 hypertopic_columns = [col for col in topic_columns if col not in [wc.format(n) for n in (2,3,4,6,7,8,9,11,12,13,14,65, 70) for wc in ('topic_{}', 'topic_{}_p', 'topic_{}_entropy')]]
 article_hypertopics = find_hypertopics(articles, columns=hypertopic_columns, hypertopic_table=hypertopic_table)
 hypertopics_distributions = find_topic_distributions(article_hypertopics, hypertopic_columns)
-plot_hypertopic_distribution_by_n(hypertopics_distributions, hypertopics, articles_per_SES=articles_per_SES)
+plot_hypertopic_distribution_by_n(hypertopics_distributions, hypertopics, articles_per_SES=find_articles_per_SES(articles))
 
 
 # %% 
 article_hypertopics_distinct = find_hypertopics(articles_distinct, columns=hypertopic_columns, hypertopic_table=hypertopic_table)
 hypertopics_distributions_distinct = find_topic_distributions(article_hypertopics_distinct, hypertopic_columns)
-plot_hypertopic_distribution_by_n(hypertopics_distributions_distinct, hypertopics, articles_per_SES=articles_per_SES_distinct)
+plot_hypertopic_distribution_by_n(hypertopics_distributions_distinct, hypertopics, articles_per_SES=find_articles_per_SES(articles_distinct))
 
 
 # %%
@@ -431,7 +463,7 @@ plot_human_annotation_confusion_matrix(article_hypertopics_distinct, human_annot
 to_evaluate = 'topic_50'
 plot_topic_distribution(hypertopics_distributions_distinct[to_evaluate])
 print(chi2_contingency_test(hypertopics_distributions_distinct[to_evaluate]))
-print(chi2_per_label_test(hypertopics_distributions_distinct[to_evaluate], articles_per_SES_distinct))
+print(chi2_per_label_test(hypertopics_distributions_distinct[to_evaluate], find_articles_per_SES(articles_distinct)))
 
 
 # %%
@@ -440,4 +472,14 @@ plot_accuracy_by_n(article_hypertopics, human_annotated)
 
 # %%
 plot_accuracy_by_n(article_hypertopics_distinct, human_annotated_distinct)
+
+
+# %%
+# Filtering by entropy
+articles_filtered = filter_out_low_entropy_labels(articles, percentile=0.50, topic_columns=topic_columns)
+article_hypertopics_filtered = find_hypertopics(articles_filtered, hypertopic_table, hypertopic_columns)
+hypertopics_distributions_filtered = find_topic_distributions(article_hypertopics_filtered, hypertopic_columns)
+plot_hypertopic_distribution_by_n(hypertopics_distributions_filtered, hypertopics, articles_per_SES=find_articles_per_SES(articles_filtered))
+# %%
+plot_accuracy_by_n(article_hypertopics_filtered, human_annotated)
 # %%
