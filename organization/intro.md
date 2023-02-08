@@ -7,6 +7,14 @@
 ## Definition
 - Hurd Zimmermann (2011), Pleiss (1995)
 
+## Role Model Impact
+- Human capital
+    - Education, Career, and Development
+    - Prosociality
+- Mentoring
+    - not self-selected, opposite to role models
+    - make case that self-selected models are interesting (Strasser-Burke 2020)
+
 ## Accessible vs Inaccessible
 - Role of accessibility (Strasser-Burke 2020, Lockwood 1997)
     - accessible: current support
@@ -18,14 +26,6 @@
     - no direct contact
     - selection and consumption via video and text
     - newspaper articles sensible
-
-## Role Model Impact
-- Human capital
-    - Education, Career, and Development
-    - Prosociality
-- Mentoring
-    - not self-selected, opposite to role models
-    - make case that self-selected models are interesting (Strasser-Burke 2020)
 
 
 # SES
