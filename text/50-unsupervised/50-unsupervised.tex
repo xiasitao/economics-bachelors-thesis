@@ -66,20 +66,24 @@ The accuracy of the hypertopic assignment was calculated as the ratio of article
     }
 \end{align}
 
-Figure~\ref{fig:accuracy_by_ntopics} shows that the accuracy greatly depends on $\ntopics$ with a maximum of abount \SI{50}{\percent} at $\ntopics=15$.
+Figure~\ref{fig:lda_accuracy_diagram} shows that the accuracy greatly depends on $\ntopics$ with a maximum of abount \SI{50}{\percent} at $\ntopics=15$.
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{\imagepath/acc_by_n_topic_modelling.png}
-    \caption{Accuracy of the model-assigned hypertopics compared to human-annotated data as a function of the number of topics: A maximum accuracy of around \SI{50}{\percent} was achieved for $\ntopics=15$.The accuracy not consistent across the different numbers of topics.\todo[inline]{replace}}\label{fig:accuracy_by_ntopics}
+    \begin{pgfpicture}
+        \pgftext{\input{\imagepath/lda_accuracy_diagram.pgf}}
+    \end{pgfpicture}
+    \caption{Accuracy of the model-assigned hypertopics compared to human-annotated data as a function of the number of topics: A maximum accuracy of around \SI{50}{\percent} was achieved for $\ntopics=15$.The accuracy not consistent across the different numbers of topics.}\label{fig:lda_accuracy_diagram}
 \end{figure}
 
-Additionally, the share of low-\gls{ses} articles for each assigned hypertopic was used as a measure for topic assignment consistency across $\ntopics$. This share is plotted in figure~\ref{fig:lowshare_per_ntopics}. The fact that there is no range of $\ntopics$ where this share is consistent for small variations of $\ntopics$ suggests that the assignment of articles to the hypertopics is to a considerable extent random and that the model is incapable of making a reliable prediction of an article's topic.\todo{Explain more why you took exactly this share and not anything else.} These observations did not differ significantly if the \textit{distinct-\gls{ses}} set of articles was used instead.
+Additionally, the share of low-\gls{ses} articles for each assigned hypertopic was used as a measure for topic assignment consistency across $\ntopics$. This share is plotted in figure~\ref{fig:lda_hypertopic_consistency_diagram}. The fact that there is no range of $\ntopics$ where this share is consistent for small variations of $\ntopics$ suggests that the assignment of articles to the hypertopics is to a considerable extent random and that the model is incapable of making a reliable prediction of an article's topic.\todo{Explain more why you took exactly this share and not anything else.} These observations did not differ significantly if the \textit{distinct-\gls{ses}} set of articles was used instead.
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{\imagepath/low_ses_by_n_topic_modelling.png}
-    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics as an indicator of topic assignment consistency: The share varies substantially over a range from \SI{5}{} to \SI{50}{} topics, indicating that the assigment of articles to topics is not very reliable and not consistent. The share of low-\gls{ses} articles among all articles is shown as a reference.\todo[inline]{replace}}\label{fig:lowshare_per_ntopics}
+    \begin{pgfpicture}
+        \pgftext{\input{\imagepath/lda_hypertopic_consistency_diagram.pgf}}
+    \end{pgfpicture}
+    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics as an indicator of topic assignment consistency: The share varies substantially over a range from \SI{5}{} to \SI{50}{} topics, indicating that the assigment of articles to topics is not very reliable and not consistent. The share of low-\gls{ses} articles among all articles is shown as a reference.}\label{fig:lda_hypertopic_consistency_diagram}
 \end{figure}
 
 Two potential approaches for improving accuracy and consistency were examined: Firstly, it was attempted to train the topic models on the low-\gls{ses} and high-\gls{ses} corpora separately, which, however, led to similar inconsistencies. Secondly, it was tried to filter out articles for which the model's topic assignment was ambiguous. As a measure for the ambiguity in topic assignment for article $i$ with topic probabilities $p_{i, t}$, the information theoretical entropy was used~\autocite{gray_entropy_2013}:
@@ -105,8 +109,8 @@ Figure~\ref{fig:embedding_modelling_schema} illustrates this modelling procedure
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{\imagepath/clusters.png}
-    \caption{Two-dimensional representation of the vector embeddings of the newspaper articles. The different colors denote the different clusters found by the KMeans algorithm. The clusters may seem to be incontiguous because the clustering was performed on the three-dimensional data whereas this representation is two-dimensional. Note that the two axes have no intuitive meaning, they represent the two main components of the original SentenceBERT embedding of each article.\todo[inline]{replace}}\label{fig:clusters}
+    \includegraphics[]{\imagepath/cluster_diagram.pdf}
+    \caption{Two-dimensional representation of the vector embeddings of the newspaper articles. The different colors denote the different clusters found by the KMeans algorithm. The clusters may seem to be incontiguous because the clustering was performed on the three-dimensional data whereas this representation is two-dimensional. Note that the two axes have no intuitive meaning, they represent the two main components of the original SentenceBERT embedding of each article.}\label{fig:clusters}
 \end{figure}
 
 \begin{figure}
@@ -116,46 +120,56 @@ Figure~\ref{fig:embedding_modelling_schema} illustrates this modelling procedure
 \end{figure}
 
 \paragraph{Accuracy and Consistency}
-Again, hypertopics were assigned to each set of topic words for evaluating the accuracy and assessing consistency across $\nclusters$. With this enhanced approach, higher accuracies of up to \SI{75}{\percent} and more consistency in topic assignment was achieved, as can be seend from figures~\ref{fig:accuracy_by_nclusters} and~\ref{fig:lowshare_by_nclusters}.
+Again, hypertopics were assigned to each set of topic words for evaluating the accuracy and assessing consistency across $\nclusters$. With this enhanced approach, higher accuracies of up to \SI{75}{\percent} and more consistency in topic assignment was achieved, as can be seend from figures~\ref{fig:semantic_clustering_accuracy_diagram} and~\ref{fig:semantic_clustering_hypertopic_consistency_diagram}.
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{\imagepath/acc_by_n_embeddings.png}
-    \caption{Accuracy of the  enhanced model-assigned hypertopics compared to human-annotated data as a function of the number of topics: The accuracy is higher and more consistent across the different numbers of clusters compared to the \gls{lda} approach. A value of $\nclusters=20$ seems promising.\todo[inline]{replace}}\label{fig:accuracy_by_nclusters}
+    %\includegraphics[scale=0.5]{\imagepath/acc_by_n_embeddings.png}
+    \begin{pgfpicture}
+        \pgftext{\input{\imagepath/semantic_clustering_accuracy_diagram.pgf}}
+    \end{pgfpicture}
+    \caption{Accuracy of the  enhanced model-assigned hypertopics compared to human-annotated data as a function of the number of topics: The accuracy is higher and more consistent across the different numbers of clusters compared to the \gls{lda} approach. A value of $\nclusters=20$ seems promising.}\label{fig:semantic_clustering_accuracy_diagram}
 \end{figure}
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{\imagepath/low_ses_by_n_embeddings.png}
-    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is comparably consistent around $\nclusters=20$ for all hypertopics, making it a promising choice. The share of low-\gls{ses} articles among all articles is shown as a reference.\todo[inline]{replace}}\label{fig:lowshare_by_nclusters}
+    % \includegraphics[scale=0.5]{\imagepath/low_ses_by_n_embeddings.png}
+    \begin{pgfpicture}
+        \pgftext{\input{\imagepath/semantic_clustering_hypertopic_consistency_diagram.pgf}}
+    \end{pgfpicture}
+    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is comparably consistent around $\nclusters=20$ for all hypertopics, making it a promising choice. The share of low-\gls{ses} articles among all articles is shown as a reference.}\label{fig:semantic_clustering_hypertopic_consistency_diagram}
 \end{figure}
 
 As the highest accuracy was achieved for a value of $\nclusters=20$ with comparably little variation around it, this choice was kept for the following analysis. Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned by the model and the human-annotated hypertopics. It shows that the overall performance of the model is good, however some of the articles that the human annotator had labelled as \textit{movie} or \textit{music} were classified as \textit{life}. This is not surprising considering that celebrity reports do often also cover celebrities' lifestories to a significant extent. For the \textit{distinct-SES} approach, somewhat less accuracy is achieved, the predictions appear, however, equally consistent.
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{img/embeddings_confusion_matrix.png}
+    \includegraphics[]{\imagepath/semantic_clustering_confusion_matrix.pdf}
     \caption{Confusion matrix of the hypertopics for $\nclusters=20$:}\label{fig:embedding_confusion_matrix}
 \end{figure}
 
 \paragraph{Evaluation}
 The distribution of articles across the \SI{20}{} topics was compared between the low- and high-\gls{ses} groups in order to identify any significant differences in prevalence of and thus potentially preference for certain topics in the groups' respective celebrity news consumption.
 
-The distribution of the hypertopics for the \textit{general} and the \textit{distinct-SES} approaches is shown in figure~\ref{fig:topic_modelling_hypertopic_distribution}. The distribution of all \SI{20}{} topics and their respective topic words is presented in the appedix chapter~\ref{ch:unsupervised_appendix}.
+The distribution of the hypertopics for the \textit{general} and the \textit{distinct-SES} approaches is shown in figure~\ref{fig:semantic_clustering_hypertopic_distribution}. The distribution of all \SI{20}{} topics and their respective topic words is presented in figure~\ref{fig:semantic_clustering_cluster_distribution} the appedix chapter~\ref{ch:unsupervised_appendix}.
 
 \begin{figure}
     \centering
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[scale=0.5]{img/embeddings_hypertopic_distribution.png}
+        \begin{pgfpicture}
+            \pgftext{\input{\imagepath/semantic_clustering_hypertopic_distribution.pgf}}
+        \end{pgfpicture}
         \caption{\textit{general} approach}
     \end{subfigure}
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[scale=0.5]{img/embeddings_hypertopic_distribution_distinct.png}
+        \begin{pgfpicture}
+            \pgftext{\input{\imagepath/semantic_clustering_hypertopic_distribution_distinct.pgf}}
+        \end{pgfpicture}
         \caption{\textit{distinct-\gls{ses}} approach}
     \end{subfigure}
-    \caption{Distribution of articles across hypertopics for the low- and the high-\gls{ses} groups; left for the \textit{general}, right for the \textit{distinct-SES} approach. While the \textit{life} hypertopic is equally represented in both \gls{ses} groups, \textit{movie}-related articles are more prevalent in the high- than in the low-\gls{ses} group, whereas \textit{music} and \textit{sport}-related articles more in the low-\gls{ses} than in the high-\gls{ses} group}\label{fig:topic_modelling_hypertopic_distribution}
+    \caption{Distribution of articles across hypertopics for the low- and the high-\gls{ses} groups; left for the \textit{general}, right for the \textit{distinct-SES} approach. While the \textit{life} hypertopic is equally represented in both \gls{ses} groups, \textit{movie}-related articles are more prevalent in the high- than in the low-\gls{ses} group, whereas \textit{music} and \textit{sport}-related articles more in the low-\gls{ses} than in the high-\gls{ses} group}\label{fig:semantic_clustering_hypertopic_distribution}
 \end{figure}
 
 The graphs reveal that the topic \textit{movie} is more prevalent in the high-\gls{ses} group compared to the low-\gls{ses} group, whereas the topics \textit{music} and \textit{sport} are more represented in the low-\gls{ses} than in the high-\gls{ses} group. For the all-encompassing \textit{life} hypertopic, the groups show only little difference.
@@ -165,7 +179,7 @@ In order to estimate the significance of these differences in the topic distribu
     \item An overall $\chi^2$-contingency test assessed whether it the distribution of articles across topics is different for low- and high-\gls{ses}~\autocite[p. 430]{fahrmeir_spezielle_2016}:
     \begin{align}
         \begin{split}
-            H_{0, \text{contingency}}: ~~~ &\text{distributions } p_{s, t} \text{ over topics } t \text{ are indepentent of } s\\
+            H_{0, \text{contingency}}: ~~~ &\text{distributions } p_{s, t} \text{ over topics } t \text{ are indepedent of } s\\
         & \text{i.e. } p_{s, t} = p_s \cdot p_t ~~ \forall t, s
         \end{split}
     \end{align}
@@ -191,14 +205,8 @@ Table~\ref{tab:embeddings_hypertopics_chi2s} shows that...
 
 \begin{table}
     \centering
-    \begin{tabular}{clcc}
-        \toprule
-        \gls{ses} assigment & test & $\chi^2$ & $p$ \\
-        \toprule
-        \\
-        \bottomrule
-    \end{tabular}
-    \caption{Results of the $\chi^2$-contingency and topic-wise tests for the hypertopics: \todo[inline]{describe results, add table}}\label{tab:embeddings_hypertopics_chi2s}
+    \input{\imagepath/semantic_clustering_hypertopic_chi2_table.tex}
+    \caption{Results of the $\chi^2$-contingency and topic-wise tests for the hypertopics: \todo[inline]{describe results}}\label{tab:embeddings_hypertopics_chi2s}
 \end{table}
 
 \paragraph{Alternative Approach: Adjectives and Adverbs}

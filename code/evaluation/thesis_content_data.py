@@ -25,7 +25,7 @@ ASSET_PATH = SOURCE_PATH.joinpath('..', '..', 'assets').resolve()
 BUILD_PATH = SOURCE_PATH.joinpath("..", "..", "build").resolve()
 
 
-ROLE_MODEL_LIST_PATH = BUILD_PATH / 'thesis/role_model_overview.tex'
+ROLE_MODEL_LIST_PATH = BUILD_PATH / 'thesis/30-data/role_model_overview.tex'
 def produce_role_model_list(produces: Path):
     """Produce the list of role models.
 
@@ -50,7 +50,7 @@ def produce_role_model_list(produces: Path):
     produces.write_text(latex)
 
 
-ARTICLES_PER_ROLE_MODEL_PATH = BUILD_PATH / 'thesis/role_model_article_distribution.pgf'
+ARTICLES_PER_ROLE_MODEL_PATH = BUILD_PATH / 'thesis/30-data/role_model_article_distribution.pgf'
 def plot_articles_per_role_model_distribution(produces: Path):
     articles = pd.read_pickle(BUILD_PATH / 'articles/articles.pkl')
     articles = articles[articles['language_ml']=='en']

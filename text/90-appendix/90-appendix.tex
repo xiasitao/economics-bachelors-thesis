@@ -4,7 +4,39 @@
 \appendix
 
 \chapter{Supplimentary Material on the Data}\label{ch:data_appendix}
-\input{\imagepath/role-model-overview.tex}
+\input{\imagepath/role_model_overview.tex}
 
 
 \chapter{Supplimentary Material on Unsupervised Learning}\label{ch:unsupervised_appendix}
+This appendix chapter names all topics and the respective hypertopics that were output be the pretained model-enhanced topic modelling procedure for $n_\text{topic} = 20$ in table~\ref{tab:semantic_clustering_topic_hypertopic_table}. The distribution of these topics are shown in figure~\ref{fig:semantic_clustering_cluster_distribution}, the results of the respective $\chi^2$-tests are shown in table~\ref{tab:semantic_clustering_cluster_chi2_table}.
+\begin{table}[h]
+    \centering
+    \input{\imagepath/semantic_clustering_topic_hypertopic_table.tex}
+    \caption{All topics and the respective hypertopics generated with the semantic embedding-enhanced topic modelling procedure}\label{tab:semantic_clustering_topic_hypertopic_table}
+\end{table}
+
+\begin{table}
+    \centering
+    \input{\imagepath/semantic_clustering_cluster_chi2_table.tex}
+    \caption{Results of the $\chi^2$-contingency tests and the per-cluster $\chi^2$ tests}\label{tab:semantic_clustering_cluster_chi2_table}
+\end{table}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{pgfpicture}
+            \pgftext{\input{\imagepath/semantic_clustering_cluster_distribution.pgf}}
+        \end{pgfpicture}
+        \caption{\textit{general} approach}
+    \end{subfigure}
+    \vspace{1.5cm}
+    \begin{subfigure}{\textwidth}
+        \centering
+        \begin{pgfpicture}
+            \pgftext{\input{\imagepath/semantic_clustering_cluster_distribution_distinct.pgf}}
+        \end{pgfpicture}
+        \caption{\textit{distinct-\gls{ses}} approach}
+    \end{subfigure}
+    \caption{Distribution of topics in the semantic embedding-enhanced topic modelling process for low- and high-\gls{ses} for $n_\text{topics}=20$. For the meaning of each topic, refer to table~\ref{tab:semantic_clustering_topic_hypertopic_table}}\label{fig:semantic_clustering_cluster_distribution}
+\end{figure}
