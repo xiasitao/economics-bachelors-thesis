@@ -251,7 +251,7 @@ def plot_accuracy_by_n(article_hypertopic_data: pd.DataFrame,  human_annotated: 
     fig = None
     if ax is None:
         fig, ax = plt.gcf(), plt.gca()
-    ax.set_xlabel('number of clusters')
+    ax.set_xlabel('number of topics')
     ax.set_ylabel('accuracy')
     ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
     ax.plot(ns, accuracies)

@@ -103,7 +103,7 @@ As a first step, each article in the \textit{content} stage, meaning the origina
 
 In the next step, these vectors were then used as input for the KMeans clustering algorithm~\autocite{macqueen_methods_1967} for partitioning the articles according to their meaning, such that articles with similar meaning are rather within the same cluster whereas articles with differing meaning are more likely to be in different clusters. This algorithm produced $\nclusters$ clusters, each one representing one topic. Figure~\ref{fig:clusters} shows the articles' vector representation and the clusters for $\nclusters=5$ in two dimensions. In this way, the process of assigning topics to each article did not depend on the newspaper article corpus anymore but instead on a pretrained model.
 
-Finally \gls{lda} with $\ntopics=1$ was applied on the articles of each cluster in the \textit{nouns and verbs} stage, hence with most of the structure removed from the text. In this way, each cluster was assigned a single set of topic words, such that in the end the output of the modelling process had the same structure as for using \gls{lda}.
+Finally \gls{lda} with $\ntopics=1$ was applied on the articles of each cluster in the \textit{nouns and verbs} stage, hence with most of the structure removed from the text. In this way, each cluster was assigned a single set of topic words, such that in the end the output of the modelling process had the same structure as for using \gls{lda}. In the following, $\ntopics$ and $\nclusters$ are going to be used interchangeably for the effective number of topics that are examined.
 
 Figure~\ref{fig:embedding_modelling_schema} illustrates this modelling procedure from the articles, over the vector representations, to the clusters representing topics. In figure~
 
@@ -120,7 +120,7 @@ Figure~\ref{fig:embedding_modelling_schema} illustrates this modelling procedure
 \end{figure}
 
 \paragraph{Accuracy and Consistency}
-Again, hypertopics were assigned to each set of topic words for evaluating the accuracy and assessing consistency across $\nclusters$. With this enhanced approach, higher accuracies of up to \SI{75}{\percent} and more consistency in topic assignment was achieved, as can be seend from figures~\ref{fig:semantic_clustering_accuracy_diagram} and~\ref{fig:semantic_clustering_hypertopic_consistency_diagram}.
+Again, hypertopics were assigned to each set of topic words for evaluating the accuracy and assessing consistency across $\ntopics$. With this enhanced approach, higher accuracies of up to \SI{75}{\percent} and more consistency in topic assignment was achieved, as can be seend from figures~\ref{fig:semantic_clustering_accuracy_diagram} and~\ref{fig:semantic_clustering_hypertopic_consistency_diagram}.
 
 \begin{figure}
     \centering
@@ -128,7 +128,7 @@ Again, hypertopics were assigned to each set of topic words for evaluating the a
     \begin{pgfpicture}
         \pgftext{\input{\imagepath/semantic_clustering_accuracy_diagram.pgf}}
     \end{pgfpicture}
-    \caption{Accuracy of the  enhanced model-assigned hypertopics compared to human-annotated data as a function of the number of topics: The accuracy is higher and more consistent across the different numbers of clusters compared to the \gls{lda} approach. A value of $\nclusters=20$ seems promising.}\label{fig:semantic_clustering_accuracy_diagram}
+    \caption{Accuracy of the  enhanced model-assigned hypertopics compared to human-annotated data as a function of the number of topics: The accuracy is higher and more consistent across the different numbers of clusters compared to the \gls{lda} approach. A value of $\ntopics=20$ seems promising.}\label{fig:semantic_clustering_accuracy_diagram}
 \end{figure}
 
 \begin{figure}
@@ -137,15 +137,15 @@ Again, hypertopics were assigned to each set of topic words for evaluating the a
     \begin{pgfpicture}
         \pgftext{\input{\imagepath/semantic_clustering_hypertopic_consistency_diagram.pgf}}
     \end{pgfpicture}
-    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is comparably consistent around $\nclusters=20$ for all hypertopics, making it a promising choice. The share of low-\gls{ses} articles among all articles is shown as a reference.}\label{fig:semantic_clustering_hypertopic_consistency_diagram}
+    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is comparably consistent around $\ntopics=20$ for all hypertopics, making it a promising choice. The share of low-\gls{ses} articles among all articles is shown as a reference.}\label{fig:semantic_clustering_hypertopic_consistency_diagram}
 \end{figure}
 
-As the highest accuracy was achieved for a value of $\nclusters=20$ with comparably little variation around it, this choice was kept for the following analysis. Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned by the model and the human-annotated hypertopics. It shows that the overall performance of the model is good, however some of the articles that the human annotator had labelled as \textit{movie} or \textit{music} were classified as \textit{life}. This is not surprising considering that celebrity reports do often also cover celebrities' lifestories to a significant extent. For the \textit{distinct-SES} approach, somewhat less accuracy is achieved, the predictions appear, however, equally consistent.
+As the highest accuracy was achieved for a value of $\ntopics=20$ with comparably little variation around it, this choice was kept for the following analysis. Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned by the model and the human-annotated hypertopics. It shows that the overall performance of the model is good, however some of the articles that the human annotator had labelled as \textit{movie} or \textit{music} were classified as \textit{life}. This is not surprising considering that celebrity reports do often also cover celebrities' lifestories to a significant extent. For the \textit{distinct-SES} approach, somewhat less accuracy is achieved, the predictions appear, however, equally consistent.
 
 \begin{figure}
     \centering
     \includegraphics[]{\imagepath/semantic_clustering_confusion_matrix.pdf}
-    \caption{Confusion matrix of the hypertopics for $\nclusters=20$:}\label{fig:embedding_confusion_matrix}
+    \caption{Confusion matrix of the hypertopics for $\ntopics=20$:}\label{fig:embedding_confusion_matrix}
 \end{figure}
 
 \paragraph{Evaluation}
