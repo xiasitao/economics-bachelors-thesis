@@ -8,11 +8,19 @@
 
 
 \chapter{Supplementary Material on the Unsupervised Analysis}\label{ch:unsupervised_appendix}
-This appendix chapter names all topics and the respective hypertopics that were output be the pretained model-enhanced topic modelling procedure for $n_\text{topic} = 20$ in table~\ref{tab:semantic_clustering_topic_hypertopic_table}. The distribution of these topics are shown in figure~\ref{fig:semantic_clustering_cluster_distribution}, the results of the respective $\chi^2$-tests are shown in table~\ref{tab:semantic_clustering_cluster_chi2_table}.
+This appendix chapter lists all topics and the respective hypertopics that were output be the pretained model-enhanced topic modelling procedure for $n_\text{topic} = 20$ in table~\ref{tab:semantic_clustering_topic_hypertopic_table} for the \textit{nous and verbs} stage and in \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} for the \textit{adjectives and adverbs} stage.
+
+The distribution of the topics among all articles per \gls{ses} are shown in figure~\ref{fig:semantic_clustering_cluster_distribution}, the results of the respective $\chi^2$-tests are shown in table~\ref{tab:semantic_clustering_cluster_chi2_table}.
 \begin{table}[h]
     \centering
     \input{\imagepath/semantic_clustering_topic_hypertopic_table.tex}
     \caption{All topics and the respective hypertopics generated with the semantic embedding-enhanced topic modelling procedure for $n_\text{topics}=20$}\label{tab:semantic_clustering_topic_hypertopic_table}
+\end{table}
+
+\begin{table}
+    \centering
+    \input{img/semantic_clustering_adjectives_adverbs_topic_table.tex}
+    \caption{Adjective and adverb characterizing word lists for each cluster. The clusters correspond to the topics in table~\ref{tab:semantic_clustering_topic_hypertopic_table}.}\label{tab:semantic_clustering_adjectives_adverbs_topic_table}
 \end{table}
 
 \begin{table}

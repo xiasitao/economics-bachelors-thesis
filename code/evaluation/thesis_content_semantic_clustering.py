@@ -111,7 +111,7 @@ def plot_semantic_clustering_hypertopic_distribution():
     SEMANTIC_CLUSTERING_HYPERTOPIC_CHI2_TABLE_PATH.write_text(table_str)
 
     # Topic-hypertopic table
-    table_str = r"\begin{tabular}{clc}\toprule & topic words & hypertopic\\\toprule" + '\n'
+    table_str = r"\begin{tabular}{clc}\toprule topic & characterizing words (nouns and verbs) & hypertopic\\\toprule" + '\n'
     for i, hypertopic in enumerate(hypertopic_table[20]):
         word_list = cluster_topics['cluster_20'][i]
         table_str += rf"{i} & {' '.join(word_list)} & \textit{{{hypertopic}}} \\" + '\n'
@@ -153,11 +153,20 @@ def plot_semantic_clustering_cluster_distribution():
     SEMANTIC_CLUSTERING_CLUSTER_CHI2_TABLE_PATH.write_text(table_str)
 
 
+SEMANTIC_CLUSTERING_ADJECTIVES_ADVERBS_TOPIC_TABLE_PATH = BUILD_PATH / 'thesis/50-unsupervised/semantic_clustering_adjectives_adverbs_topic_table.tex'
+def produce_adjectives_adverbs_topic_table():
+    table_str = r"\begin{tabular}{cl}\toprule cluster & characterizing words (adjectives and adverbs) \\\toprule" + '\n'
+    for i in sorted(cluster_adjectives['cluster_20']):
+        table_str += rf"{i} & {' '.join(cluster_adjectives['cluster_20'][i])} \\" + '\n'
+    table_str += r"\bottomrule\end{tabular}"
+    SEMANTIC_CLUSTERING_ADJECTIVES_ADVERBS_TOPIC_TABLE_PATH.write_text(table_str)
+
 
 if __name__ == '__main__':
-    plot_cluster_diagram()
-    plot_semantic_clustering_accuracy_diagram()
-    plot_semantic_clustering_hypertopic_consistency_diagram()
-    plot_semantic_clustering_confusion_matrix()
-    plot_semantic_clustering_hypertopic_distribution()
-    plot_semantic_clustering_cluster_distribution()
+    # plot_cluster_diagram()
+    # plot_semantic_clustering_accuracy_diagram()
+    # plot_semantic_clustering_hypertopic_consistency_diagram()
+    # plot_semantic_clustering_confusion_matrix()
+    # plot_semantic_clustering_hypertopic_distribution()
+    # plot_semantic_clustering_cluster_distribution()
+    produce_adjectives_adverbs_topic_table()
