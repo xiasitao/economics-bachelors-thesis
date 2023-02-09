@@ -11,21 +11,20 @@
 - Human capital
     - Education, Career, and Development
     - Prosociality
+
+## Accessible vs Inaccessible
+- Role of accessibility and relatability (Strasser-Burke 2020, Lockwood 1997)
+    - accessible: current support
+    - inaccessible: distant, future, self-mending, visionary (Strasser-Burke 2020, Bird 2011)
 - Mentoring
     - not self-selected, opposite to role models
     - make case that self-selected models are interesting (Strasser-Burke 2020)
-
-## Accessible vs Inaccessible
-- Role of accessibility (Strasser-Burke 2020, Lockwood 1997)
-    - accessible: current support
-    - inaccessible: distant, future, self-mending, visionary (Strasser-Burke 2020, Bird 2011)
-    
-## Celebrities
-- self-selected role models (Strasser-Burke 2020)
-- newspaper coverage
-    - no direct contact
-    - selection and consumption via video and text
-    - newspaper articles sensible
+- Celebrities
+    - self-selected role models (Strasser-Burke 2020)
+    - newspaper coverage
+        - no direct contact
+        - selection and consumption via video and text
+        - newspaper articles sensible
 
 
 # SES
