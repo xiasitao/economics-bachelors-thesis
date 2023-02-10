@@ -6,10 +6,12 @@
 \chapter{Unsupervised Analysis: Topic Modelling}\label{ch:unsupervised}
 This chapter covers the exploration of topics and connotations of the celebrity newspaper articles as a function of \gls{ses}, as motivated in chapter~\ref{ch:this_thesis}, using two unsupervised techniques. It is shown that using \gls{lda} alone for topic modelling does not yield robust and reliable results. In a second approach, the pre-trained SentenceBERT model in combination with KMeans clustering is shown to improve the quality of the topic extraction. The results are then used to examine differences in the distribution of these topics between the low-\gls{ses} and high-\gls{ses} groups. The main finding is that sports- and music-related celebrity newspaper articles prevail more in the low-\gls{ses} group and movie-related articles more in the high-\gls{ses} group. Potential improvements of the approaches, also in order to reliably capture topic connotation, are discussed.
 
-\section{Shortcomings of LDA Topic Modelling}
-In a first attempt, \gls{lda} models (see chapter~\ref{ch:lda}) were trained for a varying number of topics $\ntopics$. The corpus of all relevant newspaper articles comprised the 50-article balanced data set ensuring that role models with many articles could not induce a topic bias in the models. The texts were fed to the models in the \textit{noun and verb} stage in order to focus on the meaning-bearing elements of the texts.
+\todo{unify naming of pre-trained model procedure}
 
-Each of these model instances yielded a set of $\ntopics$ topics. Each topic $t$ is defined by a list $T_{\ntopics, t}$ of characterizing topic words.\footnote{In the rest of this chapter, these word lists are always represented as the 10 most significant words. There are, however, many more topic-characterizing words that the \gls{lda} algorithm outputs for each topic.} Each model assigned to every newspaper article $i$ estimated probabilities $p_{i, t}$ that article $i$ would belong to the topic $t$. Each newspaper article $i$ was assigned a topic $t_i$ by selecting the topic with the maximum probability:
+\section{Shortcomings of LDA Topic Modelling}
+In a first attempt, \gls{lda} (see chapter~\ref{ch:lda})\todo{decide for one kind of reference, cf next chapter} was trained on the corpus of all relevant newspaper articles from the 50-article balanced data set. This was done in order to ensure that role models with many articles could not induce a topic bias in the models. The texts were fed to the models in the \textit{noun and verb} stage in order to focus on the meaning-bearing elements of the texts.
+
+Multiple model instances were created, each one parameterized such that it would output a set of $\ntopics$ topics, with $\ntopics$ varied across the model instances. Each of these topics $t$ is defined by a list $T_{\ntopics, t}$ of characterizing topic words.\footnote{In the rest of this chapter, these word lists are always represented as the 10 most significant words. There are, however, many more topic-characterizing words that the \gls{lda} algorithm outputs for each topic.} Each model assigned to every newspaper article $i$ estimated probabilities $p_{i, t}$ that article $i$ would belong to the topic $t$. Each newspaper article $i$ was assigned a topic $t_i$ by selecting the topic with the maximum probability:
 \begin{align}
     t_i = \arg \max_{t'} p_{i, t'}
 \end{align}
@@ -18,7 +20,7 @@ Figure~\ref{fig:topic_modelling_schema} illustrates the modelling and assigment 
 \begin{figure}
     \centering
     \includegraphics[]{\imagepath/topic_modelling_schema.pdf}
-    \caption{Schematic of the topic modelling setup with \gls{lda}: Many models for different numbers $\ntopics$ of topics are trained, each of them yields a list of topics that are characterized by topic words, as well as topic probabilities for each article.}\label{fig:topic_modelling_schema}
+    \caption{Schematic of the topic modelling procedure with \gls{lda}: Many models for different numbers $\ntopics$ of topics are trained, each of them yields a list of topics that are characterized by topic words, as well as topic probabilities for each article.}\label{fig:topic_modelling_schema}
 \end{figure}
 
 The \gls{lda} algorithm depends on a set of hyperparameters, most of which are related to its underlying optimization process.  Sensible values for these were found by trial and error. The one hyperparameter that is crucial for the interpretation of this analysis is $\ntopics$. It determines the granularity of the topics the model provides for the comparison of the low- and high-\gls{ses} groups. The trade-off between a low and a high number of topics is expected to be a well-graspable set of topics with considerable overlaps and therefore poor specificity for low $\ntopics$, in contrast to highly delimited niche-topics suffering from a lack of generality for high $\ntopics$. For choosing an appropriate $\ntopics$ in this work, it was required that the topics assigned to articles be consistent for small variations of $\ntopics$. Otherwise it could be assumed that the assignment of topics to the articles is to a large part random, which would imply that the findings about the distribution of these topics across the low- and high-\gls{ses} groups is also random. The search for an optimal number of topics included introducing of so-called \textit{hypertopics} to make the topics comparable as well as assessing ranges for $\ntopics$ within which the hypertopic accuracy and the \gls{ses} assignment were consistent:
@@ -145,13 +147,13 @@ Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned wi
 \begin{figure}
     \centering
     \includegraphics[]{\imagepath/semantic_clustering_confusion_matrix.pdf}
-    \caption{Confusion matrix of the hypertopics for $\ntopics=20$:}\label{fig:embedding_confusion_matrix}
+    \caption{Confusion matrix of the hypertopics for $\ntopics=20$:\todo[inline]{describe}\todo[inline]{improve colors}}\label{fig:embedding_confusion_matrix}
 \end{figure}
 
 \paragraph{Evaluation}
 The distribution of articles across the \SI{20}{} topics was compared between the low- and high-\gls{ses} groups in order to identify any significant differences in prevalence of and thus potentially preference for certain topics in the groups' respective celebrity news consumption.
 
-The distribution of the hypertopics for the \textit{general} and the \textit{distinct-SES} approaches is shown in figure~\ref{fig:semantic_clustering_hypertopic_distribution}. The distribution of all \SI{20}{} topics and their respective topic words is presented in figure~\ref{fig:semantic_clustering_cluster_distribution} the appedix chapter~\ref{ch:unsupervised_appendix}.
+The distribution of the hypertopics for the \textit{general} and the \textit{distinct-SES} approaches is shown in figure~\ref{fig:semantic_clustering_hypertopic_distribution} and listed in table~\ref{tab:embeddings_hypertopics_distribution_and_chi2}. The distribution of all \SI{20}{} topics and their respective topic words is presented in figure~\ref{fig:semantic_clustering_cluster_distribution} the appedix chapter~\ref{ch:unsupervised_appendix}.
 
 \begin{figure}
     \centering
@@ -201,12 +203,12 @@ In order to estimate the significance of these differences in the topic distribu
 
 Both kinds of $\chi^2$-tests were conducted using the respective functions in the \textit{scipy} library \autocite{scipychi2_scipy_nodate,scipychi2_contingency_scipy_nodate}.
 
-Table~\ref{tab:embeddings_hypertopics_chi2s} shows that among the role models mentioned in the survey, newspaper coverage reporting about \textit{music} and \textit{sport} are significantly more prevalent in the low-\gls{ses} group of role models than for the high-\gls{ses} group. On the other hand, newspaper feature reporting about \textit{movies} are significantly more prevalent in the high-\gls{ses} group of role models than in the low-\gls{ses} group. Newspaper coverage of other topics, meaning the aggregate category of ambiguous topics and other topics (see table~\ref{tab:semantic_clustering_topic_hypertopic_table}) is a lot less pronounced.
+Table~\ref{tab:embeddings_hypertopics_distribution_and_chi2} shows that among the role models mentioned in the survey, newspaper coverage reporting about \textit{music} and \textit{sport} are significantly more prevalent in the low-\gls{ses} group of role models than for the high-\gls{ses} group. On the other hand, newspaper feature reporting about \textit{movies} are significantly more prevalent in the high-\gls{ses} group of role models than in the low-\gls{ses} group. Newspaper coverage of other topics, meaning the aggregate category of ambiguous topics and other topics (see table~\ref{tab:semantic_clustering_topic_hypertopic_table}) is a lot less pronounced.
 
 \begin{table}
     \centering
     \input{\imagepath/semantic_clustering_hypertopic_chi2_table.tex}
-    \caption{Results of the $\chi^2$-contingency and topic-wise tests for the hypertopics: For both the \textit{general} and the \textit{distinct-\gls{ses}} approach, the distributions of topics are significantly different across the \gls{ses} groups. The differences in the hypertopics \textit{movie}, \textit{music}, and \textit{sport} are all significant. It can, however, not be said, that the differences are generally more pronounced for the \textit{distinct-\gls{ses}} approach.}\label{tab:embeddings_hypertopics_chi2s}
+    \caption{Distribution of hypertopics for the low- and high-\gls{ses} groups and results of the $\chi^2$-contingency and topic-wise tests. For both the \textit{general} and the \textit{distinct-\gls{ses}} approach, the distributions of topics are significantly different across the \gls{ses} groups. The differences in the hypertopics \textit{movie}, \textit{music}, and \textit{sport} are all significant. It can, however, not be said, that the differences are generally more pronounced for the \textit{distinct-\gls{ses}} approach.}\label{tab:embeddings_hypertopics_distribution_and_chi2}
 \end{table}
 
 \paragraph{Adjectives and Adverbs}

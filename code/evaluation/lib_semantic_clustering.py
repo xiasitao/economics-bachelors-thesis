@@ -82,9 +82,11 @@ def find_topic_distributions(articles: pd.DataFrame, columns: list) -> dict:
     """
     topic_distributions = {}
     for n_topics_column in columns:
-        topic_distribution = pd.DataFrame(data=None, index=articles[n_topics_column].unique(), columns=['low', 'high'])
+        topic_distribution = pd.DataFrame(data=None, index=articles[n_topics_column].unique(), columns=['low', 'high', 'low_rel', 'high_rel'])
         topic_distribution['low'] = articles[articles['low_ses']].groupby(n_topics_column).count()['content']
+        topic_distribution['low_rel'] = topic_distribution['low']/topic_distribution['low'].sum()
         topic_distribution['high'] = articles[articles['high_ses']].groupby(n_topics_column).count()['content']
+        topic_distribution['high_rel'] = topic_distribution['high']/topic_distribution['high'].sum()
         topic_distributions[n_topics_column] = topic_distribution
     return topic_distributions
 
@@ -102,6 +104,7 @@ def chi2_per_label_test(distribution: pd.DataFrame, articles_per_SES: tuple) -> 
     Returns:
         pd.DataFrame: chi2 and p per category
     """    
+    distribution = distribution[['low', 'high']]
     if not (distribution == distribution.astype(int)).all().all():
         raise ValueError('Cannot accept relative frequencies.')
 
@@ -149,7 +152,7 @@ def plot_topic_distribution(topic_distribution: pd.DataFrame, relative=True, add
         category_name (str): Name of the category
         relative (bool, optional): Whether to normalize frequencies for each SES level. Defaults to True.
     """    
-    topic_distribution = topic_distribution.copy().sort_index()
+    topic_distribution = topic_distribution.copy().sort_index()[['low', 'high']]
 
     fig = None
     if ax is None:

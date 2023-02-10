@@ -95,18 +95,22 @@ def plot_semantic_clustering_hypertopic_distribution():
     fig.savefig(SEMANTIC_CLUSTERING_HYPERTOPIC_DISTRIBUTION_DISTINCT_PATH, bbox_inches='tight')
 
     # Chi2 table
-    contingency_chi2, contingency_p = chi2_contingency_test(article_hypertopic_distribution[selection])
-    per_label = chi2_per_label_test(article_hypertopic_distribution[selection], find_articles_per_SES(articles))
-    contingency_chi2_distinct, contingency_p_distinct = chi2_contingency_test(article_hypertopic_distribution_distinct[selection])
-    per_label_distinct = chi2_per_label_test(article_hypertopic_distribution_distinct[selection], find_articles_per_SES(articles_distinct))
-    table_str = r"\begin{tabular}{lcrlccrl}\toprule & \multicolumn{3}{c}{\textit{general}} & \multicolumn{3}{c}{\textit{distinct-SES}} \\ test & $\chi^2$ & \multicolumn{2}{c}{$p$} && $\chi^2$ & \multicolumn{2}{c}{$p$} \\\toprule" + '\n'
-    table_str += rf"contingency & ${contingency_chi2:.2f}$ & $\SI{{{contingency_p:.1e}}}{{}}$ & {sigstars(contingency_p)} && "
-    table_str += rf"${contingency_chi2_distinct:.2f}$ & $\SI{{{contingency_p_distinct:.1e}}}{{}}$ & {sigstars(contingency_p_distinct)} \\"  + '\n'
+    distribution, distribution_distinct = article_hypertopic_distribution[selection], article_hypertopic_distribution_distinct[selection]
+    contingency_chi2, contingency_p = chi2_contingency_test(distribution)
+    per_label = chi2_per_label_test(distribution, find_articles_per_SES(articles))
+    contingency_chi2_distinct, contingency_p_distinct = chi2_contingency_test(distribution_distinct)
+    per_label_distinct = chi2_per_label_test(distribution_distinct, find_articles_per_SES(articles_distinct))
+    table_str = r"\begin{tabular}{lcccr@{\hskip0pt}llcccr@{\hskip0pt}l}\toprule & \multicolumn{5}{c}{\textit{general}} && \multicolumn{5}{c}{\textit{distinct-SES}} \\ "
+    table_str += r"& low & high & $\chi^2$ & \multicolumn{2}{c}{$p$} && low & high & $\chi^2$ & \multicolumn{2}{c}{$p$} \\\toprule" + '\n'
+    table_str += rf"all & & & ${contingency_chi2:.2f}$ & $\SI{{{contingency_p:.0e}}}{{}}$ & {sigstars(contingency_p)} && "
+    table_str += rf"&& ${contingency_chi2_distinct:.2f}$ & $\SI{{{contingency_p_distinct:.0e}}}{{}}$ & {sigstars(contingency_p_distinct)} \\"  + '\n'
     for hypertopic in per_label.index:
+        low, high = distribution.loc[hypertopic]['low_rel'], distribution.loc[hypertopic]['high_rel']
         chi2, p = per_label.loc[hypertopic]['chi2'], per_label.loc[hypertopic]['p']
+        low_distinct, high_distinct = distribution_distinct.loc[hypertopic]['low_rel'], distribution_distinct.loc[hypertopic]['high_rel']
         chi2_distinct, p_distinct = per_label_distinct.loc[hypertopic]['chi2'], per_label_distinct.loc[hypertopic]['p']
-        table_str += rf"\textit{{{hypertopic}}} & ${chi2:.2f}$ & $\SI{{{p:.1e}}}{{}}$ & {sigstars(p)} && "
-        table_str += rf"${chi2_distinct:.2f}$ & $\SI{{{p_distinct:.1e}}}{{}}$ & {sigstars(p_distinct)} \\" + '\n'
+        table_str += rf"\textit{{{hypertopic}}} & \SI{{{low*100:.0f}}}{{\percent}} & \SI{{{high*100:.0f}}}{{\percent}} & ${chi2:.1f}$ & $\SI{{{p:.0e}}}{{}}$ & {sigstars(p)} && "
+        table_str += rf"\SI{{{low_distinct*100:.0f}}}{{\percent}} & \SI{{{high_distinct*100:.0f}}}{{\percent}} & ${chi2_distinct:.1f}$ & $\SI{{{p_distinct:.0e}}}{{}}$ & {sigstars(p_distinct)} \\" + '\n'
     table_str += r"\bottomrule\end{tabular}"
     SEMANTIC_CLUSTERING_HYPERTOPIC_CHI2_TABLE_PATH.write_text(table_str)
 
@@ -136,20 +140,23 @@ def plot_semantic_clustering_cluster_distribution():
     plot_topic_distribution(cluster_distributions_distinct[selection], ax=ax)
     fig.savefig(SEMANTIC_CLUSTERING_CLUSTER_DISTRIBUTION_DISTINCT_PATH, bbox_inches='tight')
 
-    contingency_chi2, contingency_p = chi2_contingency_test(cluster_distributions[selection])
-    per_label = chi2_per_label_test(cluster_distributions[selection], find_articles_per_SES(articles))
-    contingency_chi2_distinct, contingency_p_distinct = chi2_contingency_test(cluster_distributions_distinct[selection])
-    per_label_distinct = chi2_per_label_test(cluster_distributions_distinct[selection], find_articles_per_SES(articles_distinct))
-    table_str = r"\begin{tabular}{lcrlccrl}\toprule & \multicolumn{3}{c}{\textit{general}} & \multicolumn{3}{c}{\textit{distinct-SES}} \\ test & $\chi^2$ & \multicolumn{2}{c}{$p$} && $\chi^2$ & \multicolumn{2}{c}{$p$} \\\toprule" + '\n'
-    table_str += rf"contingency & ${contingency_chi2:.2f}$ & $\SI{{{contingency_p:.1e}}}{{}}$ & {sigstars(contingency_p)} && "
-    table_str += rf"${contingency_chi2_distinct:.2f}$ & $\SI{{{contingency_p_distinct:.1e}}}{{}}$ & {sigstars(contingency_p_distinct)} \\"  + '\n'
-    for cluster_label in per_label.index:
-        chi2, p = per_label.loc[cluster_label]['chi2'], per_label.loc[cluster_label]['p']
-        chi2_distinct, p_distinct = per_label_distinct.loc[cluster_label]['chi2'], per_label_distinct.loc[cluster_label]['p']
-        table_str += rf"cluster {cluster_label} & ${chi2:.2f}$ & $\SI{{{p:.1e}}}{{}}$ & {sigstars(p)} && "
-        table_str += rf"${chi2_distinct:.2f}$ & $\SI{{{p_distinct:.1e}}}{{}}$ & {sigstars(p_distinct)} \\" + '\n'
+    distribution, distribution_distinct = cluster_distributions[selection], cluster_distributions_distinct[selection]
+    contingency_chi2, contingency_p = chi2_contingency_test(distribution)
+    per_label = chi2_per_label_test(distribution, find_articles_per_SES(articles))
+    contingency_chi2_distinct, contingency_p_distinct = chi2_contingency_test(distribution_distinct)
+    per_label_distinct = chi2_per_label_test(distribution_distinct, find_articles_per_SES(articles_distinct))
+    table_str = r"\begin{tabular}{lcccr@{\hskip0pt}llcccr@{\hskip0pt}l}\toprule & \multicolumn{5}{c}{\textit{general}} && \multicolumn{5}{c}{\textit{distinct-SES}} \\ "
+    table_str += r"& low & high & $\chi^2$ & \multicolumn{2}{c}{$p$} && low & high & $\chi^2$ & \multicolumn{2}{c}{$p$} \\\toprule" + '\n'
+    table_str += rf"all & & & ${contingency_chi2:.2f}$ & $\SI{{{contingency_p:.0e}}}{{}}$ & {sigstars(contingency_p)} && "
+    table_str += rf"&& ${contingency_chi2_distinct:.2f}$ & $\SI{{{contingency_p_distinct:.0e}}}{{}}$ & {sigstars(contingency_p_distinct)} \\"  + '\n'
+    for hypertopic in per_label.index:
+        low, high = distribution.loc[hypertopic]['low_rel'], distribution.loc[hypertopic]['high_rel']
+        chi2, p = per_label.loc[hypertopic]['chi2'], per_label.loc[hypertopic]['p']
+        low_distinct, high_distinct = distribution_distinct.loc[hypertopic]['low_rel'], distribution_distinct.loc[hypertopic]['high_rel']
+        chi2_distinct, p_distinct = per_label_distinct.loc[hypertopic]['chi2'], per_label_distinct.loc[hypertopic]['p']
+        table_str += rf"\textit{{{hypertopic}}} & \SI{{{low*100:.0f}}}{{\percent}} & \SI{{{high*100:.0f}}}{{\percent}} & ${chi2:.1f}$ & $\SI{{{p:.0e}}}{{}}$ & {sigstars(p)} && "
+        table_str += rf"\SI{{{low_distinct*100:.0f}}}{{\percent}} & \SI{{{high_distinct*100:.0f}}}{{\percent}} & ${chi2_distinct:.1f}$ & $\SI{{{p_distinct:.0e}}}{{}}$ & {sigstars(p_distinct)} \\" + '\n'
     table_str += r"\bottomrule\end{tabular}"
-
     SEMANTIC_CLUSTERING_CLUSTER_CHI2_TABLE_PATH.write_text(table_str)
 
 
@@ -163,10 +170,10 @@ def produce_adjectives_adverbs_topic_table():
 
 
 if __name__ == '__main__':
-    # plot_cluster_diagram()
-    # plot_semantic_clustering_accuracy_diagram()
-    # plot_semantic_clustering_hypertopic_consistency_diagram()
-    # plot_semantic_clustering_confusion_matrix()
-    # plot_semantic_clustering_hypertopic_distribution()
-    # plot_semantic_clustering_cluster_distribution()
+    plot_cluster_diagram()
+    plot_semantic_clustering_accuracy_diagram()
+    plot_semantic_clustering_hypertopic_consistency_diagram()
+    plot_semantic_clustering_confusion_matrix()
+    plot_semantic_clustering_hypertopic_distribution()
+    plot_semantic_clustering_cluster_distribution()
     produce_adjectives_adverbs_topic_table()
