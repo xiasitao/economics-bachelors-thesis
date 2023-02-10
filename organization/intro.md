@@ -35,9 +35,9 @@
 - Health as very important point in research, but following aspects interesting economically:
     - human capital (find citation)
     - social mobility (Wagner)
-- Prosociality
-- Education & Career
-- Development (Education & Language)
+    - Prosociality
+    - Education & Career
+    - Development (Education & Language)
 
 ## Newspaper consumption
     - socioeconomic (inequality) and political (democracy) implications of coverage (Dubied 2014), hint to topics
