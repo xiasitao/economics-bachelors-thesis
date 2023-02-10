@@ -96,12 +96,12 @@ The author guesses that one of the reasons for the inconsistent variations in to
 
 As the quality of the topic modelling approach could not be substantially improved without the scope of \gls{lda}, the modelling process was enhanced by adding pretained transformer model providing semantic embeddings as described in the next section.
 
-\section{Improvement with a Pretrained Model}
-In order to mitigate the issue that the \gls{lda} topic model was apparently incapable of consistenly separating articles by their meaning, a pretrained semantic embedding model was added to the modelling process. It was used assign to every newspaper article a vector representation of its meaning (semantics) that could be partitioned into topics by a clustering algorithm:
+\section{Improvement with a Pre-Trained Model}
+In order to mitigate the issue that the \gls{lda} topic model was apparently incapable of consistenly separating articles by their meaning, a pre-trained semantic embedding model was added to the modelling process. It was used assign to every newspaper article a vector representation of its meaning (semantics) that could be partitioned into topics by a clustering algorithm:
 
-As a first step, each article in the \textit{content} stage, meaning the original article with only minimal cleaning applied, was assigned a $384$ dimensional vector representation by the pretrained SentenceBERT model (implemention with \textcite{sbertsentencetransformers_sentencetransformers_2022}, see chapter~\ref{ch:sentencebert}). As suggested by \textcite{black_using_2020}, these representations were first dimensionality-reduced to \SI{50}{} dimensions using \gls{pca}~\autocite{pearson_liii_1901} and then further reduced to \SI{3}{} dimensions using \gls{tsne}~\autocite{maaten_visualizing_2008}. This procedure yielded a three-dimensional semantic vector representation of each article, such that articles with similar meaning are closer to each other in this vector space than articles with a large difference in meaning.
+As a first step, each article in the \textit{content} stage, meaning the original article with only minimal cleaning applied, was assigned a $384$ dimensional vector representation by the pre-trained SentenceBERT model (implemention with \textcite{sbertsentencetransformers_sentencetransformers_2022}, see chapter~\ref{ch:sentencebert}). As suggested by \textcite{black_using_2020}, these representations were first dimensionality-reduced to \SI{50}{} dimensions using \gls{pca}~\autocite{pearson_liii_1901} and then further reduced to \SI{3}{} dimensions using \gls{tsne}~\autocite{maaten_visualizing_2008}. This procedure yielded a three-dimensional semantic vector representation of each article, such that articles with similar meaning are closer to each other in this vector space than articles with a large difference in meaning.
 
-In the next step, these vectors were then used as input for the KMeans clustering algorithm~\autocite{macqueen_methods_1967} for partitioning the articles according to their meaning, such that articles with similar meaning are rather within the same cluster whereas articles with differing meaning are more likely to be in different clusters. This algorithm produced $\nclusters$ clusters, each one representing one topic. Figure~\ref{fig:clusters} shows the articles' vector representation and the clusters for $\nclusters=5$ in two dimensions. In this way, the process of assigning topics to each article did not depend on the newspaper article corpus anymore but instead on a pretrained model.
+In the next step, these vectors were then used as input for the KMeans clustering algorithm~\autocite{macqueen_methods_1967} for partitioning the articles according to their meaning, such that articles with similar meaning are rather within the same cluster whereas articles with differing meaning are more likely to be in different clusters. This algorithm produced $\nclusters$ clusters, each one representing one topic. Figure~\ref{fig:clusters} shows the articles' vector representation and the clusters for $\nclusters=5$ in two dimensions. In this way, the process of assigning topics to each article did not depend on the newspaper article corpus anymore but instead on a pre-trained model.
 
 Finally \gls{lda} with $\ntopics=1$ was applied on the articles of each cluster in the \textit{nouns and verbs} stage, hence with most of the structure removed from the text. In this way, each cluster was assigned a single set of topic words, such that in the end the output of the modelling process had the same structure as for using \gls{lda}. In the following, $\ntopics$ and $\nclusters$ are going to be used interchangeably for the effective number of topics that are examined.
 
@@ -116,7 +116,7 @@ Figure~\ref{fig:embedding_modelling_schema} illustrates this modelling procedure
 \begin{figure}
     \centering
     \includegraphics[]{\imagepath/embedding_modelling_schema.pdf}
-    \caption{Schematic of the topic modelling process with SentenceBERT semantic embeddings and KMeans clustering: The article texts (in the \textit{content} stage) are transformed into embeddings, a vector representation of text, by the pretrained SentenceBERT transformer model. These representations are dimensionality-reduced with \gls{pca} and \gls{tsne}. Then the KMeans algorithm clusters the articles into $\nclusters$ clusters. Each of these sets of articles represents a topic whose topic words are found by separate \gls{lda} models (with $\ntopics=1$, taking the articles in the \textit{nouns and verbs} stage as input) for each cluster.}\label{fig:embedding_modelling_schema}
+    \caption{Schematic of the topic modelling process with SentenceBERT semantic embeddings and KMeans clustering: The article texts (in the \textit{content} stage) are transformed into embeddings, a vector representation of text, by the pre-trained SentenceBERT transformer model. These representations are dimensionality-reduced with \gls{pca} and \gls{tsne}. Then the KMeans algorithm clusters the articles into $\nclusters$ clusters. Each of these sets of articles represents a topic whose topic words are found by separate \gls{lda} models (with $\ntopics=1$, taking the articles in the \textit{nouns and verbs} stage as input) for each cluster.}\label{fig:embedding_modelling_schema}
 \end{figure}
 
 \paragraph{Accuracy and Consistency}
@@ -180,7 +180,7 @@ In order to estimate the significance of these differences in the topic distribu
 \begin{itemize}
     \item An overall $\chi^2$-contingency test assessed whether it the distribution of articles across topics is different for low- and high-\gls{ses}~\autocite[p. 430]{fahrmeir_spezielle_2016}:
     \begin{align}
-        \begin{split}
+        \begin{split}\label{eq:h0_contingency}
             H_{0, \text{contingency}}: ~~~ &\text{distributions } p_{s, t} \text{ over topics } t \text{ are indepedent of } s\\
         & \text{i.e. } p_{s, t} = p_s \cdot p_t ~~ \forall t, s
         \end{split}
@@ -189,7 +189,7 @@ In order to estimate the significance of these differences in the topic distribu
 
     \item A second set of $\chi^2$ tests was performed per topic $t$, assessing whether the respective amount of low- and high-\gls{ses} articles in that topic equals the expected number over all topics:
     \begin{align}
-        \begin{split}
+        \begin{split}\label{eq:h0_topic}
             H_{0, \text{ topic }t}: ~~~ &\text{number of articles } n_{s, t} \text{ equals expected number } \tilde n_{s, t} \\
             & \text{i.e. } n_{\text{low}, t} = \tilde n_{\text{low}, t} \text{ and } n_{\text{high}, t} = \tilde n_{\text{high}, t}
         \end{split}
@@ -212,7 +212,7 @@ Table~\ref{tab:embeddings_hypertopics_chi2s} shows that among the role models me
 \end{table}
 
 \paragraph{Alternative Approach: Adjectives and Adverbs}
-As an alternative, the pretrained model-enhanced modelling procedure was also used to examine the \textit{adjectives and adverbs} stage of text, assuming that it could reveal information about the sentiment of the newspaper articles. For this the per-cluster \gls{lda} models were fed with the text in the \textit{adjectives and adverbs} stage instead of the \textit{nouns and verbs} stage. Table \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} in the appendix lists the \SI{20}{} cluster word lists found in this alternative approach. However, these word lists don't appear to convey any information that could be clearly identified as sentiment. Furthermore, it appears that the part-of-speech tagging didn't work as well as expected as proper names are still among the words.
+As an alternative, the pre-trained model-enhanced modelling procedure was also used to examine the \textit{adjectives and adverbs} stage of text, assuming that it could reveal information about the sentiment of the newspaper articles. For this the per-cluster \gls{lda} models were fed with the text in the \textit{adjectives and adverbs} stage instead of the \textit{nouns and verbs} stage. Table \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} in the appendix lists the \SI{20}{} cluster word lists found in this alternative approach. However, these word lists don't appear to convey any information that could be clearly identified as sentiment. Furthermore, it appears that the part-of-speech tagging didn't work as well as expected as proper names are still among the words.
 
 
 \section{Discussion}
