@@ -140,7 +140,7 @@ Again, hypertopics were assigned to each set of topic words for evaluating the a
     \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is comparably consistent around $\ntopics=20$ for all hypertopics, making it a promising choice. The share of low-\gls{ses} articles among all articles is shown as a reference.}\label{fig:semantic_clustering_hypertopic_consistency_diagram}
 \end{figure}
 
-As the highest accuracy was achieved for a value of $\ntopics=20$ with comparably little variation around it, this choice was kept for the following analysis. The topic word lists and the assigned hypertopics are listed in the appendix in table~\ref{semantic_clustering_topic_hypertopic_table}. It should be noted that assigning hypertopics was not always unambiguous (see e.g. topics 2 and 7 that could also be \textit{music} instead of \textit{life}). In case of ambiguity, it is decided to label a topic as \textit{life}.
+As the highest accuracy was achieved for a value of $\ntopics=20$ with comparably little variation around it, this choice was kept for the following analysis. The topic word lists and the assigned hypertopics are listed in the appendix in table~\ref{tab:semantic_clustering_topic_hypertopic_table}. It should be noted that assigning hypertopics was not always unambiguous (see e.g. topics 2 and 7 that could also be \textit{music} instead of \textit{life}). In case of ambiguity, it is decided to label a topic as \textit{life}.
 
 Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned with the model output and the human-annotated hypertopics. It shows that the overall performance of the model is good, however some of the articles that the human annotator had labelled as \textit{movie} or \textit{music} were classified as \textit{life}. This is not surprising considering that celebrity reports do often also cover celebrities' lifestories to a significant extent. For the \textit{distinct-SES} approach, somewhat less accuracy is achieved, the predictions appear, however, equally consistent.
 
@@ -216,7 +216,7 @@ As an alternative, the pre-trained model-enhanced modelling procedure was also u
 
 
 \section{Discussion}
-In this chapter, topic modelling was explored as a method for analyzing newspaper articles
+In this chapter, topic modelling was explored as a method for analyzing newspaper articles\todo{continue}
 %  potential points:
 % Making more interesting
 % - only use articles which don't cover a topic out of certain pool of uninteresting ones
