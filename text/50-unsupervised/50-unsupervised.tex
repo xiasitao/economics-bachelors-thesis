@@ -94,7 +94,7 @@ The author guesses that one of the reasons for the inconsistent variations in to
 
 As the quality of the topic modelling approach could not be substantially improved without the scope of \gls{lda}, the modelling process was enhanced by adding pretained transformer model providing semantic embeddings as described in the next section.
 
-\section{Improvement with a Pre-Trained Model}
+\section{Improvement with a Pre-Trained Model}\label{ch:pretrained_topic_modelling}
 In order to mitigate the issue that the \gls{lda} topic model was apparently incapable of consistenly separating articles by their meaning, a pre-trained semantic embedding model was added to the modelling process. It was used assign to every newspaper article a vector representation of its meaning (semantics) that could be partitioned into topics by a clustering algorithm:
 
 As a first step, each article in the \textit{content} stage, meaning the original article with only minimal cleaning applied, was assigned a $384$ dimensional vector representation by the pre-trained SentenceBERT model (implemention with \textcite{sbertsentencetransformers_sentencetransformers_2022}, see chapter~\ref{ch:sentencebert}). As suggested by \textcite{black_using_2020}, these representations were first dimensionality-reduced to \SI{50}{} dimensions using \gls{pca}~\autocite{pearson_liii_1901} and then further reduced to \SI{3}{} dimensions using \gls{tsne}~\autocite{maaten_visualizing_2008}. This procedure yielded a three-dimensional semantic vector representation of each article, such that articles with similar meaning are closer to each other in this vector space than articles with a large difference in meaning.
@@ -209,18 +209,15 @@ Table~\ref{tab:embeddings_hypertopics_chi2s} shows that among the role models me
     \caption{Results of the $\chi^2$-contingency and topic-wise tests for the hypertopics: For both the \textit{general} and the \textit{distinct-\gls{ses}} approach, the distributions of topics are significantly different across the \gls{ses} groups. The differences in the hypertopics \textit{movie}, \textit{music}, and \textit{sport} are all significant. It can, however, not be said, that the differences are generally more pronounced for the \textit{distinct-\gls{ses}} approach.}\label{tab:embeddings_hypertopics_chi2s}
 \end{table}
 
-\paragraph{Alternative Approach: Adjectives and Adverbs}
-As an alternative, the pre-trained model-enhanced modelling procedure was also used to examine the \textit{adjectives and adverbs} stage of text, assuming that it could reveal information about the sentiment of the newspaper articles. For this the per-cluster \gls{lda} models were fed with the text in the \textit{adjectives and adverbs} stage instead of the \textit{nouns and verbs} stage. Table \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} in the appendix lists the \SI{20}{} cluster word lists found in this alternative approach. However, these word lists don't appear to convey any information that could be clearly identified as sentiment. Furthermore, it appears that the part-of-speech tagging didn't work as well as expected as proper names are still among the words.
+\paragraph{Adjectives and Adverbs}
+The topic words of the \textit{nouns and verbs} stage that were output by the model (table~\ref{tab:semantic_clustering_topic_hypertopic_table}) do not expose clear information about connotation and sentiment. Assuming that instead the \textit{adjectives and adverbs} stage could reveal more about the connotations and the sentiment of the newspaper articles, the modelling procedure was modified in orders to examine the \textit{adjectives and adverbs} stage of text. To this end, the per-cluster \gls{lda} models were fed with the text in the \textit{adjectives and adverbs} stage instead of the \textit{nouns and verbs} stage. Table \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} in the appendix lists the \SI{20}{} cluster word lists found in this alternative approach. However, these word lists also don't appear to convey any information that could be clearly identified as connotation or sentiment, except for the word ``great''. Furthermore, it appears that the part-of-speech tagging didn't work as well as expected since proper names are still among the words.
 
 
 \section{Discussion}
-In this chapter, topic modelling was explored as a method for analyzing newspaper articles\todo{continue}
-%  potential points:
-% Making more interesting
-% - only use articles which don't cover a topic out of certain pool of uninteresting ones
-% - exclude articles whose topic matches the profession of role model
-% - include other forms of text (social media, non-newspaper reports)
-% Scrutinizing more
-% - more effort needed to capture certain connotations, scrutinize more on word lists
-% - scrutinize for higher n_topics
-% Validity:
+In this chapter, topic modelling was explored as a method for analyzing newspaper articles with respect to their topics and their connotation or sentiment. It was shown that \gls{lda} topic modelling alone is outperformed by a modelling approach enhanced by a pre-trained semantic embedding model.
+
+The clearly interpretable results at this stage are unfortunately restricted to the finding that sports- and music-related topics are more prevalent in the low-\gls{ses} group, whereas movie-related topics are more prevalent in the high-\gls{ses} group. These topics are, however, already well reflected by the professions of the individual role models (see table~\ref{tab:role_model_overview}) and would probably not need a topic modelling approach for identification. To a considerable extent, this is due to the assignment of occupation-related hypertopics. In this first approach, this seems, however, justified as it represented the most straightforward and unambiguous way of subsuming the topics into sensible categories and thus making model outputs comparable. Also, the adjectives and adverbs describing each topic were unfortunately not indicating any clear connotations.
+
+In order to gain more valuable insights, more sophisticated preprocessing of the data and further enhancing the modelling procedure will be required. The author deems filtering the training data helpful, e.g. by removing articles whose topic is too closely related to the respective role model's occupation. In this way, the association of role models with their profession wouldn't dominate the topics as much as they do without filtering. In order to facilitate the emergence of sentiment and connotation in the topics, words that don't carry sentiment could be removed from the input fed into the \gls{lda} stages of the modelling process, only leaving connotation- and  sentiment-bearing words in the modelling process. Finally, it could be advisable to examine the model output for high numbers of topics (e.g. $\ntopics>50$) more thoroughly, as in these cases the topics are more specific and could hence expose connotations of the topics.
+
+\todo{validity already here or just in the end?}

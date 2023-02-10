@@ -8,7 +8,7 @@
 
 
 \chapter{Supplementary Material on the Unsupervised Analysis}\label{ch:unsupervised_appendix}
-This appendix chapter lists all topics and the respective hypertopics that were output be the pretained model-enhanced topic modelling procedure for $n_\text{topic} = 20$ in table~\ref{tab:semantic_clustering_topic_hypertopic_table} for the \textit{nous and verbs} stage and in \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} for the \textit{adjectives and adverbs} stage.
+This appendix chapter lists all topics and the respective hypertopics that were output be the topic modelling procedure enhanced with a pre-trained model (see section~\ref{ch:pretrained_topic_modelling}) for $n_\text{topic} = 20$ in table~\ref{tab:semantic_clustering_topic_hypertopic_table} for the \textit{nous and verbs} stage and in \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} for the \textit{adjectives and adverbs} stage.
 
 The distribution of the topics among all articles per \gls{ses} are shown in figure~\ref{fig:semantic_clustering_cluster_distribution}, the results of the respective $\chi^2$-tests are shown in table~\ref{tab:semantic_clustering_cluster_chi2_table}.
 \begin{table}[h]
@@ -20,13 +20,7 @@ The distribution of the topics among all articles per \gls{ses} are shown in fig
 \begin{table}
     \centering
     \input{\imagepath/semantic_clustering_adjectives_adverbs_topic_table.tex}
-    \caption{Adjective and adverb characterizing word lists for each cluster. The clusters correspond to the topics in table~\ref{tab:semantic_clustering_topic_hypertopic_table}.}\label{tab:semantic_clustering_adjectives_adverbs_topic_table}
-\end{table}
-
-\begin{table}
-    \centering
-    \input{\imagepath/semantic_clustering_cluster_chi2_table.tex}
-    \caption{Results of the $\chi^2$-contingency tests and the per-cluster $\chi^2$ tests}\label{tab:semantic_clustering_cluster_chi2_table}
+    \caption{All adjective and adverb clusters generated with the semantic embedding-enhanced topic modelling procedure for $n_\text{topics}=20$}\label{tab:semantic_clustering_adjectives_adverbs_topic_table}
 \end{table}
 
 \begin{figure}
@@ -46,5 +40,11 @@ The distribution of the topics among all articles per \gls{ses} are shown in fig
         \end{pgfpicture}
         \caption{\textit{distinct-\gls{ses}} approach}
     \end{subfigure}
-    \caption{Distribution of topics in the semantic embedding-enhanced topic modelling process for low- and high-\gls{ses} for $n_\text{topics}=20$. For the meaning of each topic, refer to table~\ref{tab:semantic_clustering_topic_hypertopic_table}}\label{fig:semantic_clustering_cluster_distribution}
+    \caption{Distribution of topics output by the topic modelling procedure enhanced with a pre-trained model for low- and high-\gls{ses} for $n_\text{topics}=20$. For the meaning of each topic, refer to table~\ref{tab:semantic_clustering_topic_hypertopic_table}}\label{fig:semantic_clustering_cluster_distribution}
 \end{figure}
+
+\begin{table}
+    \centering
+    \input{\imagepath/semantic_clustering_cluster_chi2_table.tex}
+    \caption{Results of the $\chi^2$-contingency tests and the per-cluster $\chi^2$ tests for the topics output by the topic modelling procedure enhanced with a pre-trained model (see figure~\ref{fig:semantic_clustering_cluster_distribution}). The respective test hypotheses are formulated in the equations~\eqref{eq:h0_contingency} and ~\eqref{eq:h0_topic}.}\label{tab:semantic_clustering_cluster_chi2_table}
+\end{table}
