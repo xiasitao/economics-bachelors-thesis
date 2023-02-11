@@ -265,7 +265,7 @@ def evaluate_category(
     
     distinct_text = None
     if is_distinct is not None:
-        distinct_text = 'distinct' if is_distinct else 'general'
+        distinct_text = 'distinct-SES' if is_distinct else 'mixed-SES'
     plot_category_distribution(category_distributions, category, relative=relative_dist_plot, additional_title_text=distinct_text, show_title=show_title, ax=ax)
 
     contingency_chi2, contingency_p = chi2_contingency_test(category_distributions[category])

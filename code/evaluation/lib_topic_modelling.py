@@ -324,7 +324,7 @@ def evaluate_topics_for_n(
     
     distinct_text = None
     if is_distinct is not None:
-        distinct_text = 'distinct' if is_distinct else 'general'
+        distinct_text = 'distinct-SES' if is_distinct else 'mixed-SES'
     plot_topic_distribution(topic_distributions[column_name], relative=relative_dist_plot, additional_title_text=distinct_text, ax=ax)
 
     contingency_chi2, contingency_p = chi2_contingency_test(topic_distributions[column_name])

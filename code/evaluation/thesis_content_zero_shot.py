@@ -34,7 +34,7 @@ distributions_distinct = find_category_distributions(articles=articles_distinct,
 
 ZERO_SHOT_RESULT_TABLE_PATH = BUILD_PATH / 'thesis/70-supervised/zero_shot_result_table.tex'
 def produce_zero_shot_result_table():
-    table_str = r"\begin{tabular}{lccccr@{\hskip0pt}llccccr@{\hskip0pt}l}\toprule & \multicolumn{6}{c}{\textit{general}} && \multicolumn{6}{c}{\textit{distinct-SES}} \\ "
+    table_str = r"\begin{tabular}{lccccr@{\hskip0pt}llccccr@{\hskip0pt}l}\toprule & \multicolumn{6}{c}{\textit{mixed-SES}} && \multicolumn{6}{c}{\textit{distinct-SES}} \\ "
     table_str += r"& low & high & $\Braket{\widetilde{H}}$ & $\chi^2$ & \multicolumn{2}{c}{$p$} && low & high & $\Braket{\widetilde{H}}$ & $\chi^2$ & \multicolumn{2}{c}{$p$} \\\toprule" + '\n'
 
     for category in category_columns:

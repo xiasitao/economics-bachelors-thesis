@@ -100,7 +100,7 @@ def plot_semantic_clustering_hypertopic_distribution():
     per_label = chi2_per_label_test(distribution, find_articles_per_SES(articles))
     contingency_chi2_distinct, contingency_p_distinct = chi2_contingency_test(distribution_distinct)
     per_label_distinct = chi2_per_label_test(distribution_distinct, find_articles_per_SES(articles_distinct))
-    table_str = r"\begin{tabular}{lcccr@{\hskip0pt}llcccr@{\hskip0pt}l}\toprule & \multicolumn{5}{c}{\textit{general}} && \multicolumn{5}{c}{\textit{distinct-SES}} \\ "
+    table_str = r"\begin{tabular}{lcccr@{\hskip0pt}llcccr@{\hskip0pt}l}\toprule & \multicolumn{5}{c}{\textit{mixed-SES}} && \multicolumn{5}{c}{\textit{distinct-SES}} \\ "
     table_str += r"& low & high & $\chi^2$ & \multicolumn{2}{c}{$p$} && low & high & $\chi^2$ & \multicolumn{2}{c}{$p$} \\\toprule" + '\n'
     table_str += rf"all & & & ${contingency_chi2:.2f}$ & $\SI{{{contingency_p:.0e}}}{{}}$ & {sigstars(contingency_p)} && "
     table_str += rf"&& ${contingency_chi2_distinct:.2f}$ & $\SI{{{contingency_p_distinct:.0e}}}{{}}$ & {sigstars(contingency_p_distinct)} \\"  + '\n'
@@ -145,7 +145,7 @@ def plot_semantic_clustering_cluster_distribution():
     per_label = chi2_per_label_test(distribution, find_articles_per_SES(articles))
     contingency_chi2_distinct, contingency_p_distinct = chi2_contingency_test(distribution_distinct)
     per_label_distinct = chi2_per_label_test(distribution_distinct, find_articles_per_SES(articles_distinct))
-    table_str = r"\begin{tabular}{lcccr@{\hskip0pt}llcccr@{\hskip0pt}l}\toprule & \multicolumn{5}{c}{\textit{general}} && \multicolumn{5}{c}{\textit{distinct-SES}} \\ "
+    table_str = r"\begin{tabular}{lcccr@{\hskip0pt}llcccr@{\hskip0pt}l}\toprule & \multicolumn{5}{c}{\textit{mixed-SES}} && \multicolumn{5}{c}{\textit{distinct-SES}} \\ "
     table_str += r"& low & high & $\chi^2$ & \multicolumn{2}{c}{$p$} && low & high & $\chi^2$ & \multicolumn{2}{c}{$p$} \\\toprule" + '\n'
     table_str += rf"all & & & ${contingency_chi2:.2f}$ & $\SI{{{contingency_p:.0e}}}{{}}$ & {sigstars(contingency_p)} && "
     table_str += rf"&& ${contingency_chi2_distinct:.2f}$ & $\SI{{{contingency_p_distinct:.0e}}}{{}}$ & {sigstars(contingency_p_distinct)} \\"  + '\n'

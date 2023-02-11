@@ -153,7 +153,7 @@ Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned wi
 \paragraph{Evaluation}
 The distribution of articles across the \SI{20}{} topics was compared between the low- and high-\gls{ses} groups in order to identify any significant differences in prevalence of and thus potentially preference for certain topics in the groups' respective celebrity news consumption.
 
-The distribution of the hypertopics for the \textit{general} and the \textit{distinct-SES} approaches is shown in figure~\ref{fig:semantic_clustering_hypertopic_distribution} and listed in table~\ref{tab:embeddings_hypertopics_distribution_and_chi2}. The distribution of all \SI{20}{} topics and their respective topic words is presented in figure~\ref{fig:semantic_clustering_cluster_distribution} the appedix chapter~\ref{ch:unsupervised_appendix}.
+The distribution of the hypertopics for the \textit{mixed-} and the \textit{distinct-SES} approaches is shown in figure~\ref{fig:semantic_clustering_hypertopic_distribution} and listed in table~\ref{tab:embeddings_hypertopics_distribution_and_chi2}. The distribution of all \SI{20}{} topics and their respective topic words is presented in figure~\ref{fig:semantic_clustering_cluster_distribution} the appedix chapter~\ref{ch:unsupervised_appendix}.
 
 \begin{figure}
     \centering
@@ -162,7 +162,7 @@ The distribution of the hypertopics for the \textit{general} and the \textit{dis
         \begin{pgfpicture}
             \pgftext{\input{\imagepath/semantic_clustering_hypertopic_distribution.pgf}}
         \end{pgfpicture}
-        \caption{\textit{general} approach}
+        \caption{\textit{mixed-\gls{ses}} approach}
     \end{subfigure}
     \begin{subfigure}{0.48\textwidth}
         \centering
@@ -171,7 +171,7 @@ The distribution of the hypertopics for the \textit{general} and the \textit{dis
         \end{pgfpicture}
         \caption{\textit{distinct-\gls{ses}} approach}
     \end{subfigure}
-    \caption{Distribution of articles across hypertopics for the low- and the high-\gls{ses} groups; left for the \textit{general}, right for the \textit{distinct-SES} approach. While the \textit{life} hypertopic is equally represented in both \gls{ses} groups, \textit{movie}-related articles are more prevalent in the high- than in the low-\gls{ses} group, whereas \textit{music} and \textit{sport}-related articles more in the low-\gls{ses} than in the high-\gls{ses} group}\label{fig:semantic_clustering_hypertopic_distribution}
+    \caption{Distribution of articles across hypertopics for the low- and the high-\gls{ses} groups; left for the \textit{mixed-}, right for the \textit{distinct-SES} approach. While the \textit{life} hypertopic is equally represented in both \gls{ses} groups, \textit{movie}-related articles are more prevalent in the high- than in the low-\gls{ses} group, whereas \textit{music} and \textit{sport}-related articles more in the low-\gls{ses} than in the high-\gls{ses} group}\label{fig:semantic_clustering_hypertopic_distribution}
 \end{figure}
 
 The graphs reveal that the topic \textit{movie} is more prevalent in the high-\gls{ses} group compared to the low-\gls{ses} group, whereas the topics \textit{music} and \textit{sport} are more represented in the low-\gls{ses} than in the high-\gls{ses} group. For the all-encompassing \textit{life} hypertopic, the groups show only little difference.
@@ -208,7 +208,7 @@ Table~\ref{tab:embeddings_hypertopics_distribution_and_chi2} shows that among th
 \begin{table}
     \centering
     \input{\imagepath/semantic_clustering_hypertopic_chi2_table.tex}
-    \caption{Distribution of hypertopics for the low- and high-\gls{ses} groups and results of the $\chi^2$-contingency and topic-wise tests. For both the \textit{general} and the \textit{distinct-\gls{ses}} approach, the distributions of topics are significantly different across the \gls{ses} groups. The differences in the hypertopics \textit{movie}, \textit{music}, and \textit{sport} are all significant. It can, however, not be said, that the differences are generally more pronounced for the \textit{distinct-\gls{ses}} approach.}\label{tab:embeddings_hypertopics_distribution_and_chi2}
+    \caption{Distribution of hypertopics for the low- and high-\gls{ses} groups and results of the $\chi^2$-contingency and topic-wise tests. For both the \textit{mixed-} and the \textit{distinct-\gls{ses}} approach, the distributions of topics are significantly different across the \gls{ses} groups. The differences in the hypertopics \textit{movie}, \textit{music}, and \textit{sport} are all significant. It can, however, not be said, that the differences are generally more pronounced for the \textit{distinct-\gls{ses}} approach.}\label{tab:embeddings_hypertopics_distribution_and_chi2}
 \end{table}
 
 \paragraph{Adjectives and Adverbs}

@@ -15,7 +15,7 @@ Every participant could name up to five role models, most of them, however, indi
 \paragraph{Role Models and SES}
 The role models were associated with \gls{ses} status in two different ways:
 \begin{itemize}
-    \item In the \textit{general} approach,\todo{find better name and consistently change} each role model is associated with low \gls{ses} and high-\gls{ses} if it was mentioned at least once by a participant in the respective \gls{ses} group, resulting in \SI{172}{} low-, \SI{72}{} high-\gls{ses} role models, and \SI{28}{} role models associated with both \gls{ses} levels. Formally, this set $\mathcal{R}_\text{general}$ splits into $\mathcal{R}_\text{general, low}$ and $\mathcal{R}_\text{general, high}$ with $\left|\mathcal{R}_\text{general, low} \cap \mathcal{R}_\text{general, high}\right| \neq 0$.
+    \item In the \textit{mixed-\gls{ses}} approach,\todo{find better name and consistently change} each role model is associated with low \gls{ses} and high-\gls{ses} if it was mentioned at least once by a participant in the respective \gls{ses} group, resulting in \SI{172}{} low-, \SI{72}{} high-\gls{ses} role models, and \SI{28}{} role models associated with both \gls{ses} levels. Formally, this set $\mathcal{R}_\text{mixed}$ splits into $\mathcal{R}_\text{mixed, low}$ and $\mathcal{R}_\text{mixed, high}$ with $\left|\mathcal{R}_\text{mixed, low} \cap \mathcal{R}_\text{mixed, high}\right| \neq 0$.
 
     \item In the \textit{distinct-\gls{ses}} approach, only role models were considered who were mentioned only by either low- or high-\gls{ses} survey participants exclusively. Role models who were mentioned by both low- and high-\gls{ses} participants are excluded from this set. This set contains \SI{144}{} role models associated with low \gls{ses} and \SI{44}{} role models associated with high \gls{ses}. Formally, this set $\mathcal{R}_\text{distinct}$ splits into $\mathcal{R}_\text{distinct, low}$ and $\mathcal{R}_\text{distinct, high}$ with $\left|\mathcal{R}_\text{distinct, low} \cap \mathcal{R}_\text{distinct, high}\right| = \SI{0}{}$.
     
@@ -64,18 +64,18 @@ This is a potential threat to the \gls{nlp} analyses to be conducted in this wor
 
 To combat this, the number of articles per role model was balanced by downsampling and upsampling \autocite{kumar_5_2021} with a target of \SI{50}{} articles per role model. If a role model was reported about in more then \SI{50}{} articles, a random subset of articles was selected (downsampling). If a role model had $n < \SI{50}{}$ articles, the articles were repeated $\lceil \frac{50}{n} \rceil$ times and then cut off at the 50th article. Role models that would require more than \SI{10}{} repetitions were excluded in order not to give a few articles too much weight.
 
-After balancing, \SI{9200}{} newspaper articles about \SI{184}{} role models remained in the data set. Table~\ref{tab:role_models_after_balancing} lists the number of role models remaining after balancing for the \textit{general} and \textit{distinct-\gls{ses}} analysis approaches. They are listed along with their basic information in table~\ref{tab:role_model_overview} in the appendix chapter~\ref{ch:data_appendix}. These were used for analyzing the output of the \gls{nlp} algorithms per \gls{ses}-group.
+After balancing, \SI{9200}{} newspaper articles about \SI{184}{} role models remained in the data set. Table~\ref{tab:role_models_after_balancing} lists the number of role models remaining after balancing for the \textit{mixed-} and \textit{distinct-\gls{ses}} analysis approaches. They are listed along with their basic information in table~\ref{tab:role_model_overview} in the appendix chapter~\ref{ch:data_appendix}. These were used for analyzing the output of the \gls{nlp} algorithms per \gls{ses}-group.
 
 \begin{table}
     \centering
     \begin{tabular}{lcccc}
         \toprule 
         set & role models & low-\gls{ses} & high-\gls{ses} & low- \& high-\gls{ses} \\ \toprule 
-        $\mathcal{R}_\text{general}$ & \SI{184}{} & \SI{151}{} & \SI{57}{} & \SI{24}{} \\
+        $\mathcal{R}_\text{mixed}$ & \SI{184}{} & \SI{151}{} & \SI{57}{} & \SI{24}{} \\
         $\mathcal{R}_\text{distinct}$ & \SI{160}{} & \SI{127}{} & \SI{33}{} & \SI{0}{} \\
         \bottomrule
     \end{tabular}
-    \caption{Number of valid role models after balancing the number of articles per role model for the \textit{general} and the \textit{distinct-\gls{ses}} approach}
+    \caption{Number of valid role models after balancing the number of articles per role model for the \textit{mixed-} and the \textit{distinct-\gls{ses}} approach}
     \label{tab:role_models_after_balancing}
 \end{table}
 
