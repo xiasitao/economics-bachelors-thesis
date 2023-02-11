@@ -88,7 +88,7 @@ Additionally, the share of low-\gls{ses} articles for each assigned hypertopic w
 
 Two potential approaches for improving accuracy and consistency were examined: Firstly, it was attempted to train the topic models on the low-\gls{ses} and high-\gls{ses} corpora separately, which, however, led to similar inconsistencies. Secondly, it was tried to filter out articles for which the model's topic assignment was ambiguous. As a measure for the ambiguity in topic assignment for article $i$ with topic probabilities $p_{i, t}$, the information theoretical entropy was used~\autocite{gray_entropy_2013}:
 \begin{align}
-    H_i = \sum_t p_{i, t} \ln p_{i,t}
+    H_i = -\sum_t p_{i, t} \ln p_{i,t}
 \end{align}
 The entropy is low if the probability distribution clearly favors a specific topic, and it is high if the probabilities $p_{i, t}$ are rather ambiguous. After filtering out articles where $H_i$ is higher than the \SI{50}{\percent}- or \SI{30}{\percent}-percentile of all articles, higher accuracies of up to \SI{70}{\percent} were reached, however the consistency problem persisted and due to filtering out articles some hypertopics were not present in the remaining set of articles in some cases. The topic modelling quality could hence not be substantially improved by these measures.
 
