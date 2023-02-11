@@ -11,7 +11,7 @@ thesis_rebecca = "#693EA3"
 thesis_fuchsia = "#9A5B91"
 thesis_blue = "#50BDE9"
 thesis_color_map = matplotlib.colors.LinearSegmentedColormap.from_list("Custom", [thesis_gray, thesis_red], N=1000)
-thesis_color_map_special = matplotlib.colors.LinearSegmentedColormap.from_list("Custom", [thesis_blue, thesis_fuchsia,  thesis_red], N=1000)
+thesis_color_map_special = matplotlib.colors.LinearSegmentedColormap.from_list("Custom", ['white', thesis_red], N=1000)
 plt.rcParams['axes.prop_cycle'] = plt.cycler(color=[thesis_red, thesis_blue, thesis_rebecca, thesis_gray, thesis_fuchsia])
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.size'] = 9
@@ -57,15 +57,23 @@ def produce_zero_shot_result_table():
             table_str += rf"\SI{{{low_distinct*100:.0f}}}{{\percent}} & \SI{{{high_distinct*100:.0f}}}{{\percent}} & ${entropy_distinct:.2f}$ & ${chi2_distinct:.1f}$ & $\SI{{{p_distinct:.0e}}}{{}}$ & {sigstars(p_distinct)} \\" + '\n'
         if category != category_columns[-1]:
             table_str += r'\midrule'
-    
     table_str += r"\bottomrule\end{tabular}"
-    
     ZERO_SHOT_RESULT_TABLE_PATH.write_text(table_str)
 
 
-def produce_confusion_matrices():
-    # topic and topic_l
-    pass
+ZERO_SHOT_CONFUSION_MATRIX_TOPIC_PATH = BUILD_PATH / 'thesis/70-supervised/zero_shot_confusion_matrix_topic.pgf'
+ZERO_SHOT_CONFUSION_MATRIX_TOPIC_L_PATH = BUILD_PATH / 'thesis/70-supervised/zero_shot_confusion_matrix_topic_l.pgf'
+def plot_zero_shit_confusion_matrices():
+    width = 6.5*cm
+    fig = plt.figure(figsize=(width, width))
+    ax = fig.gca()
+    plot_human_annotation_confusion_matrix(articles, human_annotated, 'topic', ax=ax, cmap=thesis_color_map_special)
+    fig.savefig(ZERO_SHOT_CONFUSION_MATRIX_TOPIC_PATH, bbox_inches='tight')
+
+    fig = plt.figure(figsize=(width, width))
+    ax = fig.gca()
+    plot_human_annotation_confusion_matrix(articles, human_annotated, 'topic_l', ax=ax, cmap=thesis_color_map_special)
+    fig.savefig(ZERO_SHOT_CONFUSION_MATRIX_TOPIC_L_PATH, bbox_inches='tight')
 
 
 def plot_category_distributions():
@@ -74,3 +82,4 @@ def plot_category_distributions():
 
 if __name__ == '__main__':
     produce_zero_shot_result_table()
+    plot_zero_shit_confusion_matrices()

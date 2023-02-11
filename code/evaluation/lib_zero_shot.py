@@ -28,7 +28,7 @@ def retrieve_data():
             pd.DataFrame: Zero-shot data for each article.
         """    
         zero_shot_data = None
-        for category in ['article_type', 'crime', 'crime_type', 'emotion', 'prosociality', 'relatability', 'sentiment', 'sentiment_n', 'topic', 'topic_l', 'writing_style']:
+        for category in ['article_type', 'crime', 'crime_type', 'emotion', 'prosociality', 'relatability', 'sentiment', 'sentiment_n', 'success', 'topic', 'topic_l', 'writing_style']:
             filename = BUILD_PATH / f'zero_shot_classification/zero_shot_classification_{category}.pkl'
             if filename.exists:
                 category_data = pd.read_pickle(filename)
@@ -210,7 +210,7 @@ def plot_category_distribution(category_distributions: dict, category: str, rela
         fig.show()
 
 
-def plot_human_annotation_confusion_matrix(articles: pd.DataFrame, human_annotated: pd.DataFrame, category: str, ax: plt.axis=None):
+def plot_human_annotation_confusion_matrix(articles: pd.DataFrame, human_annotated: pd.DataFrame, category: str, ax: plt.axis=None, cmap=None):
     """Plot the confusion matrix for a certain category.
 
     Args:
@@ -233,7 +233,7 @@ def plot_human_annotation_confusion_matrix(articles: pd.DataFrame, human_annotat
     display = ConfusionMatrixDisplay(category_confusion_matrix, display_labels=category_labels)
     if ax is not None:
         ax = plt.gca()
-    display.plot(ax=ax, colorbar=False)
+    display.plot(ax=ax, colorbar=False, cmap=cmap)
     return display
 
 

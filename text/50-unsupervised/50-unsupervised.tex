@@ -54,7 +54,7 @@ With every article associated to a hypertopic, it was possible to compare the di
 
 \paragraph{Accuracy and Consistency}
 The accuracy of the hypertopic assignment was calculated as the ratio of articles with correct hypertopic assignment by the model and all articles that were human-annotated:
-\begin{align}
+\begin{align}\label{eq:accuracy}
     acc = \frac{
         \left|
             \left\{i\middle|h_{i}^\text{predicted} = h_{i}^\text{true}\right\}
@@ -142,12 +142,12 @@ Again, hypertopics were assigned to each set of topic words for evaluating the a
 
 As the highest accuracy was achieved for a value of $\ntopics=20$ with comparably little variation around it, this choice was kept for the following analysis. The topic word lists and the assigned hypertopics are listed in the appendix in table~\ref{tab:semantic_clustering_topic_hypertopic_table}. It should be noted that assigning hypertopics was not always unambiguous (see e.g. topics 2 and 7 that could also be \textit{music} instead of \textit{life}). In case of ambiguity, it is decided to label a topic as \textit{life}.
 
-Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned with the model output and the human-annotated hypertopics. It shows that the overall performance of the model is good, however some of the articles that the human annotator had labelled as \textit{movie} or \textit{music} were classified as \textit{life}. This is not surprising considering that celebrity reports do often also cover celebrities' lifestories to a significant extent. For the \textit{distinct-SES} approach, somewhat less accuracy is achieved, the predictions appear, however, equally consistent.
+Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned with the model output and the human-annotated hypertopics. It shows that the overall performance of the model is good at an accuracy of \SI{76}{\percent}, however some of the articles that the human annotator had labelled as \textit{movie} or \textit{music} were subsumed under the hypertopic \textit{life} by the model. This is not surprising considering that celebrity reports do often also cover celebrities' lifestories to a significant extent. For the \textit{distinct-SES} approach, somewhat less accuracy is achieved, the predictions appear, however, equally consistent.
 
 \begin{figure}
     \centering
     \includegraphics[]{\imagepath/semantic_clustering_confusion_matrix.pdf}
-    \caption{Confusion matrix of the hypertopics for $\ntopics=20$:\todo[inline]{describe}\todo[inline]{improve colors}}\label{fig:embedding_confusion_matrix}
+    \caption{Confusion matrix of the hypertopics for $\ntopics=20$. An accuracy of \SI{76}{\percent} was achieved. The most pronounced difference between the human annotation (``true label'') and the model-based topic assignment (``predicted label'') is that the model subsumes many articles under the \textit{life} hypertopic that the human annotator deems \textit{movie} or \textit{music}.}\label{fig:embedding_confusion_matrix}
 \end{figure}
 
 \paragraph{Evaluation}
@@ -185,7 +185,7 @@ In order to estimate the significance of these differences in the topic distribu
         & \text{i.e. } p_{s, t} = p_s \cdot p_t ~~ \forall t, s
         \end{split}
     \end{align}
-    with the relative frequencies of articles $p_s$ per \gls{ses}, $p_t$ per topic, and $p_{s, t}$ per \gls{ses} and topic. Rejecting $H_0$ means that both the topic distribution is different for low- and high-\gls{ses}.
+    with the relative frequencies of articles $p_s$ per \gls{ses}, $p_t$ per topic, and $p_{s, t}$ per \gls{ses} and topic. Rejecting $H_{0, \text{contingency}}$ means that the topic distribution can be assumed to be different for low- and high-\gls{ses}.
 
     \item A second set of $\chi^2$ tests was performed per topic $t$, assessing whether the respective amount of low- and high-\gls{ses} articles in that topic equals the expected number over all topics:
     \begin{align}
@@ -198,7 +198,7 @@ In order to estimate the significance of these differences in the topic distribu
     \begin{align}
         \tilde n_{s, t} = n_s \cdot \frac{n_t}{n}
     \end{align}
-    $n_s$ is the number of articles in \gls{ses} group $s$, $n_t$ the number of articles in topic $t$, and $n$ the total number of articles. Rejecting $H_0$ means that 
+    $n_s$ is the number of articles in \gls{ses} group $s$, $n_t$ the number of articles in topic $t$, and $n$ the total number of articles. Rejecting $H_{0, \text{ topic }t}$ means the prevalence of articles in topic $t$ in the low- and high-\gls{ses} groups is not equal (hence not matching the expectation that topic $t$ would be equally prevalent among the low-\gls{ses} and the high-\gls{ses} articles).
 \end{itemize}
 
 Both kinds of $\chi^2$-tests were conducted using the respective functions in the \textit{scipy} library \autocite{scipychi2_scipy_nodate,scipychi2_contingency_scipy_nodate}.

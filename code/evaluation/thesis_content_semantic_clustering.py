@@ -11,7 +11,7 @@ thesis_rebecca = "#693EA3"
 thesis_fuchsia = "#9A5B91"
 thesis_blue = "#50BDE9"
 thesis_color_map = matplotlib.colors.LinearSegmentedColormap.from_list("Custom", [thesis_gray, thesis_red], N=1000)
-thesis_color_map_special = matplotlib.colors.LinearSegmentedColormap.from_list("Custom", [thesis_blue, thesis_fuchsia,  thesis_red], N=1000)
+thesis_color_map_special = matplotlib.colors.LinearSegmentedColormap.from_list("Custom", ['white', thesis_red], N=1000)
 plt.rcParams['axes.prop_cycle'] = plt.cycler(color=[thesis_red, thesis_blue, thesis_rebecca, thesis_gray, thesis_fuchsia])
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.size'] = 9
