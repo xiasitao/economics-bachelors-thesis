@@ -2,15 +2,29 @@
 \renewcommand{\imagepath}{../30-algorithms/img}
 
 \chapter{Natural Language Processing Algorithms}\label{ch:algorithms}
-In this chapter, the natural language algorithms and language models that were used in the unsupervised and the supervised analysis approaches are introduced. All of them aim to group the celebrity newspaper articles based on their content or properties of their content. While topic modelling and semantic similarity clustering represent unsupervised clustering models, zero-shot classification can be counted towards the supervised classification algorithms.
-\todo{continue}
+In this chapter, the algorithms and language models that were used in the unsupervised and the supervised analysis approaches are introduced. All of them aim to group and label the celebrity newspaper articles based on their content or properties of their content.
+
+\todo{quick historical overview of \gls{nlp}}
 
 
 \section{Clustering Algorithms}\label{ch:clustering_algorithms}
-\subsection*{Clustering Overview}\label{ch:clustering}
-\subsection*{Topic Modelling with Latent Dirichlet Allocation}\label{ch:lda}
+The goal of clustering algorithms is to assign data points to multiple groups based on a distance measure, such that points that are close to each other are likely to be inside the same cluster, whereas data points distant from each other rather find themselves in different clusters~\autocite{everitt_cluster_2011,jain_algorithms_1988}. Clustering is an unsupervised machine learning technique as is doesn't require labelled data to infer regularities from rather than structuring the data as is~\autocite{xu_survey_2005}. The following two clustering algorithms were used in the analyses of this thesis.
+
+\paragraph{Topic Modelling with Latent Dirichlet Allocation}\label{ch:lda}
+Topic modelling with \gls{lda} is a probabilistic clustering algorithm used in \gls{nlp} from the early 2000s. It aims at finding groups within a corpus of natural language documents, the so-called topics, that are characterized by a set of keywords which are most prominent within the topic. It probabilistically assigns to every document probabilities of pertaining to each single topic, differentiating it from similar clustering approaches just assigning one topic~\autocite{blei_latent_2003, blei_probabilistic_2012}. The arguably most important hyperparameter of \gls{lda} is the number of topics that the algorithm should distill from the provided corpus. In this thesis, \gls{lda} is used to find the prevailing topics in the celebrities news articles data set and partition them by these topics.
+
+\paragraph{k-means}
+The k-means algorithm is a more generally applicable to any sets of data points represented in a vector space, with the idea dating back more than half a century. It aims at minimizing the aggregate absolute vector space distance of all data points in a cluster from the cluster mean, hence the name k-means~\autocite{macqueen_methods_1967}. In this thesis, k-means is used as an alternative way oif partitioning the celebrity newspaper articles, namely by their vector representations from pre-trained semantic embeddings, as introduced in the following.
+
 
 
 \section{Pre-Trained Semantic Embeddings}\label{ch:pretrained_algorithms}
-\subsection*{Semantic Similarity Clustering with SentenceBERT}\label{ch:sentencebert}
-\subsection*{Zero-Shot Classification with BART}\label{ch:zero_shot}
+When using clustering algorithms for modelling a corpus of documents, the model will depend only on the data of the corpus, hence relevant contextual information that is not present in the corpus itself is not part of the modelling procedure. The rise of ever more capable artificial intelligence and the availability of highly efficient computing hardware have led to the emergence of pre-trained context-aware language models based on deep learning schemes in the last years.
+
+\paragraph{BERT and SentenceBERT}\label{ch:sentencebert}
+BERT, standing for bidirectional encoder representations from transformers, is such a language model. It is pre-trained on books and Wikipedia on the task of finding the correct word for a gap in a given context of words. Its use is, however, not constrained to what it is pre-trained on. By fine-tuning it, BERT can also engage in tasks like paraphrasing and token identification~\autocite{devlin_bert_2019}. In this thesis, BERT's capability of providing a context-aware vector representation (\textit{embedding}) of meaning (\textit{semantics}) is exploited. To this end, a derivative of BERT, SentenceBERT~\autocite{reimers_sentence-bert_2019}, is used in order to get a contextual vector representation of entire documents rather than single words. Note that the components of these vector representations do not bear any intuitive meaning, but their vector space proximity encodes their semantic proximity, making them suitable for k-means clustering. In this thesis, this approach is examined as an alternative to \gls{lda} topic modelling.
+
+\paragraph{BART and Zero-Shot Classification}\label{ch:zero_shot}
+The other way BERT derivatives are used in this thesis is in zero-shot classification with BART. BART is another pre-trained context-aware language model generalizing BERT~\autocite{lewis_bart_2020}, which can be also used for zero-shot classification~\autocite{huggingfacebart-large-mnli_facebookbart-large-mnli_nodate,davison_zero-shot_2020}.
+
+In \gls{nlp}, zero-shot classification means assigning a label from a set of labels to a document without any further training of the underlying model. If the model is pre-trained on semantic similarities, it is already capable of deciding which label is closest to the text in terms of meaning. In comparison to topic modelling approaches, this opens up the possibility of classifying texts even if the words characterizing the candidate classes are not directly present in the texts, but their meaning is present in the context, such as for emotions and connotations~\autocite{yin_benchmarking_2019}. In this thesis, BART-based zero-shot classification is used explore the celebrity newspaper articles beyond the article topics that \gls{lda} can find.
