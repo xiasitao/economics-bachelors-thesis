@@ -75,7 +75,7 @@ All examined categories and their respective labels, the respective distribution
 \begin{table}
     \centering
     \resizebox{0.85\textwidth}{!}{\input{\imagepath/zero_shot_result_table.tex}}
-    \caption{Results of the zero-shot classification for each category along with $\chi^2$ contingency and per-label tests. Legend: $\Braket{\widetilde{H}}$ is the average of the normalized entropy $\widetilde{H}$.}\label{tab:zero_shot_result_table}
+    \caption{Results of the zero-shot classification for each category along with $\chi^2$ contingency and per-label tests. Legend: $\Braket{\widetilde{H}}$ is the average of the normalized entropy $\widetilde{H}$, *: $p < \SI{1e-1}{}$, **: $p<\SI{5e-2}{}$, ***: $p<\SI{1e-2}{}$.}\label{tab:zero_shot_result_table}
 \end{table}
 
 \paragraph{Topics}
@@ -162,19 +162,6 @@ In this chapter, zero-shot classification based on the BART model was explored f
 
 The prevalence of sports- and music-related articles in the low-\gls{ses} and the prevalence of movie-related topics in the high-\gls{ses} group matches with the findings in the topic modelling approach in chapter~\ref{ch:unsupervised}. The achieved accuracy is, however, smaller. A tendency of low-\gls{ses} articles towards negative sentiment and of high-\gls{ses} articles towards neutral positive sentiment could be seen, even though it was not highly significant. Similarly, when differentiating between articles with the notion of success and failure, a tendency towards association of failure-related articles with the low-\gls{ses} and of success-related articles with the high-\gls{ses} group is discernible, but not significant. A remarkable finding in the area of delinquency and prosociality is that the well-researched link between prosociality, role models, and \gls{ses} is appearing in the data, with articles with antisocial connotation being more prevalent in the low-\gls{ses} group and prosocial connotation more in the high-\gls{ses} group. Drug-related articles were found to be significantly more frequent in the low-\gls{ses} group. No signficant and indepedently interpretable differences between the \gls{ses} groups were found in emotion, relatability, and in journalistic style. The \gls{ses} differences in the latter are believed to be mostly attributable to the \gls{ses} groups' topic preferences.
 
-The internal validity of the classification procedure was assessed for the article categories, despite are rather mediocre accuracy compared to the topic modelling approach, the model's prediction seemed convincing from a qualitative standpoint. The validity for all other categories was, however, not checked, and it is uncertain whether the level of accuracy achieved for the topics can be extrapolated to all other examined categories. In an improved version of this procedure, these categories should also be quality-assessed, e.g. by human-annotating the articles with the respective labels. As the modelling procedure compares the articles' and the labels' semantics, such crosschecks will be especially important for those categories 
+The internal validity of the classification procedure was assessed for the article categories, despite are rather mediocre accuracy compared to the topic modelling approach, the model's prediction seemed convincing from a qualitative standpoint. The validity for all other categories was, however, not checked, and it is uncertain whether the level of accuracy achieved for the topics can be extrapolated to all other examined categories. In an improved version of this procedure, these categories should also be quality-assessed, e.g. by human-annotating the articles with the respective labels. As the modelling procedure compares the articles' and the labels' semantics, such crosschecks will be especially important for categories with rather abstract labels, e.g. emotion, since the meaning of the labels is usually not literally present in the articles.
 
-whose label text can be assumed to not be semantically closely related to the article texts. E.g., the meaning of labels for journalistic writing styles, like ``embellished'' are probability not closely related to the meaning of any article text, which can also be seen from high average entropies for the categories in question.
-
-
-
-
-
-
-% - accuracy only tested for topic
-% - questionable if semantic similarity can catch all these, or equally well (meaning of the word not necessarily encoded in semantics of articles), more verifications necessary
-% - labels are human-made:
-% in case of non-signficance: not clear whether there is not difference between SESs or the model is just doing random things
-% multi-stage classification, e.g. with crime type
-% aggregation strategy
-% alternative semi-supervised learning
+In order to distill more concise information about the aforementioned significant differences between the \gls{ses} groups, a more refined data aggregation strategy than the straightforward comparison of label distributions is advisable, such as aggregation on the role model level. The higher amount of drug-related reports in the low-\gls{ses} group, e.g., could be further scrutinized by aggregating the articles per role model and identifying role models reported about in a drug context. In a multi-stage approach, further insights could then be generated by comparing the reports about the drug and the non-drug role models. Also, correlations between the labels of different categories, as was mentioned for topic and article type, could bring further insights. As BERT-like models can be fine-tuned with labelled data in order to reap the benefits of both general pre-training and problem-specific conditioning~\autocite{devlin_bert_2019}, it could also be promising to human-annotate more articles and enhance the language models used with these annotations, similar to the approach of \textcite{fenske_using_2022}.

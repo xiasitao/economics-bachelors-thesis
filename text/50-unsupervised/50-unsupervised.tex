@@ -8,7 +8,7 @@ This chapter covers the exploration of topics and connotations of the celebrity 
 
 \todo{unify naming of pre-trained model procedure}
 
-\section{Shortcomings of LDA Topic Modelling}
+\section{Shortcomings of LDA Topic Modelling}\label{ch:lda_topic_modelling}
 In a first attempt, \gls{lda} (see chapter~\ref{ch:lda})\todo{decide for one kind of reference, cf next chapter} was trained on the corpus of all relevant newspaper articles from the 50-article balanced data set. The balanced dataset was chosen in order to ensure that role models with many articles could not induce a topic bias in the models. The texts were fed to the models in the \textit{noun and verb} stage in order to focus on the meaning-bearing elements of the texts.
 
 Multiple model instances were created, each one parameterized such that it would output a set of $\ntopics$ topics, with $\ntopics$ varied across the model instances. Each of these topics $t$ is defined by a list $T_{\ntopics, t}$ of characterizing topic words.\footnote{In the rest of this chapter, these word lists are always represented as the 10 most significant words. There are, however, many more topic-characterizing words that the \gls{lda} algorithm outputs for each topic.} Each model assigned to every newspaper article $i$ estimated probabilities $p_{i, t}$ that article $i$ would belong to the topic $t$. Each newspaper article $i$ was assigned a topic $t_i$ by selecting the topic with the maximum probability:
@@ -208,7 +208,7 @@ Table~\ref{tab:embeddings_hypertopics_distribution_and_chi2} shows that among th
 \begin{table}
     \centering
     \input{\imagepath/semantic_clustering_hypertopic_chi2_table.tex}
-    \caption{Distribution of hypertopics for the low- and high-\gls{ses} groups and results of the $\chi^2$-contingency and topic-wise tests. For both the \textit{mixed-} and the \textit{distinct-\gls{ses}} approach, the distributions of topics are significantly different across the \gls{ses} groups. The differences in the hypertopics \textit{movie}, \textit{music}, and \textit{sport} are all significant. It can, however, not be said, that the differences are generally more pronounced for the \textit{distinct-\gls{ses}} approach.}\label{tab:embeddings_hypertopics_distribution_and_chi2}
+    \caption{Distribution of hypertopics for the low- and high-\gls{ses} groups and results of the $\chi^2$-contingency and topic-wise tests. For both the \textit{mixed-} and the \textit{distinct-\gls{ses}} approach, the distributions of topics are significantly different across the \gls{ses} groups. The differences in the hypertopics \textit{movie}, \textit{music}, and \textit{sport} are all significant. It can, however, not be said, that the differences are generally more pronounced for the \textit{distinct-\gls{ses}} approach. Legend: *: $p < \SI{1e-1}{}$, **: $p<\SI{5e-2}{}$, ***: $p<\SI{1e-2}{}$.}\label{tab:embeddings_hypertopics_distribution_and_chi2}
 \end{table}
 
 \paragraph{Adjectives and Adverbs}
