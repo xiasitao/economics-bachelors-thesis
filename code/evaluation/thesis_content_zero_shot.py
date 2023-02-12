@@ -38,7 +38,7 @@ def produce_zero_shot_result_table():
     table_str += r"& low & high & $\Braket{\widetilde{H}}$ & $\chi^2$ & \multicolumn{2}{c}{$p$} && low & high & $\Braket{\widetilde{H}}$ & $\chi^2$ & \multicolumn{2}{c}{$p$} \\\toprule" + '\n'
 
     for category in category_columns:
-        category_to_display = category.replace('topic_l', 'topic (soc.)').replace('sentiment n', 'sent. (+neutr)').replace('_', ' ')
+        category_to_display = category.replace('topic_l', 'topic (soc.)').replace('sentiment_n', 'sentiment (n)').replace('_', ' ')
         distribution, distribution_distinct = distributions[category], distributions_distinct[category]
         contingency_chi2, contingency_p = chi2_contingency_test(distribution)
         contingency_entropy = calculate_average_entropy(articles, category, norm=True)
@@ -76,10 +76,32 @@ def plot_zero_shit_confusion_matrices():
     fig.savefig(ZERO_SHOT_CONFUSION_MATRIX_TOPIC_L_PATH, bbox_inches='tight')
 
 
+ZERO_SHOT_DISTRIBUTION_PLOT_BASEPATH = BUILD_PATH / 'thesis/70-supervised/'
+ZERO_SHOT_DISTRIBUTION_PLOT_BASEPATH_WILDCARD = 'zero_shot_distribution_{}.pgf'
 def plot_category_distributions():
-    pass
+    for category in category_columns:
+        width = 6.5*cm
+        height = 0.7*width
+        fig = plt.figure(figsize=(width, height))
+        ax = fig.gca()
+        plot_category_distribution(distributions, category, show_title=False, ax=ax)
+        fig.savefig(
+            ZERO_SHOT_DISTRIBUTION_PLOT_BASEPATH / ZERO_SHOT_DISTRIBUTION_PLOT_BASEPATH_WILDCARD.format(category), 
+            bbox_inches='tight'
+        )
+        plt.close()
+
+        fig = plt.figure(figsize=(width, height))
+        ax = fig.gca()
+        plot_category_distribution(distributions_distinct, category, show_title=False, ax=ax)
+        fig.savefig(
+            ZERO_SHOT_DISTRIBUTION_PLOT_BASEPATH / ZERO_SHOT_DISTRIBUTION_PLOT_BASEPATH_WILDCARD.format(f'{category}_distinct'), 
+            bbox_inches='tight'
+        )
+        plt.close()
 
 
 if __name__ == '__main__':
     produce_zero_shot_result_table()
     plot_zero_shit_confusion_matrices()
+    plot_category_distributions()
