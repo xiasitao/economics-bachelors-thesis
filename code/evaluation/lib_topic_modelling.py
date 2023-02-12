@@ -215,7 +215,7 @@ def plot_hypertopic_distribution_by_n(hypertopic_distributions: dict, hypertopic
     fig = None
     if ax is None:
         fig, ax = plt.gcf(), plt.gca()
-    ax.set_ylabel('percentage of low SES articles')
+    ax.set_ylabel('percentage of low-SES articles')
     ax.set_xlabel('number of topics')
     ax.yaxis.set_major_formatter(ticker.PercentFormatter(xmax=1.0))
     for hypertopic in hypertopics:
