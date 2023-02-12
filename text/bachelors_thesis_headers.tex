@@ -10,7 +10,7 @@
 \printversionfalse
 
 \newif\ifdraft
-\draftfalse
+\drafttrue
 
 % === Page  ===
 \ifprintversion
@@ -26,7 +26,7 @@
 \ifdraft
   \usepackage{draftwatermark}
   \SetWatermarkLightness{0.8}
-  \SetWatermarkText{preliminary (\today)}
+  \SetWatermarkText{draft/Entwurf}
   \SetWatermarkAngle{0}
   \SetWatermarkVerCenter{0.93\pdfpageheight}
   \SetWatermarkScale{0.17}
@@ -148,6 +148,7 @@
 \usepackage[
   %style=authoryear,
   style=apa,
+  %style=numeric,
   backend=biber,
   sorting=nty,
 ]{biblatex}
@@ -158,6 +159,7 @@
   \clearfield{note}
   \clearfield{extra}
   \clearfield{annotation}
+  \clearfield{month}
 }{}
 
 
