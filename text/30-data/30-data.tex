@@ -2,27 +2,27 @@
 \renewcommand{\imagepath}{../30-data/img}
 
 \chapter{Data Overview and Preprocessing}\label{ch:data}
-For the analyses in this work, survey data of adolescents' celebrity role models and their \gls{ses} was used alongside online newspaper articles about these role models. In this chapter, each data set and its fundamental descriptive statistics are presented in details along with the respective preprocessing steps applied before the analyses.
+For the analyses in this work, survey data of adolescents' celebrity role models and their \gls{ses} was used alongside online newspaper articles about these role models. In this chapter, each data set and its fundamental descriptive statistics are presented in detail along with the respective preprocessing steps applied before the analyses.
 
 \section{Adolescents' Socioeconomic Status and Role Models}
 The \gls{ses} dimension of the data used in this work stems from a long-term study on the link between prosociality and \gls{ses} started in 2011~\autocite{kosse_formation_2020}. This study had originally researched the influence of a year of student mentoring on the prosociality of second-graders from low-\gls{ses} backgrounds living in German Northrhine-Westphalia. At the end of the original interview period, the cohort consisted of \SI{412}{children} from low- and \SI{97}{children} from high-\gls{ses} backgrounds. A participant was labeled low-\gls{ses} if their household's income was below Germany's \SI{30}{\percent} income quantile at the time, or none of their parents had a degree permitting university studies, or they were raised by a single parent~\autocite{kosse_formation_2020}.
 
 \paragraph{Role Models}
-In a follow-up round of interviews in 2018, the now 13- and 14-year-old adolescents were interviewed about their role models. At this stage, \SI{245}{children} of low- and \SI{96}{children} of high-\gls{ses} participated in the interview.
+In a follow-up round of interviews in 2018, the now 13- and 14-year-old adolescents were interviewed about their role models. At this stage, \SI{245}{children} of low and \SI{96}{children} of high \gls{ses} participated in the interviews.
 
 Every participant could name up to five role models, most of them, however, indicated just one. Not all answers were valid: only celebrities and groups of celebrities (e.g. bands) were counted, entire professions (``sportsmen/women'', ``YouTuber'') were excluded. In total, \SI{236}{} participants gave \SI{332}{} valid answers, resulting in a set of \SI{216}{} distinct role models (\SI{60}{} female, \SI{156}{} male).
 
 \paragraph{Role Models and SES}
-The role models were associated with \gls{ses} status in two different ways:
+The role models were associated with \gls{ses} in two different ways:
 \begin{itemize}
-    \item In the \textit{mixed-\gls{ses}} approach, each role model is associated with low \gls{ses} and high-\gls{ses} if it was mentioned at least once by a participant in the respective \gls{ses} group, resulting in \SI{172}{} low-, \SI{72}{} high-\gls{ses} role models, and \SI{28}{} role models associated with both \gls{ses} levels. Formally, this set $\mathcal{R}_\text{mixed}$ splits into $\mathcal{R}_\text{mixed, low}$ and $\mathcal{R}_\text{mixed, high}$ with $\left|\mathcal{R}_\text{mixed, low} \cap \mathcal{R}_\text{mixed, high}\right| \neq 0$.
+    \item In the \textit{mixed-\gls{ses}} approach, each role model is associated with low \gls{ses} and/or high \gls{ses} if they were mentioned at least once by a participant in the respective \gls{ses} group, resulting in \SI{172}{} low-, \SI{72}{} high-\gls{ses} role models, and \SI{28}{} role models associated with both \gls{ses} levels.
 
-    \item In the \textit{distinct-\gls{ses}} approach, only role models were considered who were mentioned only by either low- or high-\gls{ses} survey participants exclusively. Role models who were mentioned by both low- and high-\gls{ses} participants are excluded from this set. This set contains \SI{144}{} role models associated with low \gls{ses} and \SI{44}{} role models associated with high \gls{ses}. Formally, this set $\mathcal{R}_\text{distinct}$ splits into $\mathcal{R}_\text{distinct, low}$ and $\mathcal{R}_\text{distinct, high}$ with $\left|\mathcal{R}_\text{distinct, low} \cap \mathcal{R}_\text{distinct, high}\right| = \SI{0}{}$.
+    \item In the \textit{distinct-\gls{ses}} approach, only role models are considered who were mentioned only by either low- or high-\gls{ses} survey participants exclusively. Role models who were mentioned by both low- and high-\gls{ses} participants are excluded from this set. This set contains \SI{144}{} role models associated with low \gls{ses} and \SI{44}{} role models associated with high \gls{ses}.
     
-    It is expected that any differences between the role models of the two \gls{ses} groups are more pronounced if only $\mathcal{R}_\text{distinct}$ is considered, as then any characteristics of each one are not diluted by role models being in both groups.
+    It is expected that any differences between the role models of the two \gls{ses} groups are more pronounced for the \textit{distinct-\gls{ses}} approach, as then any characteristics of each one are not diluted by role models being in both groups.
 \end{itemize}
 
-Note that, on average, each role model was mentioned only \SI{1.54}{times}. \SI{158}{} of them were mentioned only once, only four of them were mentioned four times or more often which means that most role models' \gls{ses} association is hence not based on a lot of statistical variation. This association is hence not so well-grounded and must be dealt with carefully. The idea of filtering out role models who were just mentioned once, however, was decided against because then the number of high-\gls{ses} role models would have become too small to say anything meaningful about this group.
+Note that, on average, each role model was mentioned only \SI{1.54}{times}. \SI{158}{} of them were mentioned only once, only four of them were mentioned four times or more often which means that most role models' \gls{ses} association is not based on a lot of statistical variation. This association is hence not so well-grounded and must be dealt with carefully. The idea of filtering out role models who were just mentioned once, however, was decided against because then the number of high-\gls{ses} role models would have become very small.
 
 
 \section{Newspaper Articles}
@@ -30,7 +30,7 @@ The \gls{nlp} analyses of this thesis were conducted on online newspaper article
 
 The articles had already been retrieved from the internet by~\textcite{fenske_using_2022} and the thesis supervisors before the writing of this thesis. They had been located using the Google News keyword search, downloaded from the Internet, and their text content had been extracted. The newspaper articles' publication dates range from 2014 to 2022 \autocite{fenske_using_2022}.
 
-In this thesis, only English newspaper articles were used for the \gls{nlp} analyses as the programming libraries and natural language models are most mature for English texts. In total, the dataset contains \SI{99367}{} English articles about \SI{205}{} of the role models that were valid answers in the interview.
+In this thesis, only English newspaper articles were used for the \gls{nlp} analyses as programming libraries and \gls{nlp} models are most mature for English texts. In total, the dataset contains \SI{99367}{} English articles about \SI{205}{} of the role models that were valid answers in the interview.
 
 The newspaper articles published before the interviews and the ones published afterwards were not analyzed separately, hence ignoring any potential changes in the role models' newspaper coverage after the interviews.
 
@@ -42,15 +42,15 @@ In order to be fed into the \gls{nlp} algorithm for analysis, the article texts 
     \item \textit{Raw}: The \textit{raw} stage is text content from the online newspaper website as extracted by the webscraping algorithm without any other filtering.
     \item \textit{Content}: For the \textit{content} stage, all internet hyperlinks and non-latin characters were removed from the \textit{raw} texts, and sentence boundaries were unified. At this stage, the text is still human-readable and was used as an input for the semantic embedding-based language models (chapters~\ref{ch:pretrained_topic_modelling} and~\ref{ch:supervised}).
     \item \textit{Slim Content}: For the \textit{slim content} stage, the \textit{content} texts were all put to lower case, stop words, numerals, and punctuation were removed. All words were lemmatized, meaning that flectional words were replaced with their respective grammatical base form. These operations were suggested in \textcite[p. 254]{vajjala_practical_2020}. Stopword removal was performed using the \textit{nltk} library~\autocite{bird_natural_2019}, lemmatization was performed using the \textit{spaCy} library~\autocite{spacy_spacy_nodate}.
-    \item \textit{Nouns and Verbs}: In this stage, the text is deprived of most of its linguistic structure, with only nouns and verbs in their base form. This stage was used as an input for the topic modelling approach (see chapter~\ref{ch:unsupervised}). The part of speech was identified and the base form of words was retrieved with the \textit{nltk} library~\autocite{bird_natural_2019}.
-    \item \textit{Adjectives and Adverbs}: In this stage, similar to the \textit{nouns and verbs} stage, only adjects and adverbs are kept in their base for. This stage was also used as an input to the topic modelling approach (see chapter~\ref{ch:unsupervised}). Also this stage was prepared with the \textit{nltk} library~\autocite{bird_natural_2019}.
+    \item \textit{Nouns and Verbs}: In this stage, the text is deprived of most of its linguistic structure, with only nouns and verbs in their base form left. This stage was used as an input for the topic modelling approach (see chapter~\ref{ch:unsupervised}). The words' part of speech was identified and their base forms were retrieved with the \textit{nltk} library~\autocite{bird_natural_2019}.
+    \item \textit{Adjectives and Adverbs}: In this stage, similar to the \textit{nouns and verbs} stage, only adjectives and adverbs are kept in their base form. This stage was also used as an input to the topic modelling approach (see chapter~\ref{ch:unsupervised}) and prepared with the \textit{nltk} library~\autocite{bird_natural_2019}.
 \end{itemize}
 
-Even though the articles' content had already been pre-cleaned from pop-ups and cookie banners by \textcite{fenske_using_2022}, a few artifacts remained in the data set. These articles were, however, not filtered out in order not to accidentally remove entire articles just slightly polluted by cookie banners, user comments or social-media insets.
+Even though the articles' content had already been pre-cleaned from pop-ups and cookie banners by \textcite{fenske_using_2022}, a few artifacts remained in the data set. These articles were, however, not filtered out in order not to accidentally remove entire articles that are just slightly polluted by cookie banners, user comments or social-media insets.
 
 
 \subsection*{Balancing}
-In the article dataset, the number of articles per role model is imbalanced, meaning that many role models are well-represented by their articles, while about \SI{30}{\percent} of them are just reported about in very few articles (see figure~\ref{fig:role_model_article_distribution}).
+In the original article dataset, the number of articles per role model is imbalanced, meaning that while a majority of the role models are well-represented by their articles, about \SI{30}{\percent} of them are just reported about in very few articles (see figure~\ref{fig:role_model_article_distribution}).
 \begin{figure}
     \centering
     \begin{pgfpicture}
@@ -60,25 +60,25 @@ In the article dataset, the number of articles per role model is imbalanced, mea
     \label{fig:role_model_article_distribution}
 \end{figure}
 
-This is a potential threat to the \gls{nlp} analyses to be conducted in this work. The articles of each role model can be assumed to carry a specific set of topics, sentiment, linguistic nuances etc. in them, which are to be analyzed by the \gls{nlp} algorithms. If the role models are represented in the input data for these algorithms with different amounts of articles, these aspects of their newspaper coverage are not going to be equally represented in the algorithm output.
+This is a potential threat to the \gls{nlp} analyses to be conducted in this work. The articles can be assumed to carry a role model-specific set of topics, sentiment, linguistic nuances etc. in them, which are to be analyzed by the \gls{nlp} algorithms. If the role models are represented in the input data by unequal numbers of articles, these aspects of their newspaper coverage are not going to be equally represented in the algorithm output.
 
-To combat this, the number of articles per role model was balanced by downsampling and upsampling \autocite{kumar_5_2021} with a target of \SI{50}{} articles per role model. If a role model was reported about in more then \SI{50}{} articles, a random subset of articles was selected (downsampling). If a role model had $n < \SI{50}{}$ articles, the articles were repeated $\lceil \frac{50}{n} \rceil$ times and then cut off at the 50th article. Role models that would require more than \SI{10}{} repetitions were excluded in order not to give a few articles too much weight.
+To combat this, the number of articles per role model was balanced by downsampling and upsampling \autocite{kumar_5_2021} with a target of \SI{50}{} articles per role model. If a role model was reported about in more than \SI{50}{} articles, a random subset of \SI{50}{} articles was selected (downsampling). If a role model had $n < \SI{50}{}$ articles, the articles were repeated $\lceil \frac{50}{n} \rceil$ times and then cut off at the 50th article. Role models with very few articles requiring more than \SI{10}{} repetitions were excluded in order not to give those few articles too much weight.
 
-After balancing, \SI{9200}{} newspaper articles about \SI{184}{} role models remained in the data set. Table~\ref{tab:role_models_after_balancing} lists the number of role models remaining after balancing for the \textit{mixed-} and \textit{distinct-\gls{ses}} analysis approaches. They are listed along with their basic information in table~\ref{tab:role_model_overview} in the appendix chapter~\ref{ch:data_appendix}. These were used for analyzing the output of the \gls{nlp} algorithms per \gls{ses}-group.
+After balancing, \SI{9200}{} newspaper articles about \SI{184}{} role models remained in the data set. Table~\ref{tab:role_models_after_balancing} lists the number of role models remaining after balancing for the \textit{mixed-} and \textit{distinct-\gls{ses}} analysis approaches. They are listed along with their basic information in table~\ref{tab:role_model_overview} in the appendix chapter~\ref{ch:data_appendix}.
 
 \begin{table}
     \centering
     \begin{tabular}{lcccc}
         \toprule 
         set & role models & low-\gls{ses} & high-\gls{ses} & low- \& high-\gls{ses} \\ \toprule 
-        $\mathcal{R}_\text{mixed}$ & \SI{184}{} & \SI{151}{} & \SI{57}{} & \SI{24}{} \\
-        $\mathcal{R}_\text{distinct}$ & \SI{160}{} & \SI{127}{} & \SI{33}{} & \SI{0}{} \\
+        \textit{mixed-\gls{ses}} & \SI{184}{} & \SI{151}{} & \SI{57}{} & \SI{24}{} \\
+        \textit{distinct-\gls{ses}} & \SI{160}{} & \SI{127}{} & \SI{33}{} & \SI{0}{} \\
         \bottomrule
     \end{tabular}
-    \caption{Number of valid role models after balancing the number of articles per role model for the \textit{mixed-} and the \textit{distinct-\gls{ses}} approach}
+    \caption{Number of valid role models after balancing the number of articles per role model for the \textit{mixed-} and the \textit{distinct-\gls{ses}} approaches}
     \label{tab:role_models_after_balancing}
 \end{table}
 
 \subsection*{Human Annotation}
-In order to assess the \gls{nlp} algorithms' performance, a subset of around \SI{100}{} articles were annotated with topic labels by the author. The topics \textit{life}, \textit{movie}, \textit{music}, and \textit{sport} were selected as labels based on the output of the topic modelling algorithm (see chapter~\ref{ch:unsupervised}). The \textit{life} topic can be understood as a miscellaneous category catching everything that doesn't fit into the other topics, such as lifestyle, video-blogging, family dramas, legal prosecution etc. Even though the human annotator read the articles and understood their context and meaning, an unambiguos association of each article with one of the four topics was not always possible, e.g. if an article was reporting about a music star's newest singles alongside the most recent developments in their private life. The human annotation of article can therefore provide a fairly good basis for assessing performance when classifying the newspaper articles by topic, yet they are not an undisputable ground truth.
+In order to assess the \gls{nlp} algorithms' performance, a subset of about \SI{100}{} articles were annotated with topic labels by the author. The topics \textit{life}, \textit{movie}, \textit{music}, and \textit{sport} were selected as labels based on the output of the topic modelling algorithm (see chapter~\ref{ch:unsupervised}). The \textit{life} topic can be understood as a miscellaneous category catching everything that doesn't fit into the other topics, such as lifestyle, video-blogging, family dramas, legal prosecution etc. Even though the human annotator read the articles and understood their context and meaning, an unambiguous association of each article with one of the four topics was not always possible, e.g. if an article was reporting about a music star's newest single alongside the most recent developments in their private life. The human annotation of the articles can therefore provide a fairly good basis for assessing performance when classifying the newspaper articles by topic, yet they are not to be considered an undisputable ground truth.
 
