@@ -2,10 +2,10 @@
 \renewcommand{\imagepath}{../70-supervised/img}
 
 \chapter{Supervised Analysis: Zero-Shot Classification}\label{ch:supervised}
-In this chapter, the newspaper articles \todo{continue}
+In this chapter, the exploration of the celebrity newspaper articles based on their \gls{ses} is continued by focusing on aspects not covered by the article topics. A BART-based zero-shot classification scheme is presented for examining the articles with respect to sentiment and emotion, connotations of success, prosociality, crime, and journalistic styles. After a assessing the classification accuracy and confirming that the findings agree with the topic modelling procedure, interpretable differences between the \gls{ses} groups in terms of sentiment, success and prosociality are discussed along with potential improvements of the modelling approach.
 
 \section{Analysis Procedure}
-In contrast to topic modelling, in the case of zero-shot classification (see section~\ref{ch:zero_shot}) training and optimization has already been performed by the model provider. The employed BART model~\autocite{lewis_bart_2020} \todo{decide for one kind of reference} is not trained on any inputs and is not altered during the classification process. It can assign a relative semantic proximity $p_{i, l}$ to a given newspaper article $i$ for each label $l$ out of a set of labels. This quasi-probability represents how close the meaning of the label is to the meaning of the article. Similar to the procedure in topic modelling, a label was assigned to an article if it had the highest proximity:
+In contrast to topic modelling, in the case of zero-shot classification (see section~\ref{ch:zero_shot}) training and optimization has already been performed by the model provider. The employed BART model (see chapter~\ref{ch:zero_shot}) is not trained on any inputs and is not altered during the classification process. It can assign a relative semantic proximity $p_{i, l}$ to a given newspaper article $i$ for each label $l$ out of a set of labels. This quasi-probability represents how close the meaning of the label is to the meaning of the article. Similar to the procedure in topic modelling, a label was assigned to an article if it had the highest proximity:
 \begin{align}
     l_{i} = \max_{l'} p_{i, l'}
 \end{align}

@@ -5,7 +5,7 @@
 In this chapter, the algorithms and language models that were used in the unsupervised and the supervised analysis approaches are introduced. All of them aim to group and label the celebrity newspaper articles based on their content or properties of their content.
 
 
-\todo{quick historical overview of \gls{nlp}}
+\gls{nlp} has been a field of research in linguistics and computer science since the 1940s. After the first steps of analyzing natural language with machines had been undertaken with rule-based algorithms, the advent of fast computer technology in the 1990s and 2000s has given rise to machine learning-based \gls{nlp} algorithms exploring language statistically~\autocite{jurafsky_speech_2008}. The invention of clustering-based language analysis falls into this time (see section~\ref{ch:clustering_algorithms}). With computation getting even more efficient and ever more powerful artificial intelligence conquering the field of machine learning, deep learning-based language models took the stage as record setters in terms of language modelling performance and quality~(\cite{vajjala_practical_2020}, see section~\ref{ch:pretrained_algorithms}).
 
 
 \section{Clustering Algorithms}\label{ch:clustering_algorithms}
@@ -20,7 +20,8 @@ The k-means algorithm is a more generally applicable to any sets of data points 
 
 
 \section{Pre-Trained Semantic Embeddings}\label{ch:pretrained_algorithms}
-When using clustering algorithms for modelling a corpus of documents, the model will depend only on the data of the corpus, hence relevant contextual information that is not present in the corpus itself is not part of the modelling procedure. The rise of ever more capable artificial intelligence and the availability of highly efficient computing hardware have led to the emergence of pre-trained context-aware language models based on deep learning schemes in the last years.
+When using clustering algorithms for modelling a corpus of documents, the model will depend only on the data of the corpus, hence relevant contextual information that is not present in the corpus itself is not part of the modelling procedure. 
+In contrast to that, pre-trained context-aware language models based on deep learning, which have emerged just over the last years, have a way more refined capability of capturing context and connotation outside a specific use case.
 
 \paragraph{BERT and SentenceBERT}\label{ch:sentencebert}
 BERT, standing for bidirectional encoder representations from transformers, is such a language model. It is pre-trained on books and Wikipedia on the task of finding the correct word for a gap in a given context of words. Its use is, however, not constrained to what it is pre-trained on. By fine-tuning it, BERT can also engage in tasks like paraphrasing and token identification~\autocite{devlin_bert_2019}. In this thesis, BERT's capability of providing a context-aware vector representation (\textit{embedding}) of meaning (\textit{semantics}) is exploited. To this end, a derivative of BERT, SentenceBERT~\autocite{reimers_sentence-bert_2019}, is used in order to get a contextual vector representation of entire documents rather than single words. Note that the components of these vector representations do not bear any intuitive meaning, but their vector space proximity encodes their semantic proximity, making them suitable for k-means clustering. In this thesis, this approach is examined as an alternative to \gls{lda} topic modelling.
