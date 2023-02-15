@@ -82,7 +82,7 @@ SBERT_VECTORS_PATH = BUILD_PATH / 'semantic_similarity/sbert_vectors.pkl'
 @pytask.mark.depends_on(BUILD_PATH / 'articles/articles_balanced_50.pkl')
 @pytask.mark.produces(SBERT_VECTORS_PATH)
 def task_semantic_embedding(produces: Path):
-    """Finds the SentenceBERT embeddings of the balanced 50 articles data set.
+    """Finds the Sentence-BERT embeddings of the balanced 50 articles data set.
     Dimensionality-reduces the embeddings to 50, 10, 3, and 2.
 
     Args:

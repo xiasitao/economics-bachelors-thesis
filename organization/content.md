@@ -75,7 +75,7 @@ Describing what data is about, where it comes from, how it was processed, cleane
 
 
 # Zero-Shot Classification
-- BERT and SentenceBERT theory
+- BERT and Sentence-BERT theory
 - BART
 - skipping the training step in lack of labels
 - categories and their labels

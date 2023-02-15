@@ -3,5 +3,5 @@
 - CLS embedding as sentence embedding
 - both not so good
 
-# SentenceBERT
+# Sentence-BERT
 - better at finding similarity
