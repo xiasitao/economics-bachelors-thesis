@@ -7,7 +7,7 @@ In this chapter, the exploration of differences between the low- and high-\gls{s
 \section{Analysis Procedure}
 In contrast to topic modelling, in the case of zero-shot classification (see section~\ref{ch:zero_shot}), training and optimization have already been performed by the model provider. The employed BART model is not trained on any inputs and is not altered during the classification process in this thesis. It can assign a relative semantic proximity $p_{i, l}$ between a given newspaper article $i$ and a label $l$ out of a set of labels. This quasi-probability represents how close the meaning of the label is to the meaning of the article. Similar to the procedure in topic modelling, a label was assigned to an article if it had the highest proximity:
 \begin{align}
-    l_{i} = \max_{l'} p_{i, l'}
+    l_{i} = \arg \max_{l'} p_{i, l'}
 \end{align}
 Like in the topic modelling procedure, the information-theoretical entropy \autocite{gray_entropy_2013} for each article was calculated as a measure of how confident the model was in predicting the label:
 \begin{align}
@@ -38,15 +38,15 @@ In a first evaluation step, the accuracy of the zero-shot classification was ass
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[]{\imagepath/zero_shot_confusion_matrix_topic.pdf}
-        \caption{topic}\label{fig:zero_shot_confusion_matrix_topic}
+        \caption{\textit{topic}}\label{fig:zero_shot_confusion_matrix_topic}
     \end{subfigure}
     \hspace{0.03\textwidth}
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[]{\imagepath/zero_shot_confusion_matrix_topic_l.pdf}
-        \caption{topic (soc.)}\label{fig:zero_shot_confusion_matrix_topic_l}
+        \caption{\textit{topic} with \textit{life} replaced by \textit{social}}\label{fig:zero_shot_confusion_matrix_topic_l}
     \end{subfigure}
-    \caption{Comparison of the model prediction and the human annotation for the topic and topic (soc.) categories. An accuracy of \SI{}{\percent} was achieved in predicting the human annotation labels. The most pronounced mistake is that the model classifies ...}\label{fig:zero_shot_confusion_matrices}
+    \caption{Confusion matrices of the model prediction and the human annotation for the \textit{topic} and \textit{topic (soc.)} categories. Accuracies of \SI{57.9}{\percent} and \SI{55.9}{\percent} respectively were achieved in predicting the human annotation labels. The most pronounced mistake for the \textit{topic} category is that the model labels many articles as \textit{life} which the human annotator labels as \textit{sport}. For the \textit{topic (soc.)} category, this is slightly reduced at the cost of a confusion of the human-annotated label \textit{movie} with the predicted label \textit{social}.}\label{fig:zero_shot_confusion_matrices}
 \end{figure}
 
 The accuracy of the zero-shot approach is hence less than in the topic modelling approach with a pre-trained model (\SI{76}{\percent}). However, the qualitative accuracy recognizable from the confusion matrices can be considered remarkable given that the has not been trained on the corpus of newspaper articles. Since the articles' true topics cannot unambiguously be classified and thus also the human-annotated labels are subject to uncertainty, the zero-shot approach is arguably still very promising despite its lower accuracy, especially given that it makes it possible to explore all the non-topic aspects of newspaper articles examined in the following.
