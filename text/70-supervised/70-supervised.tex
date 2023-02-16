@@ -25,13 +25,13 @@ In order to examine the article texts with respect to the various aspects of rol
 \begin{figure}
     \centering
     \includegraphics[]{\imagepath/zero_shot_schema.pdf}
-    \caption{Schematic of the zero-shot classification procedure: An article $i$ is fed into the BART model along with a set of labels, called a category. BART then assigns a relative proximity $p$ to each label for this article. This is repeated for different categories, each having a different set of labels. The BART model itself doesn't depend on any input and is not altered during the process.}\label{fig:zero_shot_schema}
+    \caption{Schematic of the zero-shot classification procedure: An article $i$ is fed into the BART model along with the set of labels pertaining to the examined category. BART then assigns a relative proximity $p$ to each label for this article. This is repeated for different categories, each having a different set of labels. The BART model itself does not depend on any input and is not altered during the process.}\label{fig:zero_shot_schema}
 \end{figure}
 
 The classification procedure is illustrated in figure~\ref{fig:zero_shot_schema}. The technical integration of the BART model was conducted as suggested in \textcite{huggingfacebart-large-mnli_facebookbart-large-mnli_nodate}. As an input to the model, the text in the \textit{content} stage was used, i.e. with most structure of the human language preserved.
 
 \section{Accuracy}\label{ch:supervised_accuracy}
-In a first evaluation step, the accuracy of the zero-shot classification was assessed using the human annotated data. To this end, the model made a prediction for each article from the set of labels used in the human annotation process, namely \textit{life}, \textit{movie}, \textit{music}, and \textit{sports}. An accuracy (cf. equation~\ref{eq:accuracy}) of \SI{57.9}{\percent} was achieved, human annotation and the model-predicted topic labels are compared in the confusion matrix in figure~\ref{fig:zero_shot_confusion_matrix_topic}, showing that the model's main error is counting articles that the human annotator marked as sport-related to the label \textit{life}. It was conjectured that this might stem from an alledged semantic proximity of the word ``life'' with ``live sports''. Therefore an alternative set of labels with the \textit{life} label exchanged for \textit{social} was checked. For it an almost equal accuracy of \SI{55.9}{\percent} was achieved, the confusion matrix is shown in figure~\ref{fig:zero_shot_confusion_matrix_topic_l}. Indeed, this reduced the confusion with the label \textit{sport}, but instead a more pronounced confusion of \textit{social} and \textit{movie} showed up, which is also not surprising considering that reports about movie plots often convey social aspects. Looking at the averaged normalized entropies showed that the model makes more convinced predictions if \textit{life} is replaced by \textit{social}, $\Braket{\widetilde{H}}_\text{life} = 0.87 > 0.77 = \Braket{\widetilde{H}}_\text{social}$.
+In a first evaluation step, the accuracy of the zero-shot classification was assessed using the human annotated data. To this end, the model made a prediction for each article from the set of labels used in the human annotation process, namely \textit{life}, \textit{movie}, \textit{music}, and \textit{sports}. An accuracy (cf. equation~\ref{eq:accuracy}) of \SI{58}{\percent} was achieved, human annotation and the model-predicted topic labels are compared in the confusion matrix in figure~\ref{fig:zero_shot_confusion_matrix_topic}, showing that the model's main error is counting articles that the human annotator marked as sport-related to the label \textit{life}. It was conjectured that this might stem from an alledged semantic proximity of the word ``life'' with ``live sports''. Therefore an alternative set of labels with the \textit{life} label exchanged for \textit{social} was checked. For it an almost equal accuracy of \SI{56}{\percent} was achieved, the confusion matrix is shown in figure~\ref{fig:zero_shot_confusion_matrix_topic_l}. Indeed, this reduced the confusion with the label \textit{sport}, but instead a more pronounced confusion of \textit{social} and \textit{movie} showed up, which is also not surprising considering that reports about movie plots often convey social aspects. Looking at the averaged normalized entropies showed that the model makes more convinced predictions if \textit{life} is replaced by \textit{social}, $\Braket{\widetilde{H}}_\text{life} = 0.87 > 0.77 = \Braket{\widetilde{H}}_\text{social}$.
 
 \begin{figure}
     \centering
@@ -44,9 +44,9 @@ In a first evaluation step, the accuracy of the zero-shot classification was ass
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[]{\imagepath/zero_shot_confusion_matrix_topic_l.pdf}
-        \caption{\textit{topic} with \textit{life} replaced by \textit{social}}\label{fig:zero_shot_confusion_matrix_topic_l}
+        \caption{\textit{topic (soc.)} (with \textit{life} replaced by \textit{social})}\label{fig:zero_shot_confusion_matrix_topic_l}
     \end{subfigure}
-    \caption{Confusion matrices of the model prediction and the human annotation for the \textit{topic} and \textit{topic (soc.)} categories. Accuracies of \SI{57.9}{\percent} and \SI{55.9}{\percent} respectively were achieved in predicting the human annotation labels. The most pronounced mistake for the \textit{topic} category is that the model labels many articles as \textit{life} which the human annotator labels as \textit{sport}. For the \textit{topic (soc.)} category, this is slightly reduced at the cost of a confusion of the human-annotated label \textit{movie} with the predicted label \textit{social}.}\label{fig:zero_shot_confusion_matrices}
+    \caption{Confusion matrices comparing the model prediction and the human annotation for the \textit{topic} and \textit{topic (soc.)} categories. Accuracies of \SI{58}{\percent} and \SI{56}{\percent} respectively were achieved in predicting the human annotation labels. The most pronounced mistake for the \textit{topic} category is that the model labels many articles as \textit{life} which the human annotator had labelled as \textit{sport}. For the \textit{topic (soc.)} category, this is slightly reduced at the cost of a confusion of the human-annotated label \textit{movie} with the predicted label \textit{social}.}\label{fig:zero_shot_confusion_matrices}
 \end{figure}
 
 The accuracy of the zero-shot approach is hence less than in the topic modelling approach with a pre-trained model (\SI{76}{\percent}). However, the qualitative accuracy recognizable from the confusion matrices can be considered remarkable given that the has not been trained on the corpus of newspaper articles. Since the articles' true topics cannot unambiguously be classified and thus also the human-annotated labels are subject to uncertainty, the zero-shot approach is arguably still very promising despite its lower accuracy, especially given that it makes it possible to explore all the non-topic aspects of newspaper articles examined in the following.
@@ -75,7 +75,7 @@ All examined categories and their respective labels, the respective distribution
 \begin{table}
     \centering
     \resizebox{0.85\textwidth}{!}{\input{\imagepath/zero_shot_result_table.tex}}
-    \caption{Results of the zero-shot classification for each category along with $\chi^2$ contingency and per-label tests. Legend: $\Braket{\widetilde{H}}$ is the average of the normalized entropy $\widetilde{H}$, *: $p < \SI{1e-1}{}$, **: $p<\SI{5e-2}{}$, ***: $p<\SI{1e-2}{}$.}\label{tab:zero_shot_result_table}
+    \caption{Results of the zero-shot classification for each category along with average normalized entropies $\Braket{\widetilde{H}}$ as well as $\chi^2$ contingency and per-label tests. $p$-value indicators: *: $p < \SI{1e-1}{}$, **: $p<\SI{5e-2}{}$, ***: $p<\SI{1e-2}{}$.}\label{tab:zero_shot_result_table}
 \end{table}
 
 \paragraph{Topics}
@@ -97,7 +97,7 @@ The topic aspect of the newspaper articles was covered by the \textit{topic} and
         \end{pgfpicture}
         \caption{\textit{distinct-\gls{ses}}}
     \end{subfigure}
-    \caption{\textit{Topic (soc.)} label distribution for the \textit{mixed-\gls{ses}} and the \textit{distinct-\gls{ses}} dataset: The higher prevalence of \textit{sport} and \textit{music} in the low-\gls{ses} group and the higher prevalence of \textit{movie} in the high-\gls{ses} group is more pronounced for the distinct-\gls{ses} dataset.}\label{fig:zero_shot_distribution_topic_l}
+    \caption{\textit{Topic (soc.)} label distribution for the \textit{mixed-\gls{ses}} and the \textit{distinct-\gls{ses}} datasets: The higher prevalence of \textit{sport} and \textit{music} in the low-\gls{ses} group and the higher prevalence of \textit{movie} in the high-\gls{ses} group is more pronounced for the distinct-\gls{ses} dataset.}\label{fig:zero_shot_distribution_topic_l}
 \end{figure}
 
 \paragraph{Sentiment and Emotion}
@@ -128,7 +128,7 @@ Emotion was captured with the six labels \textit{anger}, \textit{disgust}, \text
 The category of \textit{success}, represented by the labels \textit{success} and \textit{failure}, is particularly interesting assuming that perception of success in one's role models could correlate with inspiration for one's own success-seeking behavior and hence entail implications for social mobility. The model outputs show a tendency of a higher prevalence of success-conveying articles among the high-\gls{ses} group, this is however by no means significant. The mean entropy values for the \textit{success} label are relatively low, meaning that the model was comparably confident in attesting the notion of success, making this category promising to take closer looks at.
 
 \paragraph{Relatability}
-Although relatability is an important aspect in the role model literature, as has been elaborated in section~\ref{ch:role_models}, the model output doesn't point to any significant differences between the labels \textit{distant} and \textit{relatable} across both \gls{ses} groups.
+Although relatability is an important aspect in the role model literature, as has been elaborated in section~\ref{ch:role_models}, the model output does not point to any significant differences between the labels \textit{distant} and \textit{relatable} across both \gls{ses} groups.
 
 \paragraph{Delinquency and Prosociality}
 Another two well-discussed aspects in the literature are those of delinquency and prosociality (see section~\ref{ch:role_models}). Prosociality was encoded in the labels \textit{antisocial} and \textit{prosocial}. For the \textit{distinct-\gls{ses}} dataset, a significant dominance of an \textit{antisocial} connotation among the low-\gls{ses} group compared to the high-\gls{ses} group can be attested.

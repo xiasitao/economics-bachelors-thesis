@@ -4,25 +4,25 @@
 \appendix
 
 \chapter{Supplementary Material on the Data}\label{ch:data_appendix}
-In this appendix chapter, all role models along with their \gls{ses} associations are listed (see table~\ref{tab:role_model_overview}).
+In this appendix chapter, all role models along with their \gls{ses} associations are listed in table~\ref{tab:role_model_overview}.
 
 \input{\imagepath/role_model_overview.tex}
 
 
 \chapter{Supplementary Material on the Unsupervised Analysis}\label{ch:unsupervised_appendix}
-This appendix chapter lists all topics and the respective hypertopics that were output be the unsupervised topic modelling procedure enhanced with a pre-trained model (see section~\ref{ch:pretrained_topic_modelling}) for $n_\text{topic} = 20$ in table~\ref{tab:semantic_clustering_topic_hypertopic_table} for the \textit{nous and verbs} stage and in \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} for the \textit{adjectives and adverbs} stage.
+This appendix chapter lists all model-output topics and their respective manually-assigned hypertopics from the Sentence-BERT-enhanced topic modelling procedure (see section~\ref{ch:pretrained_topic_modelling}) for $n_\text{topics} = 20$: in table~\ref{tab:semantic_clustering_topic_hypertopic_table} for the \textit{nous and verbs} stage and in \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} for the \textit{adjectives and adverbs} stage.
 
 The distribution of the topics among all articles per \gls{ses} are shown in figure~\ref{fig:semantic_clustering_cluster_distribution}, the results of the respective $\chi^2$-tests are listed in table~\ref{tab:semantic_clustering_cluster_chi2_table}.
 \begin{table}[h]
     \centering
     \input{\imagepath/semantic_clustering_topic_hypertopic_table.tex}
-    \caption{All topics and the respective hypertopics generated with the semantic embedding-enhanced topic modelling procedure for $n_\text{topics}=20$}\label{tab:semantic_clustering_topic_hypertopic_table}
+    \caption{All topics and the respective manually-assigned hypertopics generated with the Sentence-BERT-enhanced topic modelling procedure for $n_\text{topics}=20$}\label{tab:semantic_clustering_topic_hypertopic_table}
 \end{table}
 
 \begin{table}
     \centering
     \input{\imagepath/semantic_clustering_adjectives_adverbs_topic_table.tex}
-    \caption{All adjective and adverb clusters generated with the semantic embedding-enhanced topic modelling procedure for $n_\text{topics}=20$}\label{tab:semantic_clustering_adjectives_adverbs_topic_table}
+    \caption{All adjective and adverb clusters generated with the Sentence-BERT-enhanced topic modelling procedure for $n_\text{topics}=20$}\label{tab:semantic_clustering_adjectives_adverbs_topic_table}
 \end{table}
 
 \begin{figure}
@@ -32,7 +32,7 @@ The distribution of the topics among all articles per \gls{ses} are shown in fig
         \begin{pgfpicture}
             \pgftext{\input{\imagepath/semantic_clustering_cluster_distribution.pgf}}
         \end{pgfpicture}
-        \caption{\textit{mixed-\gls{ses}} approach}
+        \caption{\textit{mixed-\gls{ses}} dataset}
     \end{subfigure}
     \vspace{1.5cm}
     \begin{subfigure}{\textwidth}
@@ -40,13 +40,13 @@ The distribution of the topics among all articles per \gls{ses} are shown in fig
         \begin{pgfpicture}
             \pgftext{\input{\imagepath/semantic_clustering_cluster_distribution_distinct.pgf}}
         \end{pgfpicture}
-        \caption{\textit{distinct-\gls{ses}} approach}
+        \caption{\textit{distinct-\gls{ses}} dataset}
     \end{subfigure}
-    \caption{Distribution of topics output by the topic modelling procedure enhanced with a pre-trained model for low- and high-\gls{ses} for $n_\text{topics}=20$. For the meaning of each topic, refer to table~\ref{tab:semantic_clustering_topic_hypertopic_table}}\label{fig:semantic_clustering_cluster_distribution}
+    \caption{Distribution of topics that were output by the Sentence-BERT-enhanced topic modelling procedure for low- and high-\gls{ses} for $n_\text{topics}=20$. For the meaning of each topic, refer to table~\ref{tab:semantic_clustering_topic_hypertopic_table}.}\label{fig:semantic_clustering_cluster_distribution}
 \end{figure}
 
 \begin{table}
     \centering
     \input{\imagepath/semantic_clustering_cluster_chi2_table.tex}
-    \caption{Low- and high-\gls{ses} distributions and results of the $\chi^2$-contingency tests and the per-cluster $\chi^2$ tests for the topics output by the topic modelling procedure enhanced with a pre-trained model (see figure~\ref{fig:semantic_clustering_cluster_distribution}). The respective test hypotheses are formulated in the equations~\eqref{eq:h0_contingency} and ~\eqref{eq:h0_topic}. Legend: *: $p < \SI{1e-1}{}$, **: $p<\SI{5e-2}{}$, ***: $p<\SI{1e-2}{}$.}\label{tab:semantic_clustering_cluster_chi2_table}
+    \caption{Low- and high-\gls{ses} distributions and results of the $\chi^2$-contingency tests and the per-cluster $\chi^2$ tests for the topics output by the Sentence-BERT-enhanced topic modelling procedure (see figure~\ref{fig:semantic_clustering_cluster_distribution}). The respective test hypotheses are formulated in the equations~\eqref{eq:h0_contingency} and ~\eqref{eq:h0_topic}. $p$-value indicators: *: $p < \SI{1e-1}{}$, **: $p<\SI{5e-2}{}$, ***: $p<\SI{1e-2}{}$.}\label{tab:semantic_clustering_cluster_chi2_table}
 \end{table}

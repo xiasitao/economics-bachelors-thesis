@@ -25,14 +25,14 @@ hypertopic_crosscheck(hypertopic_table, topic_words, 60)
 
 
 # %%
-article_hypertopics = find_hypertopics(articles, columns=hypertopic_columns, hypertopic_table=hypertopic_table)
-hypertopics_distributions = find_topic_distributions(article_hypertopics, hypertopic_columns)
+article_hypertopics = find_hypertopics(articles, columns=hypertopics_columns, hypertopic_table=hypertopic_table)
+hypertopics_distributions = find_topic_distributions(article_hypertopics, hypertopics_columns)
 plot_hypertopic_distribution_by_n(hypertopics_distributions, hypertopics, articles_per_SES=find_articles_per_SES(articles))
 
 
 # %% 
-article_hypertopics_distinct = find_hypertopics(articles_distinct, columns=hypertopic_columns, hypertopic_table=hypertopic_table)
-hypertopics_distributions_distinct = find_topic_distributions(article_hypertopics_distinct, hypertopic_columns)
+article_hypertopics_distinct = find_hypertopics(articles_distinct, columns=hypertopics_columns, hypertopic_table=hypertopic_table)
+hypertopics_distributions_distinct = find_topic_distributions(article_hypertopics_distinct, hypertopics_columns)
 plot_hypertopic_distribution_by_n(hypertopics_distributions_distinct, hypertopics, articles_per_SES=find_articles_per_SES(articles_distinct))
 
 

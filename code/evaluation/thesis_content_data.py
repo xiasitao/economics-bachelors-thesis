@@ -46,7 +46,7 @@ def produce_role_model_list(produces: Path):
         line = f'{role_model.name} & {"m" if role_model["sex"]==0.0 else "f"} & {role_model["profession"]} & {role_model["birth_year"]} & {role_model["low_ses_count"]} & {role_model["high_ses_count"]} & {"XYZXYZxmark" if role_model["low_ses"] and role_model["high_ses"] else r"XYZXYZcmark"}'
         line = line.replace('XYZXYZ', '\\')
         latex += f'{line} \\\\\n'
-    latex += r"\bottomrule\caption{Overview of role models. Abbreviations: \textit{nat.}: nationality, \textit{main prof.}: main profession, \textit{y.o.b.}: year of birth, \textit{\#low/\#high}: number of mentions by low-SES/high-SES study participants, \textit{distinct}: whether they are in the set of role models with distinct SES association.}\label{tab:role_model_overview}\end{longtable}"
+    latex += r"\bottomrule\caption{Overview of the role models. Abbreviations: \textit{nat.}: nationality, \textit{main prof.}: main profession, \textit{y.o.b.}: year of birth, \textit{\#low/\#high}: number of mentions by low-SES/high-SES study participants, \textit{distinct}: whether they are in the set of role models with distinct SES association.}\label{tab:role_model_overview}\end{longtable}"
     produces.write_text(latex)
 
 

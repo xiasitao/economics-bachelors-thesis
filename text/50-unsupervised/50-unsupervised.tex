@@ -18,7 +18,7 @@ Figure~\ref{fig:topic_modelling_schema} illustrates the modelling and assigment 
 \begin{figure}
     \centering
     \includegraphics[]{\imagepath/topic_modelling_schema.pdf}
-    \caption{Schematic of the topic modelling procedure with \gls{lda}: Many models for different numbers $\ntopics$ of topics are trained, each of them yields a list of topics that are characterized by topic words, as well as topic probabilities for each article.}\label{fig:topic_modelling_schema}
+    \caption{Schematic of the topic modelling procedure with \gls{lda}: Many model instances for different numbers $\ntopics$ of topics are trained. Each of them yields a list of topics that are characterized by topic words, as well as topic probabilities for each article.}\label{fig:topic_modelling_schema}
 \end{figure}
 
 The \gls{lda} algorithm depends on a set of hyperparameters, most of which are related to its underlying optimization process.  Sensible values for these were found by trial and error. The one hyperparameter that is crucial for the interpretation of this analysis is $\ntopics$. It determines the granularity of the topics the model provides for the comparison of the low- and high-\gls{ses} groups. A trade-off exists between a well-graspable set of topics with considerable overlaps and therefore poor specificity for low $\ntopics$, in contrast to highly delimited niche topics suffering from a lack of generality for high $\ntopics$. For choosing an appropriate $\ntopics$, it was required that the topics assigned to articles be consistent for small variations of $\ntopics$. Otherwise it could be assumed that the assignment of topics to the articles is to a large part random, which would imply that the findings about the distribution of these topics across the low- and high-\gls{ses} groups are also random. The search for an optimal number of topics included introducing so-called \textit{hypertopics} to make the topics comparable and to identify ranges of $\ntopics$ within which the hypertopic accuracy and the \gls{ses} assignment are consistent:
@@ -45,7 +45,7 @@ with the manual assignment function $h$ of a hypertopic to a model output topic 
         & fc week injury season run football quarter marcel yard dortmund & \textit{sport} \\
         \bottomrule
     \end{tabular}
-    \caption{Example of model output topics and their respective hypertopics. Comparing the \textit{sport} hypertopic examples for $\ntopics = 5$ and $\ntopics = 50$ shows how a larger amount of model topics makes the topics more specific, here by referencing a particular sport and a particular sports club.}\label{tab:hypertopics_examples}
+    \caption{Example of model output topics, as defined by their characterizing word lists, along with their respective manually-assigned hypertopics for $\ntopics = 5$ and $\ntopics = 50$. Comparing the examples for the \textit{sport} hypertopic shows how a larger $\ntopics$ makes the topics more specific, here by referencing a particular sport and a particular sports club.}\label{tab:hypertopics_examples}
 \end{table}
 
 With every article associated to a hypertopic, it was possible to compare the distribution of articles and \gls{ses} groups across hypertopics for different $\ntopics$, as well as to verify how accurately the topic models had assigned topics to the articles using the human-annotated data.
@@ -55,11 +55,11 @@ The accuracy of the hypertopic assignment was calculated as the ratio of article
 \begin{align}\label{eq:accuracy}
     acc = \frac{
         \left|
-            \left\{i\middle|h_{i}^\text{predicted} = h_{i}^\text{true}\right\}
+            \left\{~i~\middle|~h_{i}^\text{predicted} = h_{i}^\text{human-annotated}~\right\}
         \right|
     }{
         \left|
-            \{{i|i \text{ was human-annotated}}\}
+            \{{~i~|~i \text{ was human-annotated}~}\}
         \right|
     }
 \end{align}
@@ -71,7 +71,7 @@ Figure~\ref{fig:lda_accuracy_diagram} shows that the accuracy varies significant
     \begin{pgfpicture}
         \pgftext{\input{\imagepath/lda_accuracy_diagram.pgf}}
     \end{pgfpicture}
-    \caption{Accuracy of the model-assigned hypertopics compared to human-annotated data as a function of the number of topics: A maximum accuracy of around \SI{50}{\percent} was achieved for $\ntopics=15$. The accuracy varies significantly across $\ntopics$ and can therefore not be considered consistent.}\label{fig:lda_accuracy_diagram}
+    \caption{Accuracy of the \gls{lda} model-assigned hypertopics compared to the human-annotated data as a function of the number of topics: A maximum accuracy of around \SI{50}{\percent} was achieved for $\ntopics=15$. The accuracy varies significantly across $\ntopics$ and can therefore not be considered consistent.}\label{fig:lda_accuracy_diagram}
 \end{figure}
 
 Additionally, the share of low-\gls{ses} articles for each assigned hypertopic was used as a measure for topic assignment consistency across $\ntopics$. This share is plotted in figure~\ref{fig:lda_hypertopic_consistency_diagram}. The fact that there is no range of $\ntopics$ where this share is consistent for small variations of $\ntopics$ suggests that the assignment of articles to the hypertopics is to a considerable extent random and that the model is incapable of making a reliable and consistent prediction of an article's topic. These observations did not differ significantly if the \textit{distinct-\gls{ses}} set of articles was used instead.
@@ -81,7 +81,7 @@ Additionally, the share of low-\gls{ses} articles for each assigned hypertopic w
     \begin{pgfpicture}
         \pgftext{\input{\imagepath/lda_hypertopic_consistency_diagram.pgf}}
     \end{pgfpicture}
-    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics as an indicator of topic assignment consistency: The share varies substantially over a range from \SI{5}{} to \SI{50}{} topics, indicating that the assigment of articles to topics is not very reliable and not consistent. The share of low-\gls{ses} articles among all articles is shown as a reference.}\label{fig:lda_hypertopic_consistency_diagram}
+    \caption{Share of low-\gls{ses} articles in each hypertopic, as assigned by \gls{lda}, across different numbers of topics as an indicator of topic assignment consistency: The share varies substantially over a range from \SI{5}{} to \SI{50}{} topics, indicating that the assigment of articles to topics is not very reliable and not consistent. The share of low-\gls{ses} articles among all articles is shown as a reference.}\label{fig:lda_hypertopic_consistency_diagram}
 \end{figure}
 
 Two potential approaches for improving accuracy and consistency were examined: Firstly, it was attempted to train the topic models on the low-\gls{ses} and high-\gls{ses} corpora separately, which, however, led to similar inconsistencies. Secondly, it was tried to filter out articles for which the model's topic assignment was ambiguous. As a measure for the ambiguity in topic assignment for article $i$ with topic probabilities $p_{i, t}$, the information theoretical entropy was used~\autocite{gray_entropy_2013}:
@@ -114,7 +114,7 @@ Figure~\ref{fig:embedding_modelling_schema} illustrates this modelling procedure
 \begin{figure}
     \centering
     \includegraphics[]{\imagepath/embedding_modelling_schema.pdf}
-    \caption{Schematic of the topic modelling process with Sentence-BERT vector representations and k-means clustering: The article texts (in the \textit{content} stage) are transformed into embeddings, a vector representation of text, by the pre-trained Sentence-BERT transformer model. These representations are dimensionality-reduced with \gls{pca} and \gls{tsne}. Then the k-means algorithm clusters the articles into $\nclusters$ clusters. Each of these sets of articles represents a topic whose characterizing words are found by separate \gls{lda} models (with $\ntopics=1$, taking the articles in the \textit{nouns and verbs} stage as input) for each cluster.}\label{fig:embedding_modelling_schema}
+    \caption{Schematic of the topic modelling procedure with Sentence-BERT vector representations and k-means clustering: The article texts (in the \textit{content} stage) are transformed into embeddings, a vector representation of text, by the pre-trained Sentence-BERT transformer model. These representations are dimensionality-reduced with \gls{pca} and \gls{tsne}. Then the k-means algorithm clusters the articles into $\nclusters$ clusters. Each of these sets of articles represents a topic whose characterizing words are found by separate \gls{lda} models (with $\ntopics=1$, taking the articles in the \textit{nouns and verbs} stage as input) for each cluster.}\label{fig:embedding_modelling_schema}
 \end{figure}
 
 \paragraph{Accuracy and Consistency}
@@ -126,7 +126,7 @@ Again, hypertopics were assigned to each set of topic words for evaluating the a
     \begin{pgfpicture}
         \pgftext{\input{\imagepath/semantic_clustering_accuracy_diagram.pgf}}
     \end{pgfpicture}
-    \caption{Accuracy of the pre-trained model-assigned hypertopics compared to human-annotated data as a function of the number of topics: The accuracy is higher and more consistent across the different numbers of clusters compared to the \gls{lda} approach. A value of $\ntopics=20$ seems promising.}\label{fig:semantic_clustering_accuracy_diagram}
+    \caption{Accuracy of the model-assigned hypertopics compared to human-annotated data for the Sentence-BERT-enhanced procedure as a function of the number of topics: The accuracy is higher and more consistent across the different numbers of clusters compared to the \gls{lda} approach. A value of $\ntopics=20$ seems promising.}\label{fig:semantic_clustering_accuracy_diagram}
 \end{figure}
 
 \begin{figure}
@@ -135,12 +135,12 @@ Again, hypertopics were assigned to each set of topic words for evaluating the a
     \begin{pgfpicture}
         \pgftext{\input{\imagepath/semantic_clustering_hypertopic_consistency_diagram.pgf}}
     \end{pgfpicture}
-    \caption{Share of low-\gls{ses} articles in each hypertopic across different numbers of topics: The share is comparably consistent around $\ntopics=20$ for all hypertopics, making it a promising choice. The share of low-\gls{ses} articles among all articles is shown as a reference.}\label{fig:semantic_clustering_hypertopic_consistency_diagram}
+    \caption{Share of low-\gls{ses} articles in each hypertopic, as assigned by the Sentence-BERT-enhanced procedure, across different numbers of topics: The share is comparably consistent around $\ntopics=20$ for all hypertopics, making it a promising choice. The share of low-\gls{ses} articles among all articles is shown as a reference.}\label{fig:semantic_clustering_hypertopic_consistency_diagram}
 \end{figure}
 
 As the highest accuracy was achieved for a value of $\ntopics=20$ with comparably little variation around it, this choice was kept for the following analysis. The topic word lists and the assigned hypertopics are listed in the appendix chapter~\ref{ch:unsupervised_appendix} in table~\ref{tab:semantic_clustering_topic_hypertopic_table}. It should be noted that assigning hypertopics was not always unambiguous (see e.g. topics 2 and 7 that could also be \textit{music} instead of \textit{life}). In case of ambiguity, it was decided to label a topic as \textit{life}.
 
-Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned with the model output and the human-annotated hypertopics. It shows that the overall performance of the model is good at an accuracy of \SI{76}{\percent}, however some of the articles that the human annotator had labelled as \textit{movie} or \textit{music} were subsumed under the hypertopic \textit{life} by the model. This is not surprising considering that celebrity reports do often also cover celebrities' life stories to a significant extent. For the \textit{distinct-SES} approach, somewhat less accuracy is achieved, the predictions appear, however, equally consistent.
+Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned with the model output and the human-annotated hypertopics. It shows that the overall performance of the model is good at an accuracy of \SI{76}{\percent}, however some of the articles that the human annotator had labelled as \textit{movie} or \textit{music} were subsumed under the hypertopic \textit{life} by the model. This is not surprising considering that celebrity reports do often also cover celebrities' life stories to a significant extent. For the \textit{distinct-SES} set of role models, somewhat less accuracy is achieved, the predictions appear, however, equally consistent.
 
 \begin{figure}
     \centering
@@ -149,7 +149,7 @@ Figure~\ref{fig:embedding_confusion_matrix} compares the hypertopics assigned wi
 \end{figure}
 
 \paragraph{Results}
-The distribution of articles across the hypertopics and the \SI{20}{} topics was compared between the low- and high-\gls{ses} groups in order to identify any significant differences in prevalence of topics in the celebrity news coverage between the two \gls{ses} groups. The distribution of the hypertopics for the \textit{mixed-} and the \textit{distinct-SES} approaches is shown in figure~\ref{fig:semantic_clustering_hypertopic_distribution} and listed in table~\ref{tab:embeddings_hypertopics_distribution_and_chi2}. The distribution of all \SI{20}{} topics and their respective topic words is presented in figure~\ref{fig:semantic_clustering_cluster_distribution} the appedix chapter~\ref{ch:unsupervised_appendix}.
+The distribution of articles across the hypertopics and the \SI{20}{} topics was compared between the low- and high-\gls{ses} groups in order to identify any significant differences in prevalence of topics in the celebrity news coverage between the two \gls{ses} groups. The distribution of the hypertopics for the \textit{mixed-} and the \textit{distinct-SES} sets of role models is shown in figure~\ref{fig:semantic_clustering_hypertopic_distribution} and listed in table~\ref{tab:embeddings_hypertopics_distribution_and_chi2}. The distribution of all \SI{20}{} topics and their respective topic words is presented in figure~\ref{fig:semantic_clustering_cluster_distribution} the appedix chapter~\ref{ch:unsupervised_appendix}.
 
 \begin{figure}
     \centering
@@ -158,16 +158,16 @@ The distribution of articles across the hypertopics and the \SI{20}{} topics was
         \begin{pgfpicture}
             \pgftext{\input{\imagepath/semantic_clustering_hypertopic_distribution.pgf}}
         \end{pgfpicture}
-        \caption{\textit{mixed-\gls{ses}} approach}
+        \caption{\textit{mixed-\gls{ses}} dataset}
     \end{subfigure}
     \begin{subfigure}{0.48\textwidth}
         \centering
         \begin{pgfpicture}
             \pgftext{\input{\imagepath/semantic_clustering_hypertopic_distribution_distinct.pgf}}
         \end{pgfpicture}
-        \caption{\textit{distinct-\gls{ses}} approach}
+        \caption{\textit{distinct-\gls{ses}} dataset}
     \end{subfigure}
-    \caption{Distribution of articles across hypertopics for the low- and the high-\gls{ses} groups; left for the \textit{mixed-}, right for the \textit{distinct-SES} approach. While the \textit{life} hypertopic is equally represented in both \gls{ses} groups, \textit{movie}-related articles prevail more in the high- than in the low-\gls{ses} group, whereas \textit{music} and \textit{sport}-related articles prevail more in the low-\gls{ses} than in the high-\gls{ses} group}\label{fig:semantic_clustering_hypertopic_distribution}
+    \caption{Distribution of articles across hypertopics for the low- and the high-\gls{ses} groups; left for the \textit{mixed-}, right for the \textit{distinct-SES} sets of role models. While the \textit{life} hypertopic is equally represented in both \gls{ses} groups, \textit{movie}-related articles prevail more in the high- than in the low-\gls{ses} group, whereas \textit{music} and \textit{sport}-related articles prevail more in the low-\gls{ses} than in the high-\gls{ses} group.}\label{fig:semantic_clustering_hypertopic_distribution}
 \end{figure}
 
 The graphs reveal that the hypertopic \textit{movie} is more frequent in the high-\gls{ses} group compared to the low-\gls{ses} group, whereas the topics \textit{music} and \textit{sport} are more common in the low-\gls{ses} than in the high-\gls{ses} group. For the all-encompassing \textit{life} hypertopic, the groups show only little difference.
@@ -204,11 +204,11 @@ Table~\ref{tab:embeddings_hypertopics_distribution_and_chi2} shows that among th
 \begin{table}
     \centering
     \input{\imagepath/semantic_clustering_hypertopic_chi2_table.tex}
-    \caption{Distribution of hypertopics for the low- and high-\gls{ses} groups and results of the $\chi^2$-contingency and topic-wise tests. For both the \textit{mixed-} and the \textit{distinct-\gls{ses}} approach, the distributions of topics are significantly different across the \gls{ses} groups. The differences in the hypertopics \textit{movie}, \textit{music}, and \textit{sport} are all significant. It can, however, not be said, that the differences are generally more pronounced for the \textit{distinct-\gls{ses}} approach. Legend: *: $p < \SI{1e-1}{}$, **: $p<\SI{5e-2}{}$, ***: $p<\SI{1e-2}{}$.}\label{tab:embeddings_hypertopics_distribution_and_chi2}
+    \caption{Distribution of hypertopics for the low- and high-\gls{ses} groups and results of the $\chi^2$-contingency and topic-wise tests. For both the \textit{mixed-} and the \textit{distinct-\gls{ses}} sets of role models, the distributions of topics are significantly different across the \gls{ses} groups. The differences in the hypertopics \textit{movie}, \textit{music}, and \textit{sport} are all significant. It can, however, not be said, that the differences are generally more pronounced for the \textit{distinct-\gls{ses}} dataset. $p$-value indicators: *: $p < \SI{1e-1}{}$, **: $p<\SI{5e-2}{}$, ***: $p<\SI{1e-2}{}$.}\label{tab:embeddings_hypertopics_distribution_and_chi2}
 \end{table}
 
 \paragraph{Adjectives and Adverbs}
-The topic words of the \textit{nouns and verbs} stage that were output by the model (table~\ref{tab:semantic_clustering_topic_hypertopic_table}) do not expose clear information about connotation and sentiment. Assuming that instead the \textit{adjectives and adverbs} stage could reveal more about the connotations and the sentiment of the newspaper articles, the modelling procedure was modified in order to examine the \textit{adjectives and adverbs} stage of text. To this end, the per-cluster \gls{lda} models were fed with the text in the \textit{adjectives and adverbs} stage instead of the \textit{nouns and verbs} stage. Table \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} in the appendix lists the \SI{20}{} cluster word lists found in this alternative approach. However, these word lists also don't appear to convey any information that could be clearly identified as connotation or sentiment, except for the omnipresent word ``great''. Furthermore, it appears that the part-of-speech tagging didn't work as well as expected since proper names are still among the words, rendering the word lists less interpretable.
+The topic words of the \textit{nouns and verbs} stage that were output by the model (table~\ref{tab:semantic_clustering_topic_hypertopic_table}) do not expose clear information about connotation and sentiment. Assuming that instead the \textit{adjectives and adverbs} stage could reveal more about the connotations and the sentiment of the newspaper articles, the modelling procedure was modified in order to examine the \textit{adjectives and adverbs} stage of text. To this end, the per-cluster \gls{lda} models were fed with the text in the \textit{adjectives and adverbs} stage instead of the \textit{nouns and verbs} stage. Table \ref{tab:semantic_clustering_adjectives_adverbs_topic_table} in the appendix lists the \SI{20}{} cluster word lists found in this alternative approach. However, these word lists also do not appear to convey any information that could be clearly identified as connotation or sentiment, except for the omnipresent word ``great''. Furthermore, it appears that the part-of-speech tagging didn't work as well as expected since proper names are still among the words, rendering the word lists less interpretable.
 
 
 \section{Discussion}
@@ -216,4 +216,4 @@ In this chapter, topic modelling was explored as a method for analyzing newspape
 
 The clearly interpretable results at this stage are unfortunately restricted to the  finding that sports- and music-related topics are comparatively more frequent in the low-\gls{ses} group, whereas movie-related topics are comparatively more frequent in the high-\gls{ses} group. These topics are, however, already well reflected in the professions of the individual role models (see table~\ref{tab:role_model_overview}) and would probably not need a topic modelling approach for identification. To a considerable extent, this is due to the assignment of occupation-related hypertopics. In this first approach, this seems, however, justified as it represented the most straightforward and unambiguous way of subsuming the topics into sensible categories and thereby making model outputs comparable. Also, the adjectives and adverbs describing each topic were unfortunately not indicating any clear connotations.
 
-In order to gain more valuable insights, more sophisticated preprocessing of the data and further enhancing of the modelling procedure will be required. The author deems filtering the training data helpful, e.g. by removing articles whose topic is too closely related to the respective role model's occupation. In this way, the association of role models with their profession wouldn't dominate the topics as much as they do without filtering. In order to facilitate the emergence of sentiment and connotation in the topics, words that don't carry sentiment could be removed from the input fed into the \gls{lda} stages of the modelling process, only leaving connotation- and  sentiment-bearing words in the modelling process. Finally, it could be advisable to examine the model output for high numbers of topics (e.g. $\ntopics>50$) more thoroughly, as in these cases the topics are more specific and could hence expose more connotations in their characterizing word lists.
+In order to gain more valuable insights, more sophisticated preprocessing of the data and further enhancing of the modelling procedure will be required. The author deems filtering the training data helpful, e.g. by removing articles whose topic is too closely related to the respective role model's occupation. In this way, the association of role models with their profession would not dominate the topics as much as they do without filtering. In order to facilitate the emergence of sentiment and connotation in the topics, words that do not carry sentiment could be removed from the input fed into the \gls{lda} stages of the modelling process, only leaving connotation- and  sentiment-bearing words in the modelling process. Finally, it could be advisable to examine the model output for high numbers of topics (e.g. $\ntopics>50$) more thoroughly, as in these cases the topics are more specific and could hence expose more connotations in their characterizing word lists.

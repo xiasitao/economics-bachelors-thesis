@@ -223,7 +223,8 @@ def plot_human_annotation_confusion_matrix(articles: pd.DataFrame, human_annotat
     human_annotated_category = human_annotated[~human_annotated[category].isna()]
     if len(human_annotated_category) == 0:
         return
-    articles_with_annotation = articles.join(human_annotated_category[[category]], rsuffix='_annotated', on='article_id', how='inner')[['content', category, f'{category}_annotated']]
+    articles = articles[[category, 'article_id']].drop_duplicates()
+    articles_with_annotation = articles.join(human_annotated_category[[category]], rsuffix='_annotated', on='article_id', how='inner')[[category, f'{category}_annotated']]
     articles_with_annotation = articles_with_annotation[~articles_with_annotation[category].isna()]
     category_labels = np.unique(articles_with_annotation[[category, f'{category}_annotated']].values.ravel())
     category_confusion_matrix = confusion_matrix(y_true=articles_with_annotation[f'{category}_annotated'], y_pred=articles_with_annotation[category], labels=category_labels)
