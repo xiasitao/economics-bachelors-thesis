@@ -1,0 +1,146 @@
+\input{presentation_headers.tex}
+
+
+\begin{document}
+%%% Title frame
+\begin{frame}
+	\begin{center}
+		\begin{block}
+			{\centering\\
+				\medskip
+				\textbf{\textsc{Idols and Socioeconomic Status}}\\
+                Exploring Role Models using Natural Language Processing\\
+				\medskip}
+		\end{block}
+
+		\bigskip
+
+		Bachelors's thesis discussion\\
+		\medskip
+		February 20, 2022\\
+
+		\vspace{1cm}
+		\textbf{Maximilian Schattauer}
+	\end{center}
+\end{frame}
+
+
+%%% Hook
+\begin{frame}
+    Lesch picture
+\end{frame}
+
+
+%%% Overview
+\begin{frame}
+    \frametitle{Contents}
+    \begin{enumerate}
+        \item Role Models and SES
+        \item Data and Methods
+        \item Findings
+        \item Discussion
+    \end{enumerate}
+\end{frame}
+
+
+%%% Role Models & SES
+\begin{frame}
+    \frametitle{Role Models and SES}
+	\begin{columns}[t]
+		\centering
+		\begin{column}{0.3\textwidth}
+			\onslide<1->{\textbf{Role Models}}
+			\begin{itemize}
+				\item<2-> child development
+				\item<3-> behavior \& prosociality
+				\item<4-> education \& career
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.00\textwidth}<7->
+			$\overset{?}{\longleftrightarrow}$
+		\end{column}
+		\begin{column}{0.35\textwidth}
+			\onslide<5->{\textbf{SES}}
+			\onslide<6->{\begin{itemize}
+				\item child development
+				\item behavior \& prosociality
+				\item education \& career
+			\end{itemize}}
+		\end{column}
+	\end{columns}
+	\onslide<7->{\begin{center}
+		\textbf{$\rightarrow$ interaction of role models and SES?}
+	\end{center}}
+
+	\onslide<8->{Role model influence determined by:}
+	\begin{itemize}
+		\item<8-> domain matching
+		\item<9-> relatability \& proximity (mentors vs. celebrities)
+	\end{itemize}
+	
+	\vspace{.5cm}
+
+\end{frame}
+
+
+%%% Data and Methods
+\begin{frame}
+	\frametitle{Data \& Methods}
+	\begin{itemize}
+		\item<+-> Survey data: adolescents' SES (low/high) and role models
+		\item<+-> online newspaper articles
+	\end{itemize}
+	\onslide<+->{
+		\textbf{Objective: finding differences between reports about low-SES and high-SES role models}
+	}
+	\onslide<+->{
+		Foci of analysis:
+		\begin{itemize}
+			\item distribution of topics
+			\item sentiment
+			\item connotations of relatability, success, and behavior
+			\item journalistic aspects
+		\end{itemize}
+	}
+\end{frame}
+\begin{frame}
+	\frametitle{Data \& Methods (cont.)}
+	NPL techniques:
+	\begin{itemize}
+		\item <+-> Topic modelling:
+		\item <+-> Zero-shot classification:
+	\end{itemize}
+\end{frame}
+
+
+%%% Findings
+\begin{frame}
+	\frametitle{Findings}
+	\only<1>{
+		\begin{figure}
+			\resizebox{7cm}{!}{\input{img/semantic_clustering_hypertopic_distribution_distinct.pgf}}
+		\end{figure}
+	}
+	\only<2>{
+		\begin{figure}
+			\resizebox{7cm}{!}{\input{img/zero_shot_distribution_sentiment_n_distinct.pgf}}
+		\end{figure}
+	}
+	\only<3>{
+		\begin{figure}
+			\resizebox{7cm}{!}{\input{img/zero_shot_distribution_prosociality_distinct.pgf}}
+		\end{figure}
+	}
+	\only<4>{
+		\begin{figure}
+			\resizebox{7cm}{!}{\input{img/zero_shot_distribution_crime_type_distinct.pgf}}
+		\end{figure}
+	}
+\end{frame}
+
+
+%%% Discussion
+\begin{frame}
+	\frametitle{Discussion}
+\end{frame}
+\end{document}

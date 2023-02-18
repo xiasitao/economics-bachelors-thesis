@@ -1,0 +1,144 @@
+\documentclass[
+  utf8,
+  aspectratio=169,
+]{beamer}
+
+% === Theme ===
+\usetheme{metropolis}
+
+% === Fonts ===
+%\usefonttheme{professionalfonts} % overwrite beamer settings
+\DeclareUnicodeCharacter{2009}{\,} 
+\usefonttheme[]{serif}
+\usepackage{noto}
+\usepackage{ebgaramond}
+%\usepackage[scale=0.75]{sourcecodepro}
+\usepackage[cmintegrals,cmbraces]{newtxmath}
+\usepackage{ebgaramond-maths}
+% Redefining missing symbols
+% https://tex.stackexchange.com/questions/215270/can-someone-explain-this-weird-font-behavior-ebgaramond-maths
+\makeatletter
+  \DeclareSymbolFont{ntxletters}{OML}{ntxmi}{m}{it}
+  \SetSymbolFont{ntxletters}{bold}{OML}{ntxmi}{b}{it}
+  \re@DeclareMathSymbol{\leftharpoonup}{\mathrel}{ntxletters}{"28}
+  \re@DeclareMathSymbol{\leftharpoondown}{\mathrel}{ntxletters}{"29}
+  \re@DeclareMathSymbol{\rightharpoonup}{\mathrel}{ntxletters}{"2A}
+  \re@DeclareMathSymbol{\rightharpoondown}{\mathrel}{ntxletters}{"2B}
+  \re@DeclareMathSymbol{\triangleleft}{\mathbin}{ntxletters}{"2F}
+  \re@DeclareMathSymbol{\triangleright}{\mathbin}{ntxletters}{"2E}
+  \re@DeclareMathSymbol{\partial}{\mathord}{ntxletters}{"40}
+  \re@DeclareMathSymbol{\flat}{\mathord}{ntxletters}{"5B}
+  \re@DeclareMathSymbol{\natural}{\mathord}{ntxletters}{"5C}
+  \re@DeclareMathSymbol{\star}{\mathbin}{ntxletters}{"3F}
+  \re@DeclareMathSymbol{\smile}{\mathrel}{ntxletters}{"5E}
+  \re@DeclareMathSymbol{\frown}{\mathrel}{ntxletters}{"5F}
+  \re@DeclareMathSymbol{\sharp}{\mathord}{ntxletters}{"5D}
+  \re@DeclareMathAccent{\vec}{\mathord}{ntxletters}{"7E}
+\makeatother
+\renewcommand{\epsilon}{\varepsilon}
+\usepackage[]{todonotes}
+
+
+%\usepackage[osf, sc]{mathpazo}
+%\linespread{1.03}
+\usepackage{setspace}
+
+\usepackage[T1]{fontenc}
+\usepackage{eurosym}
+\newcommand{\red}[1]{\colorbox{red}{\textcolor{white}{\textbf{#1}}}}
+
+% === General ===
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+%\usepackage{sfmath}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{physics}
+\usepackage{siunitx}
+\sisetup{per-mode=fraction,fraction-function=\tfrac}
+\DeclareSIUnit\gauss{G}
+\usepackage[]{braket}
+\usepackage{bbm}
+\usepackage{threeparttable}
+\usepackage{adjustbox}
+\usepackage[english]{babel}
+\usepackage{eurosym}
+\usepackage{epstopdf}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{color, colortbl}
+\usepackage{array,multirow}
+\usepackage{tabularx}
+\usepackage{dcolumn}
+\usepackage{setspace}
+\usepackage{wrapfig}
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup{compatibility=false}
+%\captionsetup[figure]{labelformat=empty}% redefines the caption setup of the figures environment in the beamer class.
+\usepackage{multido}
+\usepackage{multicol}
+\usepackage{pgf}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[scale=1]{sourcecodepro}
+\definecolor{stringcolor}{RGB}{154,91,145}  % rebecca
+\definecolor{keywordcolor}{RGB}{80,189,233} % blue
+\definecolor{commentcolor}{RGB}{255,0,0}  % red
+\lstset{
+  basicstyle=\ttfamily\tiny,
+  numbers=left,
+  breaklines=true,
+  language=Python,
+  otherkeywords={True,False},
+  commentstyle=\color{commentcolor},
+  keywordstyle=\color{keywordcolor}\bfseries,
+  stringstyle=\color{stringcolor},
+  emph={self, csl, ConeShapedCoilArrangement, FieldMap, Collection, Jones_vector},
+  emphstyle={\color{keywordcolor}},
+}
+
+
+% === Color theme ===
+\makeatletter
+\definecolor{lmugreen}{rgb}{0,.58,.25}
+\definecolor{lmu-lightgreen}{rgb}{0,.85,.36}
+\definecolor{mpqblue}{rgb}{0, .266, 0.371}
+
+\definecolor{hlgray}{gray}{0.8}
+\newcolumntype{A}{>{\columncolor{hlgray}}c}
+\setbeamercolor{title}{bg=mpqblue,fg=white}
+\setbeamercolor{block title}{bg=mpqblue,fg=white}
+\setbeamercolor{frametitle}{bg=mpqblue,fg=white}
+\setbeamercolor{normal text}{bg=white,fg=black}
+\setbeamercolor{alerted text}{fg=mpqblue}
+\setbeamercolor{example text}{fg=green!50!black}
+\setbeamercolor{structure}{fg=mpqblue}
+\setbeamercolor{background canvas}{parent=normal text}
+\setbeamercolor{background}{parent=background canvas}
+\setbeamercolor{palette primary}{fg=yellow,bg=yellow}
+\setbeamercolor{palette secondary}{use=structure,fg=structure.fg!100!green}
+\setbeamercolor{palette tertiary}{use=structure,fg=structure.fg!100!green}
+\makeatother
+
+% \AtBeginSection[]{
+%   \begin{frame}
+%   \vfill
+%   \centering
+%   \begin{beamercolorbox}[sep=8pt,center,shadow=true]{title}
+%     \usebeamerfont{title}\insertsectionhead\par
+%   \end{beamercolorbox}
+%   \vfill
+%   \end{frame}
+% }
+
+% === Glossary ===
+\usepackage[acronym]{glossaries}
+\makeglossaries
+\newacronym{bert}{BERT}{Bidirectional Encoder Representations from Transformers}
+\newacronym{lda}{LDA}{Latent Dirichlet allocation}
+\newacronym{nlp}{NLP}{natural language processing}
+\newacronym{pca}{PCA}{principal component analysis}
+\newacronym{ses}{SES}{socioeconomic status}
+\newacronym{tsne}{tSNE}{$t$-distributed stochastic neighbor embedding}
