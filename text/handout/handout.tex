@@ -1,0 +1,86 @@
+\input{../bachelors_thesis_headers.tex}
+
+\pagenumbering{gobble}
+\fontsize{10}{10}
+\geometry{a4paper, margin=2cm}
+
+\begin{document}
+    \begin{center}
+        \textsf{\textbf{\large{\textsc{Idols and Socioeconomic Status: Exploring Role Models using NLP}}}}\\
+        Bachelor's thesis, Maximilian Schattauer, February 2023
+    \end{center}
+
+
+    \subsection*{Role Models \& SES}
+    Both role models and SES influence child development, prosocial behavior, and education \& career.
+    The influence of role models is determined by their perceived relatability and proximity (gender, ethnicity, domain).
+
+    \textbf{$\rightarrow$ Are there interaction effects between role model perception and SES?}
+
+
+    \subsection*{Data \& Methods}
+    \begin{minipage}[t]{0.48\textwidth}
+        \textbf{Survey Data:}
+        \begin{itemize}
+            \item 13- and 14-years-old adolescents interviewed about role models (245 from low-, 96 from high-SES backgrounds)
+            \item 184 valid celebriry role models named
+        \end{itemize}
+    \end{minipage}
+    \hspace{0.04\textwidth}
+    \begin{minipage}[t]{0.48\textwidth}
+        \textbf{Online Newspaper Articles:}
+        \begin{itemize}
+            \item about adolescents' role models
+            \item preprocessed and balanced per role model
+        \end{itemize}
+    \end{minipage}
+
+    \vspace{0.2cm}
+    \begin{minipage}[t]{0.48\textwidth}
+        \textbf{Topic Modelling:} Finding dominant topics among the articles and assigning each article a topic probabilistically.
+        \begin{center}
+            \includegraphics[width=\textwidth]{img/topic_modelling_schema_simple.pdf}
+        \end{center}
+    \end{minipage}
+    \hspace{0.04\textwidth}
+    \begin{minipage}[t]{0.48\textwidth}
+        \textbf{Zero-Shot Classification:} Assiging to each article a label from a predefined set of labels, able of capturing connotations.
+        \begin{center}
+            \includegraphics[width=\textwidth]{img/zero_shot_schema_simple.pdf}
+        \end{center}
+    \end{minipage}
+
+    \subsection*{Findings}
+    \begin{center}
+        \begin{minipage}[t]{0.22\textwidth}
+            \small{\textbf{Topics:} low SES: sports and music more common, high SES: movie more common}
+
+            \resizebox{!}{\textwidth}{\input{img/semantic_clustering_hypertopic_distribution_distinct.pgf}}
+        \end{minipage}
+        \hspace{0.03\textwidth}
+        \begin{minipage}[t]{0.22\textwidth}
+            \small{\textbf{Sentiment}: positive correlation between SES and sentiment}
+
+            \resizebox{!}{\textwidth}{\input{img/zero_shot_distribution_sentiment_n_distinct.pgf}}
+        \end{minipage}
+        \hspace{0.03\textwidth}
+        \begin{minipage}[t]{0.22\textwidth}
+            \small{\textbf{Prosociality}: positive correlation between SES and prosocial connotations}
+
+            \resizebox{!}{\textwidth}{\input{img/zero_shot_distribution_prosociality_distinct.pgf}}
+        \end{minipage}
+        \hspace{0.03\textwidth}
+        \begin{minipage}[t]{0.22\textwidth}
+            \small{\textbf{Crime}: significantly more drug connotation in low-SES group}
+
+            \resizebox{!}{\textwidth}{\input{img/zero_shot_distribution_crime_type_distinct.pgf}}
+        \end{minipage}
+    \end{center}
+
+    \subsection*{Validity \& Improvements}
+    \begin{itemize}
+        \item potential threat: limited data abundance and variety, too few times each role models was mentions $\rightarrow$ include social media data, increase survey mentions per role model
+        \item naive aggregation strategy: only examining distribution of articles $\rightarrow$ aggregate per role model and identify interesting role models
+        \item model tuning $\rightarrow$ label articles to fine-tune models
+    \end{itemize}
+\end{document}
