@@ -23,7 +23,7 @@
         \textbf{Survey Data:}
         \begin{itemize}
             \item 13- and 14-years-old adolescents interviewed about role models (245 from low-, 96 from high-SES backgrounds)
-            \item 184 valid celebriry role models named
+            \item 184 valid celebrity role models named
         \end{itemize}
     \end{minipage}
     \hspace{0.04\textwidth}
@@ -37,14 +37,14 @@
 
     \vspace{0.2cm}
     \begin{minipage}[t]{0.48\textwidth}
-        \textbf{Topic Modelling:} Finding dominant topics among the articles and assigning each article a topic probabilistically.
+        \textbf{Topic Modelling:} finding dominant topics among the articles and assigning each article a topic probabilistically
         \begin{center}
             \includegraphics[width=\textwidth]{img/topic_modelling_schema_simple.pdf}
         \end{center}
     \end{minipage}
     \hspace{0.04\textwidth}
     \begin{minipage}[t]{0.48\textwidth}
-        \textbf{Zero-Shot Classification:} Assiging to each article a label from a predefined set of labels, able of capturing connotations.
+        \textbf{Zero-Shot Classification:} assiging to each article a label from a predefined set of labels, able of capturing connotations
         \begin{center}
             \includegraphics[width=\textwidth]{img/zero_shot_schema_simple.pdf}
         \end{center}
@@ -53,7 +53,7 @@
     \subsection*{Findings}
     \begin{center}
         \begin{minipage}[t]{0.22\textwidth}
-            \small{\textbf{Topics:} low SES: sports and music more common, high SES: movie more common}
+            \small{\textbf{Topics:} low SES: sports and music more common, high SES: movies more common}
 
             \resizebox{!}{\textwidth}{\input{img/semantic_clustering_hypertopic_distribution_distinct.pgf}}
         \end{minipage}
@@ -71,7 +71,7 @@
         \end{minipage}
         \hspace{0.03\textwidth}
         \begin{minipage}[t]{0.22\textwidth}
-            \small{\textbf{Crime}: significantly more drug connotation in low-SES group}
+            \small{\textbf{Crime}: significantly more drug-connotated articles in low-SES group}
 
             \resizebox{!}{\textwidth}{\input{img/zero_shot_distribution_crime_type_distinct.pgf}}
         \end{minipage}
@@ -79,8 +79,8 @@
 
     \subsection*{Validity \& Improvements}
     \begin{itemize}
-        \item potential threat: limited data abundance and variety, too few times each role models was mentions $\rightarrow$ include social media data, increase survey mentions per role model
-        \item naive aggregation strategy: only examining distribution of articles $\rightarrow$ aggregate per role model and identify interesting role models
-        \item model tuning $\rightarrow$ label articles to fine-tune models
+        \item potential threat: limited data abundance and variety, too few mentions of each role model on average $\rightarrow$ include social media data, increase survey mentions per role model
+        \item naive aggregation strategy: only examining distribution of articles $\rightarrow$ aggregate per role model and examine interesting role models more closely
+        \item model tuning $\rightarrow$ manually label some articles to fine-tune models and condition them for the specific use cases
     \end{itemize}
 \end{document}
